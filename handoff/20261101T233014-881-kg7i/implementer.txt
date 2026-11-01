@@ -1,0 +1,10 @@
+data/costco_revenue_breakdown.json
+research/costco_revenue_architecture.md
+wayfinder/map.md
+wayfinder/tickets/ticket-001.md
+wayfinder/tickets/ticket-002.md
+wayfinder/tickets/ticket-003.md
+wayfinder/tickets/ticket-004.md
+wayfinder/tickets/ticket-005.md
+src/costco_revenue_model.mjs
+package.json

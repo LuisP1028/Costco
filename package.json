@@ -2,6 +2,10 @@
   "name": "costco",
   "private": true,
   "type": "module",
+  "scripts": {
+    "start": "node src/costco_revenue_model.mjs",
+    "verify": "node src/costco_revenue_model.mjs --verify"
+  },
   "devDependencies": {
     "@ai-hero/sandcastle": "^0.12.0"
   }
