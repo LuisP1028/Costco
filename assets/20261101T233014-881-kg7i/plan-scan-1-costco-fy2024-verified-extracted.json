@@ -1,0 +1,229 @@
+{
+  "primary_source_metadata": {
+    "company_name": "Costco Wholesale Corporation",
+    "ticker": "COST",
+    "cik": "0000909832",
+    "form": "10-K",
+    "accession_number": "0000909832-24-000049",
+    "filing_date": "2024-10-09",
+    "period_end_date": "2024-09-01",
+    "edgar_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983224000049/cost-20240901.htm",
+    "local_filing_asset": "assets/20261101T233014-881-kg7i/plan-scan-1-cost-20240901.htm"
+  },
+  "consolidated_income_statements": {
+    "units": "USD in millions",
+    "fy2024": {
+      "fiscal_weeks": 52,
+      "period_end": "2024-09-01",
+      "net_sales": 249625,
+      "membership_fees": 4828,
+      "total_revenue": 254453,
+      "merchandise_costs": 222358,
+      "selling_general_and_administrative": 22810,
+      "operating_income": 9285,
+      "interest_expense": -169,
+      "interest_income_and_other_net": 624,
+      "income_before_income_taxes": 9740,
+      "provision_for_income_taxes": 2373,
+      "net_income_including_noncontrolling": 7367,
+      "net_income_attributable_to_costco": 7367
+    },
+    "fy2023": {
+      "fiscal_weeks": 53,
+      "period_end": "2023-09-03",
+      "net_sales": 237710,
+      "membership_fees": 4580,
+      "total_revenue": 242290,
+      "merchandise_costs": 212586,
+      "selling_general_and_administrative": 21590,
+      "operating_income": 8114,
+      "interest_expense": -160,
+      "interest_income_and_other_net": 533,
+      "income_before_income_taxes": 8487,
+      "provision_for_income_taxes": 2195,
+      "net_income_attributable_to_costco": 6292
+    },
+    "fy2022": {
+      "fiscal_weeks": 52,
+      "period_end": "2022-08-28",
+      "net_sales": 222730,
+      "membership_fees": 4224,
+      "total_revenue": 226954,
+      "merchandise_costs": 199382,
+      "selling_general_and_administrative": 19779,
+      "operating_income": 7793,
+      "interest_expense": -158,
+      "interest_income_and_other_net": 205,
+      "income_before_income_taxes": 7840,
+      "provision_for_income_taxes": 1925,
+      "net_income_attributable_to_costco": 5844
+    }
+  },
+  "disaggregated_merchandise_categories_fy2024": {
+    "source": "Item 8, Note 11 (Segment Reporting - Disaggregated Revenue)",
+    "categories": [
+      {
+        "category_id": "foods_and_sundries",
+        "name": "Foods and Sundries",
+        "net_sales_usd_m": 101463,
+        "share_of_net_sales_pct": 40.6462,
+        "share_rounded_pct": 40.65,
+        "components": [
+          "sundries",
+          "dry grocery",
+          "candy",
+          "cooler",
+          "freezer",
+          "deli",
+          "liquor",
+          "tobacco"
+        ]
+      },
+      {
+        "category_id": "non_foods",
+        "name": "Non-Foods",
+        "net_sales_usd_m": 63973,
+        "share_of_net_sales_pct": 25.6276,
+        "share_rounded_pct": 25.63,
+        "components": [
+          "major appliances",
+          "small electronics",
+          "health and beauty aids",
+          "hardware",
+          "lawn and garden",
+          "sporting goods",
+          "tires",
+          "toys and seasonal",
+          "office supplies",
+          "automotive",
+          "stamps",
+          "tickets",
+          "apparel",
+          "furniture",
+          "domestics",
+          "housewares",
+          "special order kiosk",
+          "jewelry"
+        ]
+      },
+      {
+        "category_id": "fresh_foods",
+        "name": "Fresh Foods",
+        "net_sales_usd_m": 34220,
+        "share_of_net_sales_pct": 13.7086,
+        "share_rounded_pct": 13.71,
+        "components": [
+          "meat",
+          "produce",
+          "service deli",
+          "bakery"
+        ]
+      },
+      {
+        "category_id": "warehouse_ancillary_and_other",
+        "name": "Warehouse Ancillary and Other Businesses",
+        "net_sales_usd_m": 49969,
+        "share_of_net_sales_pct": 20.0176,
+        "share_rounded_pct": 20.02,
+        "components": [
+          "gasoline (719 stations, ~12% of total net sales)",
+          "pharmacy",
+          "optical",
+          "food court",
+          "hearing aids",
+          "tire installation",
+          "e-commerce (~7% of total net sales)",
+          "business centers",
+          "travel",
+          "other"
+        ]
+      }
+    ],
+    "sum_of_category_shares_pct": 100.0,
+    "total_net_sales_usd_m": 249625
+  },
+  "geographic_segments_fy2024": {
+    "source": "Item 8, Note 11 (Segment Reporting) & Item 2 (Warehouse Properties)",
+    "segments": [
+      {
+        "segment_id": "united_states",
+        "name": "United States",
+        "total_revenue_usd_m": 184143,
+        "revenue_share_pct": 72.3682,
+        "operating_income_usd_m": 6217,
+        "warehouse_count": 614,
+        "warehouse_share_pct": 68.99
+      },
+      {
+        "segment_id": "canada",
+        "name": "Canada",
+        "total_revenue_usd_m": 34874,
+        "revenue_share_pct": 13.7055,
+        "operating_income_usd_m": 1648,
+        "warehouse_count": 108,
+        "warehouse_share_pct": 12.13
+      },
+      {
+        "segment_id": "other_international",
+        "name": "Other International",
+        "total_revenue_usd_m": 35436,
+        "revenue_share_pct": 13.9263,
+        "operating_income_usd_m": 1420,
+        "warehouse_count": 168,
+        "warehouse_share_pct": 18.88
+      }
+    ],
+    "total_warehouses": 890,
+    "total_revenue_usd_m": 254453,
+    "total_operating_income_usd_m": 9285
+  },
+  "membership_metrics_fy2024": {
+    "source": "Item 1 (Business - Membership) & Note 1 (Summary of Accounting Policies)",
+    "gold_star_members_thousands": 63700,
+    "business_members_thousands": 12500,
+    "total_paid_members_millions": 76.2,
+    "household_cards_thousands": 60600,
+    "total_cardholders_millions": 136.8,
+    "executive_members_thousands": 35400,
+    "executive_members_millions": 35.4,
+    "executive_share_of_paid_members_pct": 46.4567,
+    "executive_share_of_worldwide_net_sales_pct": 73.3,
+    "renewal_rate_us_and_canada_pct": 92.9,
+    "renewal_rate_worldwide_pct": 90.5,
+    "annual_membership_fees_usd": {
+      "fy2024_rates": {
+        "gold_star": 60,
+        "business": 60,
+        "executive": 120
+      },
+      "post_fy2024_rates_effective_2024_09_01": {
+        "gold_star": 65,
+        "business": 65,
+        "executive": 130,
+        "executive_max_2pct_reward": 1250
+      }
+    },
+    "deferred_membership_fees_liability_usd_m": 2501,
+    "executive_2pct_reward_reduction_in_sales_usd_m": 2804,
+    "accrued_member_rewards_liability_usd_m": 2435
+  },
+  "working_capital_balance_sheet_fy2024": {
+    "source": "Item 8, Consolidated Balance Sheets",
+    "merchandise_inventories_usd_m": 18647,
+    "accounts_payable_usd_m": 19421,
+    "accounts_payable_to_inventory_ratio_pct": 104.1508,
+    "inventory_funding_surplus_usd_m": 774,
+    "deferred_membership_fees_liability_usd_m": 2501
+  },
+  "key_calculated_flywheel_ratios": {
+    "net_sales_share_of_revenue_pct": 98.1026,
+    "membership_fee_share_of_revenue_pct": 1.8974,
+    "merchandise_gross_margin_usd_m": 27267,
+    "merchandise_gross_margin_pct": 10.9232,
+    "sga_pct_of_net_sales": 9.1377,
+    "membership_fee_share_of_operating_income_pct": 51.9978,
+    "merchandise_operating_contribution_usd_m": 4457,
+    "merchandise_operating_contribution_share_of_oi_pct": 48.0022,
+    "accounts_payable_to_merchandise_inventory_pct": 104.1508
+  }
+}
