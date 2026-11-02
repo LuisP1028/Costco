@@ -1,0 +1,29 @@
+# Wayfinder Map: Costco Wholesale Corporation (`NASDAQ: COST`, `CIK: 0000909832`) Revenue Generation Architecture
+
+## Destination
+
+Produce a primary-source verified architectural decomposition, SEC Form 10-K research monograph ([Costco Revenue Architecture Research Monograph](../research/costco_revenue_architecture.md)), structured multi-year GAAP financial dataset ([Costco FY2024 Revenue Breakdown Dataset](../data/costco_revenue_breakdown.json)), and zero-network deterministic revenue verification engine ([Costco Revenue Decomposition & Audit Engine](../src/costco_revenue_model.mjs)) explaining and mathematically verifying how Costco Wholesale Corporation generates consolidated revenue (`$254,453M` in FY2024) and converts high-velocity warehouse volume (`{Net Sales}` of `$249,625M`) plus recurring club subscriptions (`{Membership Fees}` of `$4,828M`) into `$9,285M` of consolidated operating profit and `$7,367M` of net income.
+
+## Notes
+
+- **Authoritative Domain Vocabulary (`LANGUAGE.md`):** All domain concepts (`{Net Sales}`, `{Membership Fees}`, `{Gross Margin Ceiling}`, `{Operating Income Flywheel}`) and evaluation criteria (`{errors}`, `{correctness}`, `{functionality}`, `{correct required outputs}`, `{sufficient}`, `{insufficient}`) strictly align with [`LANGUAGE.md`](../LANGUAGE.md).
+- **Mandatory Skill Consultation (`/wayfinder` & `/research`):** Decomposition and ticket governance strictly follow the `/wayfinder` skill protocol (atomic decision/research tickets referenced exclusively by descriptive human-readable titles wrapping relative Markdown links, never bare ticket IDs), while primary-source investigation strictly follows the `/research` skill protocol.
+- **Primary-Source SEC Form 10-K Citation Mandate:** Every quantitative figure, accounting recognition rule, category share, geographic segment total, renewal rate, and balance-sheet working-capital ratio is grounded directly in *Costco Wholesale Corporation Form 10-K for the Fiscal Year Ended September 1, 2024* (`CIK: 0000909832`, Accession No. `0000909832-24-000049`, filed October 9, 2024). Uncited secondary blog commentary is strictly rejected.
+
+## Decisions so far
+
+- [Two-Pillar Revenue Engine and ASC 606 Recognition Mechanics](./tickets/ticket-001.md) — Establishes the FY2024 consolidated revenue split between `{Net Sales}` (`$249,625M`, `98.10%`) and `{Membership Fees}` (`$4,828M`, `1.90%`) totaling `$254,453M`, principal gross recognition at warehouse point-of-sale vs. e-commerce shipment, gross return reserves, ratable 12-month deferred membership fee amortization (`$2,501M` balance-sheet liability), and `$2,804M` Executive 2% reward contra-revenue reduction against `{Net Sales}`.
+- [Merchandise Category Disaggregation, SKU Discipline, and Kirkland Signature Economics](./tickets/ticket-002.md) — Disaggregates FY2024 `{Net Sales}` per Note 11 across Foods and Sundries (`$101,463M`, `40.65%`), Non-Foods (`$63,973M`, `25.63%`), Fresh Foods (`$34,220M`, `13.71%`), and Warehouse Ancillary and Other Businesses (`$49,969M`, `20.02%`), showing how `< 4,000` active warehouse SKUs (`>$62M` buying volume per SKU) and Kirkland Signature private-label penetration compress member prices while strengthening supplier bargaining leverage.
+- [Membership Fee Tier Structure, Renewal Rate Dynamics, and Fee Increase Cadence](./tickets/ticket-003.md) — Quantifies FY2024 membership scale (`76.2M` paid members across Gold Star `63.7M` and Business `12.5M`; `136.8M` total cardholders), Executive tier concentration (`35.4M` paid Executive members = `46.5%` of paid members driving `73.3%` of worldwide net sales), `92.9%` U.S./Canada and `90.5%` worldwide renewal rates, and the September 1, 2024 U.S./Canada fee increase (`$60→$65` base, `$120→$130` Executive, `$1,000→$1,250` reward cap, `~$370M` two-year revenue lift).
+- [Warehouse Ancillary Traffic Drivers, E-Commerce, Costco Logistics, and Emerging Retail Media](./tickets/ticket-004.md) — Maps how `719` gas stations (`~12%` of FY2024 `{Net Sales}`), pharmacy, optical, food court, hearing aid, and tire centers drive high-frequency warehouse trips alongside e-commerce (`~7%` of net sales, `+16%` FY2024 comparable growth), broader digitally originated sales (`~9%` of net sales), big-and-bulky fulfillment (Costco Logistics), supplier-direct curation (Costco Next), Costco Travel, and Citibank co-branded Visa royalty and closed-loop rebate streams.
+- [Gross Margin Ceiling, Negative Working-Capital Inventory Funding, and Operating Income Flywheel](./tickets/ticket-005.md) — Reconciles Costco's `10.92%` FY2024 `{Gross Margin Ceiling}` (`$27,267M` merchandise gross margin) and `9.14%` SG&A (`$22,810M`, inclusive of preopening costs per Note 1) into `$4,457M` (`48.00%`) of merchandise operating contribution plus `$4,828M` (`52.00%`) of `{Membership Fees}` (`$9,285M` consolidated operating income), reinforced by `12.60x` average inventory turnover and `$19,421M` Accounts Payable funding `104.15%` of `$18,647M` Merchandise Inventories.
+
+## Not yet specified
+
+All research questions, GAAP accounting identities, primary-source SEC Form 10-K citations, working-capital equations, and deterministic verification invariants have been graduated into the five resolved decision tickets above. Zero open frontier fog remains.
+
+## Out of scope
+
+- Speculative common-stock price targets, forward discounted cash flow (DCF) equity valuation multiples, or non-GAAP market sentiment commentary.
+- Uncited secondary blog summaries or third-party estimates not anchored in Costco Wholesale Corporation's SEC Form 10-K (`CIK: 0000909832`) disclosures.
+- External runtime network calls during model execution in `src/costco_revenue_model.mjs` (`0` runtime network calls permitted).

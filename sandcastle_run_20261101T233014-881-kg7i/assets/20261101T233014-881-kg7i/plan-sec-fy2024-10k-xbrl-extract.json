@@ -1,0 +1,740 @@
+{
+  "cik": 909832,
+  "entityName": "COSTCO WHOLESALE CORP /NEW",
+  "accession": "0000909832-24-000049",
+  "tags": {
+    "AccountsPayableCurrent": [
+      {
+        "end": "2023-09-03",
+        "val_m": 17483,
+        "raw": 17483000000,
+        "frame": "CY2023Q3I"
+      },
+      {
+        "end": "2024-09-01",
+        "val_m": 19421,
+        "raw": 19421000000
+      }
+    ],
+    "AvailableForSaleSecuritiesDebtMaturitiesAfterFiveThroughTenYearsAmortizedCost": [
+      {
+        "end": "2024-09-01",
+        "val_m": 154,
+        "raw": 154000000,
+        "frame": "CY2024Q3I"
+      }
+    ],
+    "AvailableForSaleSecuritiesDebtMaturitiesAfterFiveThroughTenYearsFairValue": [
+      {
+        "end": "2024-09-01",
+        "val_m": 153,
+        "raw": 153000000,
+        "frame": "CY2024Q3I"
+      }
+    ],
+    "AvailableForSaleSecuritiesDebtMaturitiesAfterOneThroughFiveYearsAmortizedCost": [
+      {
+        "end": "2024-09-01",
+        "val_m": 391,
+        "raw": 391000000,
+        "frame": "CY2024Q3I"
+      }
+    ],
+    "AvailableForSaleSecuritiesDebtMaturitiesAfterOneThroughFiveYearsFairValue": [
+      {
+        "end": "2024-09-01",
+        "val_m": 391,
+        "raw": 391000000,
+        "frame": "CY2024Q3I"
+      }
+    ],
+    "AvailableForSaleSecuritiesDebtMaturitiesWithinOneYearAmortizedCost": [
+      {
+        "end": "2024-09-01",
+        "val_m": 144,
+        "raw": 144000000,
+        "frame": "CY2024Q3I"
+      }
+    ],
+    "AvailableForSaleSecuritiesDebtMaturitiesWithinOneYearFairValue": [
+      {
+        "end": "2024-09-01",
+        "val_m": 144,
+        "raw": 144000000,
+        "frame": "CY2024Q3I"
+      }
+    ],
+    "ComprehensiveIncomeNetOfTaxAttributableToNoncontrollingInterest": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 36,
+        "raw": 36000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 0,
+        "raw": 0,
+        "frame": "CY2023"
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 0,
+        "raw": 0,
+        "frame": "CY2024"
+      }
+    ],
+    "ComprehensiveIncomeNetOfTaxIncludingPortionAttributableToNoncontrollingInterest": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 5194,
+        "raw": 5194000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 6316,
+        "raw": 6316000000,
+        "frame": "CY2023"
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 7344,
+        "raw": 7344000000,
+        "frame": "CY2024"
+      }
+    ],
+    "CostOfGoodsAndServicesSold": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 199382,
+        "raw": 199382000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 212586,
+        "raw": 212586000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 222358,
+        "raw": 222358000000
+      }
+    ],
+    "DeferredFederalIncomeTaxExpenseBenefit": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": -35,
+        "raw": -35000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 33,
+        "raw": 33000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 48,
+        "raw": 48000000
+      }
+    ],
+    "DeferredForeignIncomeTaxExpenseBenefit": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": -17,
+        "raw": -17000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": -10,
+        "raw": -10000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": -72,
+        "raw": -72000000
+      }
+    ],
+    "DeferredRevenueCurrent": [
+      {
+        "end": "2023-09-03",
+        "val_m": 2337,
+        "raw": 2337000000,
+        "frame": "CY2023Q3I"
+      },
+      {
+        "end": "2024-09-01",
+        "val_m": 2501,
+        "raw": 2501000000
+      }
+    ],
+    "DeferredStateAndLocalIncomeTaxExpenseBenefit": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": -5,
+        "raw": -5000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 10,
+        "raw": 10000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": -77,
+        "raw": -77000000
+      }
+    ],
+    "DeferredTaxLiabilitiesDeferredExpenseCapitalizedInventoryCosts": [
+      {
+        "end": "2023-09-03",
+        "val_m": 380,
+        "raw": 380000000,
+        "frame": "CY2023Q3I"
+      },
+      {
+        "end": "2024-09-01",
+        "val_m": 296,
+        "raw": 296000000
+      }
+    ],
+    "FederalIncomeTaxExpenseBenefitContinuingOperations": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 763,
+        "raw": 763000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 1089,
+        "raw": 1089000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 1293,
+        "raw": 1293000000
+      }
+    ],
+    "FinanceLeaseInterestExpense": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 45,
+        "raw": 45000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 54,
+        "raw": 54000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 58,
+        "raw": 58000000
+      }
+    ],
+    "FinanceLeaseInterestPaymentOnLiability": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 45,
+        "raw": 45000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 54,
+        "raw": 54000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 58,
+        "raw": 58000000
+      }
+    ],
+    "ForeignIncomeTaxExpenseBenefitContinuingOperations": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 834,
+        "raw": 834000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 722,
+        "raw": 722000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 726,
+        "raw": 726000000
+      }
+    ],
+    "IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 5759,
+        "raw": 5759000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 6264,
+        "raw": 6264000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 7255,
+        "raw": 7255000000
+      }
+    ],
+    "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 7840,
+        "raw": 7840000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 8487,
+        "raw": 8487000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 9740,
+        "raw": 9740000000
+      }
+    ],
+    "IncomeLossFromContinuingOperationsBeforeIncomeTaxesForeign": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 2081,
+        "raw": 2081000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 2223,
+        "raw": 2223000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 2485,
+        "raw": 2485000000
+      }
+    ],
+    "IncomeTaxExpenseBenefit": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 1925,
+        "raw": 1925000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 2195,
+        "raw": 2195000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 2373,
+        "raw": 2373000000
+      }
+    ],
+    "IncomeTaxReconciliationIncomeTaxExpenseBenefitAtFederalStatutoryIncomeTaxRate": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 1646,
+        "raw": 1646000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 1782,
+        "raw": 1782000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 2045,
+        "raw": 2045000000
+      }
+    ],
+    "IncreaseDecreaseInAccountsPayable": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 1891,
+        "raw": 1891000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": -382,
+        "raw": -382000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 1938,
+        "raw": 1938000000
+      }
+    ],
+    "InterestAndOtherIncome": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 205,
+        "raw": 205000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 533,
+        "raw": 533000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 624,
+        "raw": 624000000
+      }
+    ],
+    "InterestExpense": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 158,
+        "raw": 158000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 160,
+        "raw": 160000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 169,
+        "raw": 169000000
+      }
+    ],
+    "InterestPaidNet": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 145,
+        "raw": 145000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 125,
+        "raw": 125000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 129,
+        "raw": 129000000
+      }
+    ],
+    "InventoryLIFOReservePeriodCharge": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 438,
+        "raw": 438000000,
+        "frame": "CY2022"
+      }
+    ],
+    "InventoryNet": [
+      {
+        "end": "2023-09-03",
+        "val_m": 16651,
+        "raw": 16651000000,
+        "frame": "CY2023Q3I"
+      },
+      {
+        "end": "2024-09-01",
+        "val_m": 18647,
+        "raw": 18647000000
+      }
+    ],
+    "MinorityInterestDecreaseFromDistributionsToNoncontrollingInterestHolders": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 208,
+        "raw": 208000000,
+        "frame": "CY2022"
+      }
+    ],
+    "NetIncomeLoss": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 5844,
+        "raw": 5844000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 6292,
+        "raw": 6292000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 7367,
+        "raw": 7367000000
+      }
+    ],
+    "NetIncomeLossAttributableToNoncontrollingInterest": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 71,
+        "raw": 71000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 0,
+        "raw": 0,
+        "frame": "CY2023"
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 0,
+        "raw": 0,
+        "frame": "CY2024"
+      }
+    ],
+    "OperatingIncomeLoss": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 7793,
+        "raw": 7793000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 8114,
+        "raw": 8114000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 9285,
+        "raw": 9285000000
+      }
+    ],
+    "RevenueFromContractWithCustomerExcludingAssessedTax": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 226954,
+        "raw": 226954000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 242290,
+        "raw": 242290000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 254453,
+        "raw": 254453000000
+      }
+    ],
+    "Revenues": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 226954,
+        "raw": 226954000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 242290,
+        "raw": 242290000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 254453,
+        "raw": 254453000000
+      }
+    ],
+    "SellingGeneralAndAdministrativeExpense": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 19779,
+        "raw": 19779000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 21590,
+        "raw": 21590000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 22810,
+        "raw": 22810000000
+      }
+    ],
+    "StateAndLocalIncomeTaxExpenseBenefitContinuingOperations": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 328,
+        "raw": 328000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 384,
+        "raw": 384000000
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 354,
+        "raw": 354000000
+      }
+    ],
+    "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest": [
+      {
+        "end": "2021-08-29",
+        "val_m": 18078,
+        "raw": 18078000000,
+        "frame": "CY2021Q3I"
+      },
+      {
+        "end": "2022-08-28",
+        "val_m": 20647,
+        "raw": 20647000000
+      },
+      {
+        "end": "2023-09-03",
+        "val_m": 25058,
+        "raw": 25058000000
+      },
+      {
+        "end": "2024-09-01",
+        "val_m": 23622,
+        "raw": 23622000000
+      }
+    ],
+    "AvailableForSaleSecuritiesDebtSecurities": [
+      {
+        "end": "2024-09-01",
+        "val_m": 688,
+        "raw": 688000000,
+        "frame": "CY2024Q3I"
+      }
+    ],
+    "MinorityInterestDecreaseFromRedemptions": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": -842,
+        "raw": -842000000,
+        "frame": "CY2022"
+      }
+    ],
+    "PaymentsOfDividendsMinorityInterest": [
+      {
+        "start": "2021-08-30",
+        "end": "2022-08-28",
+        "val_m": 208,
+        "raw": 208000000,
+        "frame": "CY2022"
+      },
+      {
+        "start": "2022-08-29",
+        "end": "2023-09-03",
+        "val_m": 0,
+        "raw": 0,
+        "frame": "CY2023"
+      },
+      {
+        "start": "2023-09-04",
+        "end": "2024-09-01",
+        "val_m": 0,
+        "raw": 0,
+        "frame": "CY2024"
+      }
+    ]
+  }
+}
