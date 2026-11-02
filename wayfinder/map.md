@@ -6,9 +6,9 @@ Produce a primary-source verified architectural decomposition, SEC Form 10-K res
 
 ## Notes
 
-- **Authoritative Domain Vocabulary:** All domain concepts (`{Net Sales}`, `{Membership Fees}`, `{Gross Margin Ceiling}`, `{Operating Income Flywheel}`) and evaluation criteria (`{errors}`, `{correctness}`, `{functionality}`, `{correct required outputs}`, `{sufficient}`, `{insufficient}`) strictly follow [System Glossary & Domain Vocabulary](../LANGUAGE.md).
-- **Primary-Source SEC Form 10-K Mandate (`/research` Protocol):** Every quantitative figure, accounting recognition rule, category share, geographic segment total, renewal rate, and balance-sheet working-capital ratio is grounded directly in *Costco Wholesale Corporation Form 10-K for the Fiscal Year Ended September 1, 2024* (`CIK: 0000909832`, Accession No. `0000909832-24-000049`, filed October 9, 2024). Uncited secondary blog commentary is strictly rejected.
-- **Wayfinder Refer-by-Name Rule (`/wayfinder` Protocol):** Every resolved research and architectural decision indexed below is referenced exclusively by its descriptive human-readable title wrapping its relative Markdown link.
+- **Authoritative Domain Vocabulary (`LANGUAGE.md`):** All domain concepts (`{Net Sales}`, `{Membership Fees}`, `{Gross Margin Ceiling}`, `{Operating Income Flywheel}`) and evaluation criteria (`{errors}`, `{correctness}`, `{functionality}`, `{correct required outputs}`, `{sufficient}`, `{insufficient}`) strictly align with [`LANGUAGE.md`](../LANGUAGE.md).
+- **Mandatory Skill Consultation (`/wayfinder` & `/research`):** Decomposition and ticket governance strictly follow the `/wayfinder` skill protocol (atomic decision/research tickets referenced exclusively by descriptive human-readable titles wrapping relative Markdown links, never bare ticket IDs), while primary-source investigation strictly follows the `/research` skill protocol.
+- **Primary-Source SEC Form 10-K Citation Mandate:** Every quantitative figure, accounting recognition rule, category share, geographic segment total, renewal rate, and balance-sheet working-capital ratio is grounded directly in *Costco Wholesale Corporation Form 10-K for the Fiscal Year Ended September 1, 2024* (`CIK: 0000909832`, Accession No. `0000909832-24-000049`, filed October 9, 2024). Uncited secondary blog commentary is strictly rejected.
 
 ## Decisions so far
 

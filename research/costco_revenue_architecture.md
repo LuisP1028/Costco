@@ -81,7 +81,7 @@ At fiscal year-end September 1, 2024, Costco operated **`890` membership warehou
 
 | Reportable Segment | FY2024 Total Revenue ($M) | Segment Share (%) | FY2024 Operating Income ($M) | Operating Margin (%) | Warehouses (Owned / Leased / Total) | Floor Space (Sq Ft M) | Employees |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| **United States** (47 states + Puerto Rico) | `$184,143` | **`72.37%`** (`72.3682%`) | `$6,217` | `3.38%` | `499 / 115 /` **`614`** | `91.1M` | `219,000` |
+| **United States** (47 states, D.C. & Puerto Rico) | `$184,143` | **`72.37%`** (`72.3682%`) | `$6,217` | `3.38%` | `499 / 115 /` **`614`** | `91.1M` | `219,000` |
 | **Canada** | `$34,874` | **`13.71%`** (`13.7055%`) | `$1,648` | `4.73%` | `91 / 17 /` **`108`** | `15.5M` | `53,000` |
 | **Other International** (12 countries) | `$35,436` | **`13.93%`** (`13.9263%`) | `$1,420` | `4.01%` | `113 / 55 /` **`168`** | `24.3M` | `61,000` |
 | **Consolidated Worldwide Total** | **`$254,453`** | **`100.00%`** (`100.01%` sum) | **`$9,285`** | **`3.65%`** | `703 / 187 /` **`890`** | **`130.9M`** | **`333,000`** |
@@ -201,7 +201,7 @@ Costco operates e-commerce storefronts across eight markets (U.S., Canada, Mexic
 
 ## Section 6: Negative Working-Capital Cycle & Balance Sheet Cash Conversion
 
-A foundational reason Costco can sustain a `10.92%` `{Gross Margin Ceiling}` while generating `$7,367M` in Net Income and funding `$4,710M` of annual capital expenditures (`Additions to property and equipment` per Note 11) plus a `$15.00/share` (`~$6.65B`) January 2024 special cash dividend (*Item 7, p. 23*) is its **structural negative working-capital inventory cycle**.
+A foundational reason Costco can sustain a `10.92%` `{Gross Margin Ceiling}` while generating `$7,367M` in Net Income and funding `$4,710M` of annual capital expenditures (`Additions to property and equipment` per Item 7, Consolidated Statements of Cash Flows, and Note 11) plus a `$15.00/share` (`~$6.65B`) January 2024 special cash dividend (*Item 7, p. 23*) is its **structural negative working-capital inventory cycle**.
 
 ### Table 6.1: Working-Capital Inventory Funding & Member Liability Float (FY2023 vs. FY2024)
 

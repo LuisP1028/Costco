@@ -23,12 +23,28 @@ const EXPECTED_TICKET_FILES = [
   "ticket-005.md"
 ];
 
+const REQUIRED_TICKET_HEADINGS = [
+  { label: "## Question", regex: /^##\s+Question\s*$/m },
+  { label: "## Blocked By", regex: /^##\s+Blocked By\s*$/m },
+  { label: "## Resolution", regex: /^##\s+Resolution\s*$/m }
+];
+
 const REQUIRED_RESEARCH_CITATIONS = ["0000909832", "Form 10-K", "ASC 606"];
 const REQUIRED_RESEARCH_FIGURES = ["254,453", "249,625", "4,828", "9,285", "7,367"];
 const MIN_RESEARCH_MONOGRAPH_BYTES = 8000;
+const GAAP_CONSERVATION_EPSILON = 1e-9;
 
 function round4(value) {
   return Number(value.toFixed(4));
+}
+
+function formatSignedDelta(delta) {
+  const rounded = round4(delta);
+  return rounded > 0 ? `+${rounded}` : `${rounded}`;
+}
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 function hasOwn(obj, key) {
@@ -36,7 +52,24 @@ function hasOwn(obj, key) {
 }
 
 function hasDefinedOwn(obj, key) {
-  return Object.prototype.hasOwnProperty.call(obj, key) && obj[key] !== undefined;
+  return hasOwn(obj, key) && obj[key] !== undefined;
+}
+
+function assertPlainObject(value, contextLabel) {
+  if (!isPlainObject(value)) {
+    throw new Error(`Financial dataset validation failed: "${contextLabel}" must be a non-null JSON object.`);
+  }
+  return value;
+}
+
+function assertNonEmptyString(obj, field, contextLabel) {
+  const value = obj?.[field];
+  if (typeof value !== "string" || !value.trim()) {
+    throw new Error(
+      `Financial dataset validation failed: "${contextLabel}.${field}" must be a non-empty string.`
+    );
+  }
+  return value;
 }
 
 function assertFiniteNumber(obj, field, contextLabel) {
@@ -49,17 +82,30 @@ function assertFiniteNumber(obj, field, contextLabel) {
   return value;
 }
 
+function resolveTicketsDir(rootDir, mapPath, explicitTicketsDir) {
+  if (explicitTicketsDir) {
+    return path.resolve(explicitTicketsDir);
+  }
+  if (mapPath) {
+    const siblingTicketsDir = path.join(path.dirname(mapPath), "tickets");
+    if (fs.existsSync(siblingTicketsDir)) {
+      return siblingTicketsDir;
+    }
+  }
+  return path.join(rootDir, "wayfinder", "tickets");
+}
+
 function isBareTicketLabel(rawLabel) {
   const cleaned = String(rawLabel ?? "")
     .replace(/[`*_~]/g, "")
     .trim();
-  if (!cleaned) {
+  if (!cleaned || cleaned.length < 10) {
     return true;
   }
   if (/^(?:ticket[-_\s#]*\d+(?:\.md)?|#?\d+|t[-_]?\d+)$/i.test(cleaned)) {
     return true;
   }
-  if (cleaned.length < 10) {
+  if (/(?:^|[\\/])ticket[-_\s#]*\d+(?:\.md)?$/i.test(cleaned) || /\.md$/i.test(cleaned)) {
     return true;
   }
   return false;
@@ -89,37 +135,9 @@ function extractMarkdownLinks(markdownText) {
   return links;
 }
 
-/**
- * Validates Costco's structured financial dataset against all GAAP conservation
- * identities, disaggregation share bounds, membership invariants, and working-capital
- * ratios defined in functional_specification_001.md and LANGUAGE.md.
- */
-export function verifyFinancialDataset(data) {
-  if (!data || typeof data !== "object" || Array.isArray(data)) {
-    throw new Error("Financial dataset validation failed: dataset must be a non-null JSON object.");
-  }
-
-  const requiredTopKeys = [
-    "company",
-    "consolidated_income_statement",
-    "historical_comparison",
-    "merchandise_categories",
-    "geographic_segments",
-    "membership_metrics",
-    "working_capital_balance_sheet",
-    "primary_sources"
-  ];
-
-  for (const key of requiredTopKeys) {
-    if (!hasOwn(data, key) || data[key] === null || data[key] === undefined) {
-      throw new Error(`Financial dataset validation failed: missing required top-level key "${key}".`);
-    }
-  }
-
-  const { company } = data;
-  if (typeof company.name !== "string" || !company.name.trim()) {
-    throw new Error('Financial dataset validation failed: "company.name" must be a non-empty string.');
-  }
+function verifyCompanyMetadata(companyRecord) {
+  const company = assertPlainObject(companyRecord, "company");
+  assertNonEmptyString(company, "name", "company");
   if (company.ticker !== "COST") {
     throw new Error(
       `Financial dataset validation failed: expected company.ticker "COST", received ${JSON.stringify(company.ticker)}.`
@@ -133,8 +151,14 @@ export function verifyFinancialDataset(data) {
   if (!Number.isInteger(company.fiscal_year)) {
     throw new Error('Financial dataset validation failed: "company.fiscal_year" must be an integer.');
   }
+  assertNonEmptyString(company, "fiscal_year_end", "company");
+  assertNonEmptyString(company, "currency", "company");
+  assertNonEmptyString(company, "units", "company");
+  return company;
+}
 
-  const cis = data.consolidated_income_statement;
+function verifyIncomeStatementIdentities(incomeStatementRecord) {
+  const cis = assertPlainObject(incomeStatementRecord, "consolidated_income_statement");
   const netSalesUsdM = assertFiniteNumber(cis, "net_sales_usd_m", "consolidated_income_statement");
   const membershipFeesUsdM = assertFiniteNumber(cis, "membership_fees_usd_m", "consolidated_income_statement");
   const totalRevenueUsdM = assertFiniteNumber(cis, "total_revenue_usd_m", "consolidated_income_statement");
@@ -165,51 +189,61 @@ export function verifyFinancialDataset(data) {
     );
   }
 
-  // GAAP Identity 1: Total Revenue === Net Sales + Membership Fees
   const expectedTotalRevenue = netSalesUsdM + membershipFeesUsdM;
-  if (expectedTotalRevenue !== totalRevenueUsdM) {
+  if (Math.abs(expectedTotalRevenue - totalRevenueUsdM) > GAAP_CONSERVATION_EPSILON) {
     const delta = expectedTotalRevenue - totalRevenueUsdM;
     throw new Error(
-      `GAAP Consolidated Total Revenue Identity mismatch: net_sales_usd_m (${netSalesUsdM}) + membership_fees_usd_m (${membershipFeesUsdM}) = ${expectedTotalRevenue}, which does not equal total_revenue_usd_m (${totalRevenueUsdM}); delta = ${delta > 0 ? `+${delta}` : delta} USD million.`
+      `GAAP Consolidated Total Revenue Identity mismatch: net_sales_usd_m (${netSalesUsdM}) + membership_fees_usd_m (${membershipFeesUsdM}) = ${round4(expectedTotalRevenue)}, which does not equal total_revenue_usd_m (${totalRevenueUsdM}); delta = ${formatSignedDelta(delta)} USD million.`
     );
   }
 
-  // GAAP Identity 2: Operating Income === Total Revenue - Merchandise Costs - SG&A
   const expectedOperatingIncome = totalRevenueUsdM - merchandiseCostsUsdM - sgaUsdM;
-  if (expectedOperatingIncome !== operatingIncomeUsdM) {
+  if (Math.abs(expectedOperatingIncome - operatingIncomeUsdM) > GAAP_CONSERVATION_EPSILON) {
     const delta = expectedOperatingIncome - operatingIncomeUsdM;
     throw new Error(
-      `GAAP Consolidated Operating Income Identity mismatch: total_revenue_usd_m (${totalRevenueUsdM}) - merchandise_costs_usd_m (${merchandiseCostsUsdM}) - selling_general_and_administrative_usd_m (${sgaUsdM}) = ${expectedOperatingIncome}, which does not equal operating_income_usd_m (${operatingIncomeUsdM}); delta = ${delta > 0 ? `+${delta}` : delta} USD million.`
+      `GAAP Consolidated Operating Income Identity mismatch: total_revenue_usd_m (${totalRevenueUsdM}) - merchandise_costs_usd_m (${merchandiseCostsUsdM}) - selling_general_and_administrative_usd_m (${sgaUsdM}) = ${round4(expectedOperatingIncome)}, which does not equal operating_income_usd_m (${operatingIncomeUsdM}); delta = ${formatSignedDelta(delta)} USD million.`
     );
   }
 
-  // GAAP Identity 3: Pre-Tax Income & Net Income Conservation
   const expectedPreTaxIncome = operatingIncomeUsdM - interestExpenseUsdM + interestIncomeOtherNetUsdM;
-  if (expectedPreTaxIncome !== incomeBeforeTaxesUsdM) {
+  if (Math.abs(expectedPreTaxIncome - incomeBeforeTaxesUsdM) > GAAP_CONSERVATION_EPSILON) {
     const delta = expectedPreTaxIncome - incomeBeforeTaxesUsdM;
     throw new Error(
-      `GAAP Income Before Taxes Identity mismatch: operating_income_usd_m (${operatingIncomeUsdM}) - interest_expense_usd_m (${interestExpenseUsdM}) + interest_income_and_other_net_usd_m (${interestIncomeOtherNetUsdM}) = ${expectedPreTaxIncome}, which does not equal income_before_taxes_usd_m (${incomeBeforeTaxesUsdM}); delta = ${delta > 0 ? `+${delta}` : delta} USD million.`
+      `GAAP Income Before Taxes Identity mismatch: operating_income_usd_m (${operatingIncomeUsdM}) - interest_expense_usd_m (${interestExpenseUsdM}) + interest_income_and_other_net_usd_m (${interestIncomeOtherNetUsdM}) = ${round4(expectedPreTaxIncome)}, which does not equal income_before_taxes_usd_m (${incomeBeforeTaxesUsdM}); delta = ${formatSignedDelta(delta)} USD million.`
     );
   }
 
   const expectedNetIncome = incomeBeforeTaxesUsdM - provisionForTaxesUsdM;
-  if (expectedNetIncome !== netIncomeUsdM) {
+  if (Math.abs(expectedNetIncome - netIncomeUsdM) > GAAP_CONSERVATION_EPSILON) {
     const delta = expectedNetIncome - netIncomeUsdM;
     throw new Error(
-      `GAAP Net Income Identity mismatch: income_before_taxes_usd_m (${incomeBeforeTaxesUsdM}) - provision_for_income_taxes_usd_m (${provisionForTaxesUsdM}) = ${expectedNetIncome}, which does not equal net_income_usd_m (${netIncomeUsdM}); delta = ${delta > 0 ? `+${delta}` : delta} USD million.`
+      `GAAP Net Income Identity mismatch: income_before_taxes_usd_m (${incomeBeforeTaxesUsdM}) - provision_for_income_taxes_usd_m (${provisionForTaxesUsdM}) = ${round4(expectedNetIncome)}, which does not equal net_income_usd_m (${netIncomeUsdM}); delta = ${formatSignedDelta(delta)} USD million.`
     );
   }
 
-  // Multi-year historical comparison verification
-  if (!Array.isArray(data.historical_comparison) || data.historical_comparison.length < 3) {
+  return {
+    netSalesUsdM,
+    membershipFeesUsdM,
+    totalRevenueUsdM,
+    merchandiseCostsUsdM,
+    sgaUsdM,
+    operatingIncomeUsdM
+  };
+}
+
+function verifyHistoricalComparison(historicalEntries) {
+  if (!Array.isArray(historicalEntries) || historicalEntries.length < 3) {
     throw new Error(
       "Financial dataset validation failed: historical_comparison must contain at least 3 fiscal years (FY2022–FY2024)."
     );
   }
+
   const observedYears = new Set();
-  for (const entry of data.historical_comparison) {
+  for (const entry of historicalEntries) {
+    assertPlainObject(entry, "historical_comparison[]");
     const fy = assertFiniteNumber(entry, "fiscal_year", "historical_comparison[]");
     observedYears.add(fy);
+
     const histNetSales = assertFiniteNumber(entry, "net_sales_usd_m", `historical_comparison[${fy}]`);
     const histFees = assertFiniteNumber(entry, "membership_fees_usd_m", `historical_comparison[${fy}]`);
     const histTotalRev = assertFiniteNumber(entry, "total_revenue_usd_m", `historical_comparison[${fy}]`);
@@ -217,10 +251,10 @@ export function verifyFinancialDataset(data) {
     const histOpInc = assertFiniteNumber(entry, "operating_income_usd_m", `historical_comparison[${fy}]`);
     assertFiniteNumber(entry, "net_income_usd_m", `historical_comparison[${fy}]`);
 
-    if (histNetSales + histFees !== histTotalRev) {
+    if (Math.abs(histNetSales + histFees - histTotalRev) > GAAP_CONSERVATION_EPSILON) {
       const delta = histNetSales + histFees - histTotalRev;
       throw new Error(
-        `Historical GAAP Total Revenue Identity mismatch in FY${fy}: ${histNetSales} + ${histFees} = ${histNetSales + histFees} !== ${histTotalRev} (delta = ${delta} USD million).`
+        `Historical GAAP Total Revenue Identity mismatch in FY${fy}: ${histNetSales} + ${histFees} = ${round4(histNetSales + histFees)} !== ${histTotalRev} (delta = ${formatSignedDelta(delta)} USD million).`
       );
     }
     if (histTotalRev - histCosts <= 0) {
@@ -234,56 +268,58 @@ export function verifyFinancialDataset(data) {
         "selling_general_and_administrative_usd_m",
         `historical_comparison[${fy}]`
       );
-      if (histTotalRev - histCosts - histSga !== histOpInc) {
+      if (Math.abs(histTotalRev - histCosts - histSga - histOpInc) > GAAP_CONSERVATION_EPSILON) {
         const delta = histTotalRev - histCosts - histSga - histOpInc;
         throw new Error(
-          `Historical GAAP Operating Income Identity mismatch in FY${fy}: ${histTotalRev} - ${histCosts} - ${histSga} !== ${histOpInc} (delta = ${delta} USD million).`
+          `Historical GAAP Operating Income Identity mismatch in FY${fy}: ${histTotalRev} - ${histCosts} - ${histSga} !== ${histOpInc} (delta = ${formatSignedDelta(delta)} USD million).`
         );
       }
     }
   }
+
   for (const requiredYear of [2022, 2023, 2024]) {
     if (!observedYears.has(requiredYear)) {
       throw new Error(`Financial dataset validation failed: historical_comparison missing FY${requiredYear}.`);
     }
   }
+}
 
-  // Disaggregated merchandise categories conservation
-  if (!Array.isArray(data.merchandise_categories) || data.merchandise_categories.length < 4) {
+function verifyMerchandiseCategories(categories, netSalesUsdM) {
+  if (!Array.isArray(categories) || categories.length < 4) {
     throw new Error(
       "Financial dataset validation failed: merchandise_categories must contain Costco's 4 core disaggregated categories."
     );
   }
+
   let categoryShareSum = 0;
   let categorySalesDollarSum = 0;
-  for (const cat of data.merchandise_categories) {
-    if (typeof cat?.category_id !== "string" || !cat.category_id.trim()) {
-      throw new Error("Financial dataset validation failed: merchandise_categories entry missing category_id.");
-    }
-    if (typeof cat?.name !== "string" || !cat.name.trim()) {
-      throw new Error(`Financial dataset validation failed: category "${cat.category_id}" missing name.`);
-    }
-    const share = assertFiniteNumber(cat, "share_of_net_sales_pct", `merchandise_categories[${cat.category_id}]`);
-    const estSales = assertFiniteNumber(
-      cat,
-      "estimated_net_sales_usd_m",
-      `merchandise_categories[${cat.category_id}]`
-    );
+
+  for (const cat of categories) {
+    assertPlainObject(cat, "merchandise_categories[]");
+    const categoryId = assertNonEmptyString(cat, "category_id", "merchandise_categories[]");
+    assertNonEmptyString(cat, "name", `merchandise_categories[${categoryId}]`);
+    assertNonEmptyString(cat, "role_in_flywheel", `merchandise_categories[${categoryId}]`);
+
+    const share = assertFiniteNumber(cat, "share_of_net_sales_pct", `merchandise_categories[${categoryId}]`);
+    const estSales = assertFiniteNumber(cat, "estimated_net_sales_usd_m", `merchandise_categories[${categoryId}]`);
     if (share <= 0 || estSales <= 0) {
-      throw new Error(`Financial dataset validation failed: category "${cat.category_id}" must have positive sales.`);
+      throw new Error(`Financial dataset validation failed: category "${categoryId}" must have positive sales.`);
     }
     if (!Array.isArray(cat.examples) || cat.examples.length === 0) {
-      throw new Error(`Financial dataset validation failed: category "${cat.category_id}" requires non-empty examples.`);
+      throw new Error(`Financial dataset validation failed: category "${categoryId}" requires non-empty examples.`);
     }
+
     categoryShareSum += share;
     categorySalesDollarSum += estSales;
   }
+
   const roundedCategoryShareSum = round4(categoryShareSum);
   if (Math.abs(roundedCategoryShareSum - 100.0) > 0.5) {
     throw new Error(
       `Merchandise category share drift: share_of_net_sales_pct sums to ${roundedCategoryShareSum}%, deviating from 100.0% by more than ±0.5%.`
     );
   }
+
   const maxCategoryDollarTolerance = Math.max(1, netSalesUsdM * 0.005);
   if (Math.abs(categorySalesDollarSum - netSalesUsdM) > maxCategoryDollarTolerance) {
     throw new Error(
@@ -291,49 +327,109 @@ export function verifyFinancialDataset(data) {
     );
   }
 
-  // Geographic segments conservation
-  if (!Array.isArray(data.geographic_segments) || data.geographic_segments.length < 3) {
+  return {
+    merchandiseCategoryCount: categories.length,
+    merchandiseCategoryShareSumPct: roundedCategoryShareSum,
+    merchandiseCategoryNetSalesSumUsdM: categorySalesDollarSum
+  };
+}
+
+function verifyGeographicSegments(segments, fiscalYear) {
+  if (!Array.isArray(segments) || segments.length < 3) {
     throw new Error(
       "Financial dataset validation failed: geographic_segments must contain United States, Canada, and Other International."
     );
   }
+
   let geographicShareSum = 0;
   let totalWarehouseCount = 0;
   const segmentNames = new Set();
-  for (const seg of data.geographic_segments) {
-    if (typeof seg?.name !== "string" || !seg.name.trim()) {
-      throw new Error("Financial dataset validation failed: geographic_segments entry missing name.");
-    }
-    segmentNames.add(seg.name);
-    const share = assertFiniteNumber(seg, "share_of_net_sales_pct", `geographic_segments[${seg.name}]`);
-    const warehouses = assertFiniteNumber(seg, "warehouse_count", `geographic_segments[${seg.name}]`);
+
+  for (const seg of segments) {
+    assertPlainObject(seg, "geographic_segments[]");
+    const segName = assertNonEmptyString(seg, "name", "geographic_segments[]");
+    segmentNames.add(segName);
+
+    const share = assertFiniteNumber(seg, "share_of_net_sales_pct", `geographic_segments[${segName}]`);
+    const warehouses = assertFiniteNumber(seg, "warehouse_count", `geographic_segments[${segName}]`);
     if (share <= 0 || !Number.isInteger(warehouses) || warehouses <= 0) {
       throw new Error(
-        `Financial dataset validation failed: geographic segment "${seg.name}" requires positive share and integer warehouse_count.`
+        `Financial dataset validation failed: geographic segment "${segName}" requires positive share and integer warehouse_count.`
       );
     }
+
     geographicShareSum += share;
     totalWarehouseCount += warehouses;
   }
+
   for (const expectedSeg of ["United States", "Canada", "Other International"]) {
     if (!segmentNames.has(expectedSeg)) {
       throw new Error(`Financial dataset validation failed: geographic_segments missing "${expectedSeg}".`);
     }
   }
+
   const roundedGeoShareSum = round4(geographicShareSum);
   if (Math.abs(roundedGeoShareSum - 100.0) > 0.5) {
     throw new Error(
       `Geographic segment share drift: share_of_net_sales_pct sums to ${roundedGeoShareSum}%, deviating from 100.0% by more than ±0.5%.`
     );
   }
-  if (company.fiscal_year === 2024 && totalWarehouseCount !== 890) {
+
+  if (fiscalYear === 2024 && totalWarehouseCount !== 890) {
     throw new Error(
       `Geographic segment warehouse count mismatch for FY2024: expected 890 warehouses, received ${totalWarehouseCount}.`
     );
   }
 
-  // Membership metrics validation
-  const mm = data.membership_metrics;
+  return {
+    geographicSegmentCount: segments.length,
+    geographicSegmentShareSumPct: roundedGeoShareSum,
+    totalWarehouses: totalWarehouseCount
+  };
+}
+
+/**
+ * Validates Costco's structured financial dataset against all GAAP conservation
+ * identities, disaggregation share bounds, membership invariants, and working-capital
+ * ratios defined in functional_specification_001.md and LANGUAGE.md.
+ */
+export function verifyFinancialDataset(data) {
+  if (!isPlainObject(data)) {
+    throw new Error("Financial dataset validation failed: dataset must be a non-null JSON object.");
+  }
+
+  const requiredTopKeys = [
+    "company",
+    "consolidated_income_statement",
+    "historical_comparison",
+    "merchandise_categories",
+    "geographic_segments",
+    "membership_metrics",
+    "working_capital_balance_sheet",
+    "primary_sources"
+  ];
+
+  for (const key of requiredTopKeys) {
+    if (!hasOwn(data, key) || data[key] === null || data[key] === undefined) {
+      throw new Error(`Financial dataset validation failed: missing required top-level key "${key}".`);
+    }
+  }
+
+  const company = verifyCompanyMetadata(data.company);
+  const {
+    netSalesUsdM,
+    membershipFeesUsdM,
+    totalRevenueUsdM,
+    merchandiseCostsUsdM,
+    sgaUsdM,
+    operatingIncomeUsdM
+  } = verifyIncomeStatementIdentities(data.consolidated_income_statement);
+
+  verifyHistoricalComparison(data.historical_comparison);
+  const categorySummary = verifyMerchandiseCategories(data.merchandise_categories, netSalesUsdM);
+  const geographicSummary = verifyGeographicSegments(data.geographic_segments, company.fiscal_year);
+
+  const mm = assertPlainObject(data.membership_metrics, "membership_metrics");
   const paidMembersM = assertFiniteNumber(mm, "paid_household_members_m", "membership_metrics");
   const cardholdersTotalM = assertFiniteNumber(mm, "cardholders_total_m", "membership_metrics");
   const execPaidMembersM = assertFiniteNumber(mm, "executive_paid_members_m", "membership_metrics");
@@ -357,8 +453,7 @@ export function verifyFinancialDataset(data) {
     throw new Error("Financial dataset validation failed: membership_metrics values violate physical cohort bounds.");
   }
 
-  // Working capital balance sheet validation
-  const wc = data.working_capital_balance_sheet;
+  const wc = assertPlainObject(data.working_capital_balance_sheet, "working_capital_balance_sheet");
   const merchandiseInventoriesUsdM = assertFiniteNumber(
     wc,
     "merchandise_inventories_usd_m",
@@ -376,16 +471,14 @@ export function verifyFinancialDataset(data) {
     );
   }
 
-  // Primary sources validation
   if (!Array.isArray(data.primary_sources) || data.primary_sources.length === 0) {
     throw new Error("Financial dataset validation failed: primary_sources must be a non-empty array.");
   }
   let hasPrimary10KSource = false;
   for (const src of data.primary_sources) {
+    assertPlainObject(src, "primary_sources[]");
     for (const field of ["source_id", "title", "filing_type", "cik", "filing_date", "period_end"]) {
-      if (typeof src?.[field] !== "string" || !src[field].trim()) {
-        throw new Error(`Financial dataset validation failed: primary_sources entry missing "${field}".`);
-      }
+      assertNonEmptyString(src, field, "primary_sources[]");
     }
     if (!Array.isArray(src.items_referenced) || src.items_referenced.length === 0) {
       throw new Error(
@@ -402,7 +495,6 @@ export function verifyFinancialDataset(data) {
     );
   }
 
-  // Compute exact analytical flywheel ratios
   const netSalesSharePct = round4((netSalesUsdM / totalRevenueUsdM) * 100);
   const membershipFeeShareOfRevenuePct = round4((membershipFeesUsdM / totalRevenueUsdM) * 100);
   const merchandiseGrossMarginDollarM = netSalesUsdM - merchandiseCostsUsdM;
@@ -415,14 +507,12 @@ export function verifyFinancialDataset(data) {
   );
   const accountsPayableToInventoryRatioPct = round4((accountsPayableUsdM / merchandiseInventoriesUsdM) * 100);
 
-  // Enforce structural Gross Margin Ceiling (10.0% <= GM <= 11.5%)
   if (merchandiseGrossMarginPct < 10.0 || merchandiseGrossMarginPct > 11.5) {
     throw new Error(
       `Gross Margin Ceiling invariant breach: merchandiseGrossMarginPct (${merchandiseGrossMarginPct}%) falls outside Costco's structural [10.0%, 11.5%] ceiling.`
     );
   }
 
-  // Enforce structural Operating Income Flywheel (< 2.5% of revenue; > 50% of operating income)
   if (membershipFeeShareOfRevenuePct >= 2.5 || membershipFeeShareOfOperatingIncomePct <= 50.0) {
     throw new Error(
       `Operating Income Flywheel invariant breach: membership fees must represent < 2.5% of revenue (observed ${membershipFeeShareOfRevenuePct}%) and > 50.0% of operating income (observed ${membershipFeeShareOfOperatingIncomePct}%).`
@@ -452,14 +542,62 @@ export function verifyFinancialDataset(data) {
       accountsPayableToInventoryRatioPct: accountsPayableToInventoryRatioPct.toFixed(2)
     },
     disaggregationSummary: {
-      merchandiseCategoryCount: data.merchandise_categories.length,
-      merchandiseCategoryShareSumPct: roundedCategoryShareSum,
-      merchandiseCategoryNetSalesSumUsdM: categorySalesDollarSum,
-      geographicSegmentCount: data.geographic_segments.length,
-      geographicSegmentShareSumPct: roundedGeoShareSum,
-      totalWarehouses: totalWarehouseCount
+      ...categorySummary,
+      ...geographicSummary
     }
   };
+}
+
+function verifySingleTicketMarkdown(ticketMarkdown, ticketLabel) {
+  if (typeof ticketMarkdown !== "string" || !ticketMarkdown.trim()) {
+    throw new Error(`Wayfinder audit failed for ${ticketLabel}: ticket content is empty or invalid.`);
+  }
+  if (!/wayfinder:research/i.test(ticketMarkdown)) {
+    throw new Error(
+      `Wayfinder ticket audit failed for ${ticketLabel}: missing required "wayfinder:research" indicator.`
+    );
+  }
+  if (!/claimed[_\s]+by\s*:/i.test(ticketMarkdown)) {
+    throw new Error(`Wayfinder ticket audit failed for ${ticketLabel}: missing required "Claimed by:" metadata.`);
+  }
+  if (!/(?:^|\n)[-*>\s]*\*?\*?status\*?\*?\s*:\s*`?resolved`?\s*(?:$|\n)/i.test(ticketMarkdown)) {
+    throw new Error(`Wayfinder ticket audit failed for ${ticketLabel}: ticket lacks "Status: resolved".`);
+  }
+
+  for (const requiredHeading of REQUIRED_TICKET_HEADINGS) {
+    if (!requiredHeading.regex.test(ticketMarkdown)) {
+      throw new Error(
+        `Wayfinder ticket audit failed for ${ticketLabel}: missing required section "${requiredHeading.label}".`
+      );
+    }
+  }
+
+  const blockedBySection = extractMarkdownSection(ticketMarkdown, /^##\s+Blocked By\s*$/m) ?? "";
+  for (const depLink of extractMarkdownLinks(blockedBySection)) {
+    if (isBareTicketLabel(depLink.label)) {
+      throw new Error(
+        `Wayfinder "Refer by name" link invariant breach in ${ticketLabel} under "## Blocked By": bare link "[${depLink.label}](${depLink.href})".`
+      );
+    }
+  }
+  const blockedByWithoutLinks = blockedBySection.replace(/\[([^\]]*)\]\(([^)]+)\)/g, "$1");
+  if (/\bticket[-_]\d+\b/i.test(blockedByWithoutLinks)) {
+    throw new Error(
+      `Wayfinder "Refer by name" invariant breach in ${ticketLabel} under "## Blocked By": bare ticket ID detected.`
+    );
+  }
+
+  const resolutionSection = extractMarkdownSection(ticketMarkdown, /^##\s+Resolution\s*$/m) ?? "";
+  if (!resolutionSection.includes("research/costco_revenue_architecture.md")) {
+    throw new Error(
+      `Wayfinder ticket audit failed for ${ticketLabel}: "## Resolution" must link to research/costco_revenue_architecture.md.`
+    );
+  }
+  if (!resolutionSection.includes("data/costco_revenue_breakdown.json")) {
+    throw new Error(
+      `Wayfinder ticket audit failed for ${ticketLabel}: "## Resolution" must link to data/costco_revenue_breakdown.json.`
+    );
+  }
 }
 
 /**
@@ -468,27 +606,19 @@ export function verifyFinancialDataset(data) {
  * wayfinder:research classification, Status: resolved, and primary-source artifact links.
  */
 export function verifyWayfinderArtifacts(rawOptions = {}) {
-  const opts =
-    typeof rawOptions === "string"
-      ? { mapPath: rawOptions }
-      : rawOptions && typeof rawOptions === "object" && !Array.isArray(rawOptions)
-        ? rawOptions
-        : null;
+  let opts = null;
+  if (typeof rawOptions === "string") {
+    opts = { mapPath: rawOptions };
+  } else if (isPlainObject(rawOptions)) {
+    opts = rawOptions;
+  }
   if (!opts) {
     throw new Error("Wayfinder audit failed: options must be an object or map file path string.");
   }
 
   const rootDir = opts.rootDir ? path.resolve(opts.rootDir) : DEFAULT_ROOT_DIR;
   const mapPath = opts.mapPath ? path.resolve(opts.mapPath) : path.join(rootDir, "wayfinder", "map.md");
-  let ticketsDir;
-  if (opts.ticketsDir) {
-    ticketsDir = path.resolve(opts.ticketsDir);
-  } else if (opts.mapPath) {
-    const siblingTicketsDir = path.join(path.dirname(mapPath), "tickets");
-    ticketsDir = fs.existsSync(siblingTicketsDir) ? siblingTicketsDir : path.join(rootDir, "wayfinder", "tickets");
-  } else {
-    ticketsDir = path.join(rootDir, "wayfinder", "tickets");
-  }
+  const ticketsDir = resolveTicketsDir(rootDir, opts.mapPath ? mapPath : null, opts.ticketsDir);
 
   const hasMapContentOverride =
     typeof opts.hasMapContentOverride === "boolean"
@@ -511,7 +641,7 @@ export function verifyWayfinderArtifacts(rawOptions = {}) {
     }
     resolvedMapMarkdown = mapContent;
   } else {
-    if (!mapPath || !fs.existsSync(mapPath)) {
+    if (!fs.existsSync(mapPath)) {
       throw new Error(`Wayfinder audit failed: canonical map file not found at ${mapLabel}.`);
     }
     resolvedMapMarkdown = fs.readFileSync(mapPath, "utf8");
@@ -525,9 +655,7 @@ export function verifyWayfinderArtifacts(rawOptions = {}) {
     }
   }
 
-  // Audit all ticket links across the entire map for bare ticket IDs
-  const allMapLinks = extractMarkdownLinks(resolvedMapMarkdown);
-  for (const link of allMapLinks) {
+  for (const link of extractMarkdownLinks(resolvedMapMarkdown)) {
     if (/ticket-\d+/i.test(link.href) && isBareTicketLabel(link.label)) {
       throw new Error(
         `Wayfinder "Refer by name" link invariant breach in ${mapLabel}: bare ticket link label "[${link.label}](${link.href})" is prohibited; wrap a descriptive human-readable title.`
@@ -549,7 +677,6 @@ export function verifyWayfinderArtifacts(rawOptions = {}) {
     }
   }
 
-  // Reject unlinked bare ticket-00N references inside "## Decisions so far"
   const decisionsWithoutLinks = decisionsSection.replace(/\[([^\]]*)\]\(([^)]+)\)/g, "$1");
   if (/\bticket[-_]\d+\b/i.test(decisionsWithoutLinks)) {
     throw new Error(
@@ -559,7 +686,7 @@ export function verifyWayfinderArtifacts(rawOptions = {}) {
 
   const linkedTicketsByFilename = new Map();
   for (const link of decisionLinks) {
-    const normalizedHref = link.href.replace(/^\.\//, "");
+    const normalizedHref = link.href.split("#")[0].replace(/^\.\//, "");
     for (const expectedTicketFile of EXPECTED_TICKET_FILES) {
       if (normalizedHref === `tickets/${expectedTicketFile}`) {
         linkedTicketsByFilename.set(expectedTicketFile, link.label.trim());
@@ -575,86 +702,39 @@ export function verifyWayfinderArtifacts(rawOptions = {}) {
     }
   }
 
-  // Verify each of ticket-001.md .. ticket-005.md
-  if (hasTicketContentsOverride && (!ticketContents || typeof ticketContents !== "object")) {
-    throw new Error("Wayfinder audit failed: provided tickets override must be a non-null object.");
+  if (hasTicketContentsOverride && !isPlainObject(ticketContents)) {
+    throw new Error("Wayfinder audit failed: provided tickets override must be a non-null plain object.");
+  }
+
+  // If in-memory ticket overrides are supplied, first validate every provided override entry
+  // so targeted single-ticket mutation checks fail fast on the exact malformed ticket, then
+  // enforce completeness across all five canonical tickets without silently falling back to disk.
+  if (hasTicketContentsOverride) {
+    for (const [providedKey, providedMarkdown] of Object.entries(ticketContents)) {
+      const normalizedKey = providedKey.endsWith(".md") ? providedKey : `${providedKey}.md`;
+      const ticketLabel = path.join(ticketsDir, normalizedKey);
+      verifySingleTicketMarkdown(providedMarkdown, ticketLabel);
+    }
   }
 
   const ticketsVerified = [];
   for (const ticketFilename of EXPECTED_TICKET_FILES) {
     const ticketSlug = ticketFilename.replace(/\.md$/, "");
-    const ticketFilePath = ticketsDir ? path.join(ticketsDir, ticketFilename) : `wayfinder/tickets/${ticketFilename}`;
-    let ticketMarkdown;
+    const ticketFilePath = path.join(ticketsDir, ticketFilename);
 
-    if (
-      hasTicketContentsOverride &&
-      (hasOwn(ticketContents, ticketFilename) || hasOwn(ticketContents, ticketSlug))
-    ) {
-      ticketMarkdown = hasOwn(ticketContents, ticketFilename)
-        ? ticketContents[ticketFilename]
-        : ticketContents[ticketSlug];
-      if (typeof ticketMarkdown !== "string" || !ticketMarkdown.trim()) {
-        throw new Error(`Wayfinder audit failed for ${ticketFilePath}: ticket override content is empty or invalid.`);
+    if (hasTicketContentsOverride) {
+      const hasTicketKey = hasOwn(ticketContents, ticketFilename) || hasOwn(ticketContents, ticketSlug);
+      if (!hasTicketKey) {
+        throw new Error(
+          `Wayfinder audit failed: required ticket "${ticketFilename}" missing from provided tickets override.`
+        );
       }
-    } else if (hasTicketContentsOverride && Object.keys(ticketContents).length > 0 && !ticketsDir) {
-      throw new Error(`Wayfinder audit failed: missing ticket "${ticketFilename}" in provided tickets override.`);
     } else {
-      if (!ticketsDir || !fs.existsSync(ticketFilePath)) {
+      if (!fs.existsSync(ticketFilePath)) {
         throw new Error(`Wayfinder audit failed: required ticket file not found at ${ticketFilePath}.`);
       }
-      ticketMarkdown = fs.readFileSync(ticketFilePath, "utf8");
-    }
-
-    if (!/wayfinder:research/i.test(ticketMarkdown)) {
-      throw new Error(
-        `Wayfinder ticket audit failed for ${ticketFilePath}: missing required "wayfinder:research" indicator.`
-      );
-    }
-    if (!/claimed[_\s]+by\s*:/i.test(ticketMarkdown)) {
-      throw new Error(`Wayfinder ticket audit failed for ${ticketFilePath}: missing required "Claimed by:" metadata.`);
-    }
-    if (!/(?:^|\n)[-*>\s]*\*?\*?status\*?\*?\s*:\s*`?resolved`?\s*(?:$|\n)/i.test(ticketMarkdown)) {
-      throw new Error(
-        `Wayfinder ticket audit failed for ${ticketFilePath}: ticket lacks "Status: resolved".`
-      );
-    }
-    for (const requiredTicketHeading of [
-      { label: "## Question", regex: /^##\s+Question\s*$/m },
-      { label: "## Blocked By", regex: /^##\s+Blocked By\s*$/m },
-      { label: "## Resolution", regex: /^##\s+Resolution\s*$/m }
-    ]) {
-      if (!requiredTicketHeading.regex.test(ticketMarkdown)) {
-        throw new Error(
-          `Wayfinder ticket audit failed for ${ticketFilePath}: missing required section "${requiredTicketHeading.label}".`
-        );
-      }
-    }
-
-    const blockedBySection = extractMarkdownSection(ticketMarkdown, /^##\s+Blocked By\s*$/m) ?? "";
-    for (const depLink of extractMarkdownLinks(blockedBySection)) {
-      if (isBareTicketLabel(depLink.label)) {
-        throw new Error(
-          `Wayfinder "Refer by name" link invariant breach in ${ticketFilePath} under "## Blocked By": bare link "[${depLink.label}](${depLink.href})".`
-        );
-      }
-    }
-    const blockedByWithoutLinks = blockedBySection.replace(/\[([^\]]*)\]\(([^)]+)\)/g, "$1");
-    if (/\bticket[-_]\d+\b/i.test(blockedByWithoutLinks)) {
-      throw new Error(
-        `Wayfinder "Refer by name" invariant breach in ${ticketFilePath} under "## Blocked By": bare ticket ID detected.`
-      );
-    }
-
-    const resolutionSection = extractMarkdownSection(ticketMarkdown, /^##\s+Resolution\s*$/m) ?? "";
-    if (!resolutionSection.includes("research/costco_revenue_architecture.md")) {
-      throw new Error(
-        `Wayfinder ticket audit failed for ${ticketFilePath}: "## Resolution" must link to research/costco_revenue_architecture.md.`
-      );
-    }
-    if (!resolutionSection.includes("data/costco_revenue_breakdown.json")) {
-      throw new Error(
-        `Wayfinder ticket audit failed for ${ticketFilePath}: "## Resolution" must link to data/costco_revenue_breakdown.json.`
-      );
+      const ticketMarkdown = fs.readFileSync(ticketFilePath, "utf8");
+      verifySingleTicketMarkdown(ticketMarkdown, ticketFilePath);
     }
 
     ticketsVerified.push({
@@ -678,12 +758,12 @@ export function verifyWayfinderArtifacts(rawOptions = {}) {
  * primary-source SEC Form 10-K / CIK 0000909832 / ASC 606 citations, and key FY2024 GAAP figures.
  */
 export function verifyResearchMonograph(rawOptions = {}) {
-  const opts =
-    typeof rawOptions === "string"
-      ? { researchPath: rawOptions }
-      : rawOptions && typeof rawOptions === "object" && !Array.isArray(rawOptions)
-        ? rawOptions
-        : null;
+  let opts = null;
+  if (typeof rawOptions === "string") {
+    opts = { researchPath: rawOptions };
+  } else if (isPlainObject(rawOptions)) {
+    opts = rawOptions;
+  }
   if (!opts) {
     throw new Error("Research monograph audit failed: options must be an object or research file path string.");
   }
@@ -709,7 +789,7 @@ export function verifyResearchMonograph(rawOptions = {}) {
     }
     resolvedResearchMarkdown = researchContent;
   } else {
-    if (!researchPath || !fs.existsSync(researchPath)) {
+    if (!fs.existsSync(researchPath)) {
       throw new Error(`Research monograph audit failed: file not found at ${researchLabel}.`);
     }
     resolvedResearchMarkdown = fs.readFileSync(researchPath, "utf8");
@@ -754,7 +834,7 @@ function normalizeModelOptions(rawOptions) {
   if (typeof rawOptions === "string") {
     return rawOptions.endsWith(".json") ? { dataPath: rawOptions } : { rootDir: rawOptions };
   }
-  if (rawOptions === null || typeof rawOptions !== "object" || Array.isArray(rawOptions)) {
+  if (!isPlainObject(rawOptions)) {
     throw new Error("Invalid options passed to loadAndVerifyCostcoModel: expected an options object.");
   }
   if (
@@ -783,17 +863,7 @@ export function loadAndVerifyCostcoModel(rawOptions = {}) {
     ? path.resolve(options.dataPath)
     : path.join(rootDir, "data", "costco_revenue_breakdown.json");
   const mapPath = options.mapPath ? path.resolve(options.mapPath) : path.join(rootDir, "wayfinder", "map.md");
-
-  let ticketsDir;
-  if (options.ticketsDir) {
-    ticketsDir = path.resolve(options.ticketsDir);
-  } else if (options.mapPath) {
-    const siblingTicketsDir = path.join(path.dirname(mapPath), "tickets");
-    ticketsDir = fs.existsSync(siblingTicketsDir) ? siblingTicketsDir : path.join(rootDir, "wayfinder", "tickets");
-  } else {
-    ticketsDir = path.join(rootDir, "wayfinder", "tickets");
-  }
-
+  const ticketsDir = resolveTicketsDir(rootDir, options.mapPath ? mapPath : null, options.ticketsDir);
   const researchPath = options.researchPath
     ? path.resolve(options.researchPath)
     : path.join(rootDir, "research", "costco_revenue_architecture.md");
@@ -857,26 +927,30 @@ export function loadAndVerifyCostcoModel(rawOptions = {}) {
   };
 }
 
+function readCliOptionValue(argv, index, flagName) {
+  const nextVal = argv[index + 1];
+  if (!nextVal || nextVal.startsWith("--")) {
+    throw new Error(`Missing path value for CLI option "${flagName}"`);
+  }
+  return nextVal;
+}
+
 function parseCliArgs(argv) {
   const options = {};
+  const pathFlags = {
+    "--root": "rootDir",
+    "--data": "dataPath",
+    "--map": "mapPath",
+    "--tickets": "ticketsDir",
+    "--research": "researchPath"
+  };
+
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === "--verify") {
       options.verifyOnly = true;
-    } else if (arg === "--root" && argv[i + 1]) {
-      options.rootDir = argv[i + 1];
-      i += 1;
-    } else if (arg === "--data" && argv[i + 1]) {
-      options.dataPath = argv[i + 1];
-      i += 1;
-    } else if (arg === "--map" && argv[i + 1]) {
-      options.mapPath = argv[i + 1];
-      i += 1;
-    } else if (arg === "--tickets" && argv[i + 1]) {
-      options.ticketsDir = argv[i + 1];
-      i += 1;
-    } else if (arg === "--research" && argv[i + 1]) {
-      options.researchPath = argv[i + 1];
+    } else if (hasOwn(pathFlags, arg)) {
+      options[pathFlags[arg]] = readCliOptionValue(argv, i, arg);
       i += 1;
     } else {
       throw new Error(`Unrecognized or incomplete CLI argument: "${arg}"`);
