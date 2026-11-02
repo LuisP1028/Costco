@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>costco // 1999 — dreamcore revenue architecture (CIK: 0000909832)</title>
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23fff8e6'/%3E%3Cstop offset='100%25' stop-color='%2379b4ff'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='url(%23g)'/%3E%3Cpath d='M10 32 Q32 14 54 32 Q32 50 10 32 Z' fill='%23ffffff' stroke='%23546c9e' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%236c96f0'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%231d2540'/%3E%3Ccircle cx='29' cy='29' r='2' fill='%23ffffff'/%3E%3C/svg%3E"
+  />
+  <style>
+
+    :root {
+      --sky-top: #378ef2;
+      --sky-mid: #89ccff;
+      --sky-horizon: #fff4d9;
+      --accent-primary: #5b97f2;
+      --accent-secondary: #f4a9cb;
+      --accent-meadow: #59c447;
+      --chrome-face: rgba(242, 246, 255, 0.88);
+      --chrome-face-solid: #eef3fc;
+      --chrome-border-light: #ffffff;
+      --chrome-border-dark: #8c9ebb;
+      --chrome-border-deep: #596b8a;
+      --titlebar-start: #6ca4f2;
+      --titlebar-end: #c8aff7;
+      --ink-main: #24304a;
+      --ink-muted: #556585;
+      --halo-glow: rgba(255, 232, 196, 0.78);
+      --periphery-mist: rgba(255, 248, 238, 0.62);
+      --dream-blur: 0px;
+      --font-serif: "Georgia", "Palatino", "Times New Roman", serif;
+      --font-ui: "Tahoma", "Geneva", "Verdana", sans-serif;
+      --font-mono: "Monaco", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-color: var(--sky-mid);
+      color: var(--ink-main);
+      font-family: var(--font-ui);
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* Layer 0: Living Procedural Dream Sky & Liminal Horizon Canvas */
+    #dream-sky-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* Layer 1: Peripheral Halation, 35mm Grain & Optional VHS Lens */
+    .dream-periphery-halation {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      pointer-events: none;
+      box-shadow:
+        inset 0 0 110px 34px var(--periphery-mist),
+        inset 0 0 240px 65px rgba(203, 224, 255, 0.34);
+      transition: box-shadow 0.9s ease;
+    }
+
+    body.half-asleep .dream-stage-wrap {
+      filter: blur(1.35px) saturate(1.16) brightness(1.04);
+    }
+
+    body.half-asleep .dream-periphery-halation {
+      box-shadow:
+        inset 0 0 145px 62px rgba(255, 247, 238, 0.85),
+        inset 0 0 290px 110px rgba(216, 198, 255, 0.48);
+    }
+
+    #film-grain-overlay {
+      position: fixed;
+      inset: -64px;
+      z-index: 41;
+      pointer-events: none;
+      opacity: 0.14;
+      mix-blend-mode: overlay;
+      background-repeat: repeat;
+      will-change: transform;
+    }
+
+    .vhs-scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 42;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0) 0px,
+          rgba(255, 255, 255, 0) 2px,
+          rgba(38, 54, 92, 0.055) 3px,
+          rgba(255, 255, 255, 0.04) 4px
+        );
+    }
+
+    body.vhs-active .vhs-scanlines {
+      opacity: 1;
+    }
+
+    /* Top Liminal Camcorder / 1999 Taskbar HUD */
+    .liminal-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 35;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 18px;
+      background: linear-gradient(
+        90deg,
+        rgba(240, 246, 255, 0.86) 0%,
+        rgba(255, 247, 252, 0.82) 50%,
+        rgba(238, 246, 255, 0.86) 100%
+      );
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 2px solid var(--chrome-border-light);
+      box-shadow:
+        0 1px 0 var(--chrome-border-dark),
+        0 10px 28px rgba(72, 108, 172, 0.14);
+    }
+
+    .vhs-status-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      letter-spacing: 0.06em;
+      color: var(--ink-main);
+    }
+
+    .rec-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      background: rgba(255, 255, 255, 0.78);
+      border-top: 1px solid var(--chrome-border-dark);
+      border-left: 1px solid var(--chrome-border-dark);
+      border-right: 1px solid var(--chrome-border-light);
+      border-bottom: 1px solid var(--chrome-border-light);
+      color: #36558f;
+      font-weight: 700;
+    }
+
+    .rec-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #6ad15b;
+      box-shadow: 0 0 8px #6ad15b;
+      animation: gentlePulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes gentlePulse {
+      0%, 100% { transform: scale(1); opacity: 0.95; }
+      50% { transform: scale(1.25); opacity: 0.55; }
+    }
+
+    .topbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Classic Y2K Pearl Bevel Button */
+    .bevel-btn {
+      appearance: none;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      font-size: 11.5px;
+      letter-spacing: 0.02em;
+      color: var(--ink-main);
+      background: linear-gradient(180deg, #ffffff 0%, #e4ecfa 100%);
+      padding: 5px 11px;
+      border-top: 2px solid var(--chrome-border-light);
+      border-left: 2px solid var(--chrome-border-light);
+      border-right: 2px solid var(--chrome-border-deep);
+      border-bottom: 2px solid var(--chrome-border-deep);
+      box-shadow: inset -1px -1px 0 var(--chrome-border-dark);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: filter 0.15s ease, transform 0.08s ease;
+    }
+
+    .bevel-btn:hover {
+      filter: brightness(1.04);
+      background: linear-gradient(180deg, #ffffff 0%, #eef3ff 100%);
+    }
+
+    .bevel-btn:active,
+    .bevel-btn[aria-pressed="true"] {
+      border-top: 2px solid var(--chrome-border-deep);
+      border-left: 2px solid var(--chrome-border-deep);
+      border-right: 2px solid var(--chrome-border-light);
+      border-bottom: 2px solid var(--chrome-border-light);
+      background: linear-gradient(180deg, #dce6f8 0%, #eef4ff 100%);
+      transform: translateY(0.5px);
+    }
+
+    .eq-bars {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 11px;
+      width: 14px;
+    }
+
+    .eq-bars span {
+      width: 2.5px;
+      height: 3px;
+      background: #5b87d6;
+      transition: height 0.2s ease;
+    }
+
+    body.audio-playing .eq-bars span:nth-child(1) { animation: eqBounce 0.9s ease-in-out infinite; }
+    body.audio-playing .eq-bars span:nth-child(2) { animation: eqBounce 0.7s ease-in-out 0.15s infinite; }
+    body.audio-playing .eq-bars span:nth-child(3) { animation: eqBounce 1.1s ease-in-out 0.3s infinite; }
+
+    @keyframes eqBounce {
+      0%, 100% { height: 3px; }
+      50% { height: 11px; }
+    }
+
+    /* Main Stage Layout */
+    .dream-stage-wrap {
+      position: relative;
+      z-index: 10;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 14px 22px 44px;
+      transition: filter 0.7s ease;
+    }
+
+    /* Seraphic Winged Eye Hero Header */
+    .seraph-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin: 4px 0 16px;
+      position: relative;
+    }
+
+    .watcher-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px 12px;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 6px 20px rgba(255, 250, 236, 0.92))
+              drop-shadow(0 0 34px rgba(154, 195, 255, 0.65));
+      transition: transform 0.35s ease;
+    }
+
+    .watcher-button:hover {
+      transform: scale(1.04);
+    }
+
+    .watcher-svg {
+      width: 230px;
+      height: 92px;
+      overflow: visible;
+    }
+
+    .wing-left-outer { transform-origin: 115px 46px; animation: wingBreathLeft 5.2s ease-in-out infinite; }
+    .wing-right-outer { transform-origin: 115px 46px; animation: wingBreathRight 5.2s ease-in-out infinite; }
+    .wing-left-inner { transform-origin: 115px 46px; animation: wingBreathLeft 4.1s ease-in-out 0.4s infinite; }
+    .wing-right-inner { transform-origin: 115px 46px; animation: wingBreathRight 4.1s ease-in-out 0.4s infinite; }
+
+    @keyframes wingBreathLeft {
+      0%, 100% { transform: rotate(0deg) translateY(0px); }
+      50% { transform: rotate(4.5deg) translateY(-2.5px); }
+    }
+
+    @keyframes wingBreathRight {
+      0%, 100% { transform: rotate(0deg) translateY(0px); }
+      50% { transform: rotate(-4.5deg) translateY(-2.5px); }
+    }
+
+    #watcher-eyelid {
+      transform-origin: 115px 46px;
+      transform: scaleY(0);
+      transition: transform 0.18s ease-in-out;
+    }
+
+    .watcher-button.blinking #watcher-eyelid,
+    body.half-asleep #watcher-eyelid {
+      transform: scaleY(0.72);
+    }
+
+    .dreamcore-overline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(18px, 2.3vw, 25px);
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: lowercase;
+      color: #ffffff;
+      text-shadow:
+        0 1px 3px rgba(32, 54, 102, 0.72),
+        0 0 18px rgba(255, 252, 240, 0.95),
+        0 0 36px rgba(173, 206, 255, 0.85);
+      margin-top: 2px;
+    }
+
+    .dreamcore-subwhisper {
+      margin-top: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: rgba(36, 52, 86, 0.82);
+      background: rgba(255, 255, 255, 0.56);
+      padding: 3px 12px;
+      border-radius: 999px;
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Workspace Grid of Liminal Windows */
+    .liminal-workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.68fr) minmax(305px, 0.92fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .side-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Nostalgic 1999 Pearl-Bevel Floating Window */
+    .dream-window {
+      position: relative;
+      background: var(--chrome-face);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 2px solid var(--chrome-border-light);
+      border-left: 2px solid var(--chrome-border-light);
+      border-right: 2px solid var(--chrome-border-deep);
+      border-bottom: 2px solid var(--chrome-border-deep);
+      box-shadow:
+        inset -1px -1px 0 var(--chrome-border-dark),
+        0 18px 46px rgba(48, 79, 138, 0.22),
+        0 0 38px var(--halo-glow);
+      padding: 4px;
+      transition: box-shadow 0.5s ease;
+    }
+
+    .dream-window.is-focused {
+      box-shadow:
+        inset -1px -1px 0 var(--chrome-border-dark),
+        0 22px 56px rgba(42, 70, 130, 0.30),
+        0 0 48px rgba(255, 246, 224, 0.92);
+    }
+
+    .window-titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 5px 8px;
+      background: linear-gradient(90deg, var(--titlebar-start) 0%, var(--titlebar-end) 100%);
+      color: #ffffff;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-shadow: 0 1px 2px rgba(34, 48, 86, 0.45);
+      cursor: grab;
+    }
+
+    .window-titlebar:active {
+      cursor: grabbing;
+    }
+
+    .titlebar-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .titlebar-glyph {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      background: radial-gradient(circle at 35% 35%, #ffffff, #ffe1a8 65%, #d69bf2 100%);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+    }
+
+    .titlebar-buttons {
+      display: flex;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+
+    .win-ctrl-btn {
+      width: 18px;
+      height: 17px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--ink-main);
+      background: var(--chrome-face-solid);
+      border-top: 1.5px solid #ffffff;
+      border-left: 1.5px solid #ffffff;
+      border-right: 1.5px solid var(--chrome-border-deep);
+      border-bottom: 1.5px solid var(--chrome-border-deep);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .win-ctrl-btn:hover {
+      background: #ffffff;
+    }
+
+    .win-ctrl-btn:active {
+      border-top: 1.5px solid var(--chrome-border-deep);
+      border-left: 1.5px solid var(--chrome-border-deep);
+      border-right: 1.5px solid #ffffff;
+      border-bottom: 1.5px solid #ffffff;
+    }
+
+    /* Primary Liminal Viewport Frame */
+    .viewport-sunken-well {
+      margin-top: 4px;
+      position: relative;
+      aspect-ratio: 1376 / 768;
+      width: 100%;
+      overflow: hidden;
+      background: #92c5f7;
+      border-top: 2px solid var(--chrome-border-deep);
+      border-left: 2px solid var(--chrome-border-deep);
+      border-right: 2px solid var(--chrome-border-light);
+      border-bottom: 2px solid var(--chrome-border-light);
+    }
+
+    .scene-plate {
+      position: absolute;
+      inset: -1.5%;
+      width: 103%;
+      height: 103%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.015);
+      transition: opacity 0.75s ease, filter 0.75s ease;
+      filter: saturate(1.1) contrast(1.02) brightness(1.03);
+      will-change: transform, opacity;
+      pointer-events: none;
+    }
+
+    .scene-plate.is-active {
+      opacity: 1;
+    }
+
+    /* Soft Dream Halation Frame Inside Viewport */
+    .viewport-bloom-rim {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+      box-shadow:
+        inset 0 0 38px 10px rgba(255, 248, 236, 0.56),
+        inset 0 0 90px 18px rgba(176, 212, 255, 0.25);
+    }
+
+    body.vhs-active .scene-plate.is-active {
+      filter: saturate(1.18) contrast(1.04) brightness(1.04) drop-shadow(2px 0 0 rgba(255, 110, 175, 0.25)) drop-shadow(-2px 0 0 rgba(90, 225, 255, 0.25));
+    }
+
+    /* Camcorder OSD Overlay inside Viewport */
+    .viewport-osd-top {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      right: 14px;
+      z-index: 6;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: rgba(255, 253, 245, 0.94);
+      text-shadow:
+        1px 1px 0 rgba(28, 43, 78, 0.78),
+        0 0 10px rgba(255, 244, 214, 0.85);
+    }
+
+    /* Canonical Dreamcore Spaced Serif Caption inside Scene */
+    .dreamcore-caption-overlay {
+      position: absolute;
+      left: 5%;
+      right: 5%;
+      bottom: 10px;
+      z-index: 7;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .dreamcore-caption-text {
+      display: inline-block;
+      max-width: 92%;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(14.5px, 1.72vw, 20px);
+      line-height: 1.36;
+      letter-spacing: 0.08em;
+      text-transform: lowercase;
+      color: #fffef9;
+      padding: 5px 16px;
+      border-radius: 999px;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(28, 42, 78, 0.36) 0%,
+        rgba(28, 42, 78, 0.14) 72%,
+        rgba(28, 42, 78, 0) 100%
+      );
+      text-shadow:
+        0 1px 2px rgba(18, 25, 48, 0.95),
+        0 -1px 2px rgba(18, 25, 48, 0.75),
+        1px 0 2px rgba(18, 25, 48, 0.8),
+        -1px 0 2px rgba(18, 25, 48, 0.8),
+        0 0 18px rgba(255, 238, 200, 0.95),
+        0 0 32px rgba(196, 175, 255, 0.75);
+      transition: opacity 0.32s ease, transform 0.32s ease;
+    }
+
+    .dreamcore-caption-text.is-updating {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+
+    /* Interactive Spatial Hotspot Portals */
+    #hotspot-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+    }
+
+    .dream-hotspot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.92) 0%,
+        rgba(255, 231, 198, 0.52) 42%,
+        rgba(176, 208, 255, 0.12) 72%,
+        transparent 100%
+      );
+      box-shadow:
+        0 0 16px rgba(255, 250, 232, 0.95),
+        0 0 30px rgba(154, 198, 255, 0.75);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .dream-hotspot::before {
+      content: "";
+      position: absolute;
+      inset: -7px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 253, 244, 0.85);
+      animation: portalSpin 9s linear infinite;
+    }
+
+    .dream-hotspot::after {
+      content: "✦";
+      font-size: 13px;
+      color: #4666a6;
+      text-shadow: 0 0 6px #ffffff;
+    }
+
+    .dream-hotspot:hover,
+    .dream-hotspot.is-selected {
+      transform: translate(-50%, -50%) scale(1.22);
+      box-shadow:
+        0 0 22px #ffffff,
+        0 0 42px rgba(255, 206, 235, 0.98);
+    }
+
+    .dream-hotspot.is-selected::after {
+      color: #c2599b;
+    }
+
+    .hotspot-tag {
+      position: absolute;
+      top: calc(100% + 7px);
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: lowercase;
+      padding: 2px 7px;
+      background: rgba(250, 252, 255, 0.92);
+      color: var(--ink-main);
+      border: 1px solid var(--chrome-border-dark);
+      box-shadow: 0 3px 10px rgba(34, 52, 92, 0.22);
+      pointer-events: none;
+      opacity: 0.94;
+    }
+
+    .dream-hotspot.tag-above .hotspot-tag {
+      top: auto;
+      bottom: calc(100% + 8px);
+    }
+
+    @keyframes portalSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Viewport Footer Status & Recovered Memory Fragment Bar */
+    .viewport-statusbar {
+      margin-top: 5px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(233, 240, 252, 0.88);
+      border-top: 1.5px solid var(--chrome-border-dark);
+      border-left: 1.5px solid var(--chrome-border-dark);
+      border-right: 1.5px solid var(--chrome-border-light);
+      border-bottom: 1.5px solid var(--chrome-border-light);
+      font-size: 11.5px;
+    }
+
+    .memory-fragment-readout {
+      color: var(--ink-main);
+      line-height: 1.35;
+    }
+
+    .memory-fragment-readout strong {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: #4c6eb5;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+
+    .coords-readout {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--ink-muted);
+      white-space: nowrap;
+    }
+
+    /* Side Window 1: Strata Selector (memories.idx) */
+    .window-body {
+      padding: 10px;
+    }
+
+    .strata-intro {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 13.5px;
+      color: var(--ink-muted);
+      margin-bottom: 9px;
+      letter-spacing: 0.03em;
+    }
+
+    .strata-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stratum-card {
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      text-align: left;
+      padding: 6px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.72);
+      border-top: 2px solid var(--chrome-border-light);
+      border-left: 2px solid var(--chrome-border-light);
+      border-right: 2px solid var(--chrome-border-dark);
+      border-bottom: 2px solid var(--chrome-border-dark);
+      transition: background 0.2s ease, transform 0.12s ease;
+    }
+
+    .stratum-card:hover {
+      background: rgba(255, 255, 255, 0.94);
+    }
+
+    .stratum-card.is-active {
+      background: linear-gradient(90deg, rgba(226, 239, 255, 0.96), rgba(247, 234, 255, 0.94));
+      border-top: 2px solid var(--chrome-border-deep);
+      border-left: 2px solid var(--chrome-border-deep);
+      border-right: 2px solid var(--chrome-border-light);
+      border-bottom: 2px solid var(--chrome-border-light);
+    }
+
+    .stratum-thumb {
+      width: 74px;
+      height: 44px;
+      object-fit: cover;
+      border: 1px solid var(--chrome-border-deep);
+      filter: saturate(1.12);
+    }
+
+    .stratum-meta-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-main);
+      display: block;
+    }
+
+    .stratum-meta-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-muted);
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Telemetry Box inside memories.idx */
+    .liminal-telemetry-grid {
+      margin-top: 10px;
+      padding: 8px;
+      background: rgba(232, 239, 252, 0.78);
+      border-top: 1.5px solid var(--chrome-border-dark);
+      border-left: 1.5px solid var(--chrome-border-dark);
+      border-right: 1.5px solid var(--chrome-border-light);
+      border-bottom: 1.5px solid var(--chrome-border-light);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+
+    .telemetry-cell span {
+      display: block;
+      color: var(--ink-muted);
+      font-size: 9px;
+    }
+
+    .telemetry-cell strong {
+      color: #365084;
+      font-weight: 700;
+    }
+
+    /* Side Window 2: Uncanny Nostalgia Dialog (reminder.msg) */
+    .dialog-prompt-layout {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 4px 2px 10px;
+    }
+
+    .dialog-key-orb {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 30%, #ffffff 0%, #ffe6c7 48%, #b6cbff 100%);
+      border: 1.5px solid #ffffff;
+      box-shadow:
+        0 0 16px rgba(255, 232, 198, 0.95),
+        inset 0 0 10px rgba(145, 175, 242, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+    }
+
+    .dialog-question-text {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 14.5px;
+      line-height: 1.48;
+      color: var(--ink-main);
+      letter-spacing: 0.02em;
+    }
+
+    .dialog-response-echo {
+      margin-top: 6px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: #5b6f99;
+      min-height: 16px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      justify-content: flex-end;
+      padding-top: 8px;
+      border-top: 1px solid rgba(140, 158, 187, 0.38);
+    }
+
+    @keyframes gentleReject {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-3px); }
+    }
+
+    .dream-window.gentle-shake {
+      animation: gentleReject 0.36s ease-in-out;
+    }
+
+    /* Floating Memory Echo Cards Spawned by User Choices */
+    #floating-echo-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 32;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-echo-note {
+      position: absolute;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-transform: lowercase;
+      color: #ffffff;
+      padding: 6px 14px;
+      background: rgba(168, 196, 248, 0.32);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      border-radius: 999px;
+      text-shadow:
+        0 1px 2px rgba(29, 44, 82, 0.72),
+        0 0 14px rgba(255, 244, 218, 0.95);
+      box-shadow: 0 6px 24px rgba(132, 168, 235, 0.32);
+      animation: floatMemoryUp 5.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    }
+
+    @keyframes floatMemoryUp {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 14px) scale(0.92);
+      }
+      16% {
+        opacity: 0.98;
+        transform: translate(-50%, 0px) scale(1);
+      }
+      80% {
+        opacity: 0.86;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -95px) scale(1.04);
+      }
+    }
+
+    /* Bottom Liminal Whisper Ticker */
+    .liminal-footer-note {
+      margin: 20px auto 0;
+      width: fit-content;
+      max-width: 94%;
+      text-align: center;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 13.5px;
+      letter-spacing: 0.09em;
+      text-transform: lowercase;
+      color: #2f4370;
+      background: rgba(255, 255, 255, 0.64);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      padding: 5px 18px;
+      border-radius: 999px;
+      box-shadow: 0 4px 18px rgba(132, 165, 224, 0.22);
+    }
+
+    /* Responsive Layout below 980px */
+    @media (max-width: 980px) {
+      .liminal-workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .liminal-topbar {
+        padding: 8px 12px;
+      }
+
+      .dream-stage-wrap {
+        padding: 12px 12px 36px;
+      }
+    }
+  
+    .costco-ribbon { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 10px; margin: 0 0 18px; }
+    .kpi-pearl-card { background: var(--chrome-face); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 2px solid var(--chrome-border-light); border-left: 2px solid var(--chrome-border-light); border-right: 2px solid var(--chrome-border-deep); border-bottom: 2px solid var(--chrome-border-deep); box-shadow: inset -1px -1px 0 var(--chrome-border-dark), 0 10px 24px rgba(48, 79, 138, 0.16); padding: 8px 11px; text-align: left; }
+    .kpi-pearl-card .kpi-tag { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); display: block; }
+    .kpi-pearl-card .kpi-val { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: #243b6b; display: block; margin: 2px 0; }
+    .kpi-pearl-card .kpi-sub { font-family: var(--font-serif); font-style: italic; font-size: 11.5px; color: #4a5d85; display: block; }
+    .warehouse-hud-card { position: absolute; top: 38px; left: 14px; z-index: 6; max-width: 360px; background: rgba(242, 247, 255, 0.86); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-top: 1.5px solid #ffffff; border-left: 1.5px solid #ffffff; border-right: 1.5px solid var(--chrome-border-deep); border-bottom: 1.5px solid var(--chrome-border-deep); padding: 8px 11px; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-main); box-shadow: 0 8px 24px rgba(28, 46, 88, 0.22); pointer-events: none; }
+    .warehouse-hud-card strong { display: block; font-size: 11px; color: #2c4a86; margin-bottom: 3px; text-transform: uppercase; }
+    .warehouse-hud-equation { display: inline-block; margin-top: 4px; padding: 2px 6px; background: rgba(255, 255, 255, 0.85); border: 1px solid var(--chrome-border-dark); color: #8c2d65; font-weight: 700; }
+    .analytical-deck { margin-top: 20px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+    .year-pill-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(140, 158, 187, 0.4); }
+    .waterfall-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 11px; margin-bottom: 12px; background: rgba(255, 255, 255, 0.72); border: 1px solid var(--chrome-border-dark); }
+    .waterfall-table th, .waterfall-table td { padding: 5px 8px; text-align: left; border-bottom: 1px solid rgba(140, 158, 187, 0.28); }
+    .waterfall-table th { background: rgba(220, 232, 252, 0.85); color: #2b4478; font-size: 10px; text-transform: uppercase; }
+    .waterfall-table td.num, .waterfall-table th.num { text-align: right; }
+    .waterfall-table tr.highlight-row { background: linear-gradient(90deg, rgba(230, 241, 255, 0.92), rgba(250, 234, 255, 0.92)); font-weight: 700; }
+    .bar-list { display: flex; flex-direction: column; gap: 7px; margin-top: 8px; }
+    .bar-item { background: rgba(255, 255, 255, 0.74); border: 1px solid var(--chrome-border-dark); padding: 6px 8px; }
+    .bar-item-head { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; color: var(--ink-main); margin-bottom: 4px; }
+    .bar-track { width: 100%; height: 9px; background: rgba(206, 219, 242, 0.75); border-top: 1px solid var(--chrome-border-deep); border-left: 1px solid var(--chrome-border-deep); overflow: hidden; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, #5a95f2 0%, #d49bf4 100%); transition: width 0.35s ease; }
+    .bar-note { font-family: var(--font-serif); font-style: italic; font-size: 11.5px; color: var(--ink-muted); margin-top: 3px; }
+    .sim-controls { margin-top: 10px; padding: 9px; background: rgba(232, 239, 252, 0.82); border-top: 1.5px solid var(--chrome-border-dark); border-left: 1.5px solid var(--chrome-border-dark); border-right: 1.5px solid var(--chrome-border-light); border-bottom: 1.5px solid var(--chrome-border-light); }
+    .sim-row { display: grid; grid-template-columns: 155px 1fr 64px; gap: 8px; align-items: center; font-family: var(--font-mono); font-size: 10.5px; margin-bottom: 6px; }
+    .sim-row:last-child { margin-bottom: 0; }
+    .sim-output-banner { margin-top: 8px; padding: 7px 9px; background: rgba(255, 255, 255, 0.88); border: 1px solid var(--chrome-border-dark); font-family: var(--font-mono); font-size: 10.5px; line-height: 1.45; color: #243863; }
+    .wayfinder-ticket-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .ticket-Inspector-box { background: rgba(255, 255, 255, 0.82); border-top: 1.5px solid var(--chrome-border-deep); border-left: 1.5px solid var(--chrome-border-deep); border-right: 1.5px solid var(--chrome-border-light); border-bottom: 1.5px solid var(--chrome-border-light); padding: 10px; font-size: 12px; line-height: 1.48; max-height: 320px; overflow-y: auto; }
+    .ticket-Inspector-box h3 { font-family: var(--font-mono); font-size: 12px; color: #2c4a86; margin-bottom: 4px; }
+    .ticket-Inspector-box .ticket-meta { font-family: var(--font-mono); font-size: 10px; color: #7c3568; margin-bottom: 8px; }
+    .ticket-Inspector-box ul { padding-left: 18px; margin-top: 5px; }
+    .ticket-Inspector-box li { margin-bottom: 5px; }
+    @media (max-width: 980px) { .analytical-deck { grid-template-columns: 1fr; } .sim-row { grid-template-columns: 1fr; } }
+
+  </style>
+</head>
+<body class="vhs-active">
+  <!-- Layer 0: Procedural Atmospheric Sky, Floating Soap Orbs & Horizon Checkerboard -->
+  <canvas id="dream-sky-canvas" aria-hidden="true"></canvas>
+
+  <!-- Layer 1: Peripheral Dream Halation, 35mm Film Grain & VHS Scanlines -->
+  <div class="dream-periphery-halation" aria-hidden="true"></div>
+  <div id="film-grain-overlay" aria-hidden="true"></div>
+  <div class="vhs-scanlines" aria-hidden="true"></div>
+
+  <!-- Layer 2: Floating User-Spawned Memory Echoes -->
+  <div id="floating-echo-layer" aria-hidden="true"></div>
+
+  <!-- Top Nostalgic Camcorder / 1999 Liminal Taskbar -->
+  <header class="liminal-topbar">
+    <div class="vhs-status-cluster">
+      <span class="rec-pill" title="SEC Form 10-K FY2024 primary-source loop active">
+        <span class="rec-dot"></span>
+        <span>PLAY ▷ COST // CIK 0000909832</span>
+      </span>
+      <span id="stuck-clock" title="warehouse afternoon loops gently at 04:15 PM">04:15:08 PM</span>
+    </div>
+
+    <div class="topbar-controls">
+      <button type="button" id="btn-audio-toggle" class="bevel-btn" aria-pressed="false">
+        <span class="eq-bars" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span id="audio-btn-label">tape hum: off</span>
+      </button>
+
+      <button type="button" id="btn-vhs-toggle" class="bevel-btn" aria-pressed="true">
+        <span>📼 vhs halation: on</span>
+      </button>
+
+      <button type="button" id="btn-half-asleep" class="bevel-btn" aria-pressed="false">
+        <span>☾ half-asleep blur</span>
+      </button>
+
+      <button type="button" id="btn-drift-deeper" class="bevel-btn">
+        <span>✦ audit whisper</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="dream-stage-wrap">
+    <!-- Iconic Dreamcore Six-Winged Seraphic Watcher Eye -->
+    <section class="seraph-header" aria-label="Seraphic Warehouse Watcher">
+      <button
+        type="button"
+        id="seraphic-watcher-btn"
+        class="watcher-button"
+        title="the skylight above aisle 04 is watching gently — click to toggle lucid soft-focus"
+      >
+        <svg class="watcher-svg" viewBox="0 0 230 92" role="img" aria-label="Six-winged porcelain dreamcore eye">
+          <defs>
+            <radialGradient id="haloGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fffdf4" stop-opacity="0.95" />
+              <stop offset="55%" stop-color="#ffe6c8" stop-opacity="0.45" />
+              <stop offset="100%" stop-color="#b8d4ff" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="wingFeather" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="68%" stop-color="#edf2ff" />
+              <stop offset="100%" stop-color="#d7c8f7" />
+            </linearGradient>
+            <radialGradient id="irisGrad" cx="42%" cy="38%" r="58%">
+              <stop offset="0%" stop-color="#aee4ff" />
+              <stop offset="48%" stop-color="#6e9ef5" />
+              <stop offset="82%" stop-color="#8b6cd9" />
+              <stop offset="100%" stop-color="#3c4c7a" />
+            </radialGradient>
+          </defs>
+
+          <circle cx="115" cy="46" r="43" fill="url(#haloGrad)" />
+          <circle cx="115" cy="46" r="33" fill="none" stroke="#fff8e3" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.85" />
+
+          <g class="wing-left-outer">
+            <path d="M92,43 C66,18 34,12 8,24 C24,33 44,39 68,45 C42,45 20,51 10,63 C35,64 65,58 92,48 Z"
+                  fill="url(#wingFeather)" stroke="#b4c2e4" stroke-width="1" />
+          </g>
+          <g class="wing-right-outer">
+            <path d="M138,43 C164,18 196,12 222,24 C206,33 186,39 162,45 C188,45 210,51 220,63 C195,64 165,58 138,48 Z"
+                  fill="url(#wingFeather)" stroke="#b4c2e4" stroke-width="1" />
+          </g>
+
+          <g class="wing-left-inner">
+            <path d="M96,39 C78,12 52,5 32,12 C46,24 66,34 88,43 Z"
+                  fill="#ffffff" stroke="#c5d0ec" stroke-width="0.9" opacity="0.92" />
+            <path d="M96,53 C78,76 54,83 35,77 C48,66 68,58 88,50 Z"
+                  fill="#f7f2ff" stroke="#c5d0ec" stroke-width="0.9" opacity="0.9" />
+          </g>
+          <g class="wing-right-inner">
+            <path d="M134,39 C152,12 178,5 198,12 C184,24 164,34 142,43 Z"
+                  fill="#ffffff" stroke="#c5d0ec" stroke-width="0.9" opacity="0.92" />
+            <path d="M134,53 C152,76 176,83 195,77 C182,66 162,58 142,50 Z"
+                  fill="#f7f2ff" stroke="#c5d0ec" stroke-width="0.9" opacity="0.9" />
+          </g>
+
+          <clipPath id="eyeAlmondClip">
+            <path d="M84,46 Q115,23 146,46 Q115,69 84,46 Z" />
+          </clipPath>
+
+          <path d="M84,46 Q115,23 146,46 Q115,69 84,46 Z"
+                fill="#fffdf9" stroke="#7d8fb8" stroke-width="1.5" />
+
+          <g clip-path="url(#eyeAlmondClip)">
+            <g id="watcher-iris-group">
+              <circle cx="115" cy="46" r="13.5" fill="url(#irisGrad)" />
+              <circle cx="115" cy="46" r="10.2" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="0.8" stroke-dasharray="1.5 2" />
+              <circle cx="115" cy="46" r="5.6" fill="#1d2540" />
+              <circle cx="110.5" cy="41.5" r="2.6" fill="#ffffff" opacity="0.95" />
+              <circle cx="119" cy="49.5" r="1.2" fill="#ffe6f7" opacity="0.85" />
+            </g>
+            <rect id="watcher-eyelid" x="80" y="20" width="70" height="52" fill="#f5eeff" stroke="#9aa9ce" stroke-width="1" />
+          </g>
+
+          <path d="M84,46 Q115,23 146,46 Q115,69 84,46 Z"
+                fill="none" stroke="#6f80ab" stroke-width="1.4" />
+        </svg>
+      </button>
+
+      <h1 id="hero-whisper-title" class="dreamcore-overline">
+        you paid sixty-five dollars at the door so the pallets inside could stay near cost.
+      </h1>
+      <p class="dreamcore-subwhisper">
+        archive://costco.fy2024/sec_10k_0000909832 — keys 1·2·3·4·5 or click glowing portals to inspect the revenue flywheel
+      </p>
+    </section>
+
+    <!-- Top FY2024 Verified GAAP Ribbon -->
+    <section class="costco-ribbon" aria-label="FY2024 SEC Form 10-K Verified Metrics">
+      <div class="kpi-pearl-card">
+        <span class="kpi-tag">Total Revenue (FY24)</span>
+        <span class="kpi-val">$254,453M</span>
+        <span class="kpi-sub">Net Sales + Membership Fees</span>
+      </div>
+      <div class="kpi-pearl-card">
+        <span class="kpi-tag">{Net Sales} (98.10%)</span>
+        <span class="kpi-val">$249,625M</span>
+        <span class="kpi-sub">&lt;4,000 SKUs · 890 Warehouses</span>
+      </div>
+      <div class="kpi-pearl-card">
+        <span class="kpi-tag">{Membership Fees} (1.90%)</span>
+        <span class="kpi-val">$4,828M</span>
+        <span class="kpi-sub">52.00% of Operating Profit</span>
+      </div>
+      <div class="kpi-pearl-card">
+        <span class="kpi-tag">{Gross Margin Ceiling}</span>
+        <span class="kpi-val">10.92%</span>
+        <span class="kpi-sub">$27,267M Margin vs 9.14% SG&amp;A</span>
+      </div>
+      <div class="kpi-pearl-card">
+        <span class="kpi-tag">Renewal Rate (US/CA)</span>
+        <span class="kpi-val">92.9%</span>
+        <span class="kpi-sub">90.5% Global · 76.2M Paid</span>
+      </div>
+      <div class="kpi-pearl-card">
+        <span class="kpi-tag">AP / Inventory Float</span>
+        <span class="kpi-val">104.15%</span>
+        <span class="kpi-sub">$19,421M AP / $18,647M Inv</span>
+      </div>
+    </section>
+
+    <!-- Primary Dreamcore Workspace -->
+    <section class="liminal-workspace" aria-label="Liminal Warehouse Windows">
+      <!-- Window 1: Primary Viewport Window -->
+      <article class="dream-window is-focused" id="win-viewer" data-draggable-window>
+        <div class="window-titlebar" data-drag-handle>
+          <div class="titlebar-label">
+            <span class="titlebar-glyph" aria-hidden="true"></span>
+            <span id="viewer-window-title">warehouse_viewer.exe — [01_two_pillar_asc606.bmp]</span>
+          </div>
+          <div class="titlebar-buttons">
+            <button type="button" class="win-ctrl-btn" data-win-action="whisper" title="surface SEC 10-K whisper">?</button>
+            <button type="button" class="win-ctrl-btn" data-win-action="reset-pos" title="re-center window">❖</button>
+          </div>
+        </div>
+
+        <div class="viewport-sunken-well" id="dream-viewport">
+          <img
+            id="plate-sunday_meadow"
+            class="scene-plate is-active"
+            src="./assets/meadow_portal.jpg"
+            alt="Dreamcore emerald meadow doorway representing Costco's membership threshold and two-pillar revenue entrance"
+          />
+          <img
+            id="plate-warm_poolroom"
+            class="scene-plate"
+            src="./assets/poolroom_sanctuary.jpg"
+            alt="Dreamcore sunlit tiled atrium representing Costco's 4,000-SKU warehouse floor and 104.15% working-capital float"
+          />
+          <img
+            id="plate-twilight_staircase"
+            class="scene-plate"
+            src="./assets/sky_staircase.jpg"
+            alt="Dreamcore cloud staircase ascending into a golden halo representing Costco's 92.9% renewal rate and Executive tier ascension"
+          />
+
+          <div class="viewport-bloom-rim" aria-hidden="true"></div>
+
+          <div class="viewport-osd-top" aria-hidden="true">
+            <span id="osd-stratum-code">TICKET-001 // TWO-PILLAR REVENUE ENGINE ($254,453M)</span>
+            <span id="osd-tape-counter">SP · 00:42:19</span>
+          </div>
+
+          <div class="warehouse-hud-card" id="warehouse-hud-card">
+            <strong id="hud-card-title">WAYFINDER TICKET-001 // ASC 606 TWO-PILLAR IDENTITY</strong>
+            <div id="hud-card-body">Principal gross recognition at POS &amp; shipment; ratable 12-month deferred fee amortization.</div>
+            <span class="warehouse-hud-equation" id="hud-card-eq">R_total ($254,453M) = Net Sales ($249,625M) + Fees ($4,828M)</span>
+          </div>
+
+          <!-- Dynamic Hotspot Portals Injected Here -->
+          <div id="hotspot-layer" role="group" aria-label="Costco Revenue Hotspot Portals"></div>
+
+          <!-- Canonical Spaced Italic Dreamcore Caption -->
+          <div class="dreamcore-caption-overlay">
+            <p id="scene-whisper-caption" class="dreamcore-caption-text">
+              ninety-eight point one percent is merchandise passing through; one point nine percent is the key that unlocks the door.
+            </p>
+          </div>
+        </div>
+
+        <div class="viewport-statusbar">
+          <div class="memory-fragment-readout" id="memory-fragment-readout">
+            <strong>sec 10-k trace:</strong>
+            <span>FY2024 SEC Form 10-K (Item 8, p. 35): $249,625M {Net Sales} (98.10%) + $4,828M {Membership Fees} (1.90%) = $254,453M Consolidated Revenue.</span>
+          </div>
+          <div class="coords-readout" id="portal-coords-readout">
+            PORTAL: (41.0%, 48.0%)
+          </div>
+        </div>
+      </article>
+
+      <!-- Right Column: 5 Wayfinder Strata Selector & Uncanny Audit Dialog -->
+      <div class="side-column">
+        <!-- Window 2: wayfinder.idx -->
+        <aside class="dream-window" id="win-index" data-draggable-window>
+          <div class="window-titlebar" data-drag-handle>
+            <div class="titlebar-label">
+              <span class="titlebar-glyph" aria-hidden="true"></span>
+              <span>wayfinder.idx — 5 resolved revenue strata</span>
+            </div>
+            <div class="titlebar-buttons">
+              <button type="button" class="win-ctrl-btn" data-win-action="reset-pos" title="re-center window">❖</button>
+            </div>
+          </div>
+
+          <div class="window-body">
+            <p class="strata-intro">
+              select a resolved wayfinder decision ticket (keys 1 · 2 · 3 · 4 · 5):
+            </p>
+
+            <div class="strata-list" role="tablist" aria-label="Costco Revenue Strata">
+              <button
+                type="button"
+                class="stratum-card is-active"
+                role="tab"
+                aria-selected="true"
+                data-stratum-btn="two_pillar_engine"
+              >
+                <img class="stratum-thumb" src="./assets/meadow_portal.jpg" alt="Two-Pillar Revenue Engine thumbnail" />
+                <span>
+                  <span class="stratum-meta-title">01 // two-pillar engine ($254,453M)</span>
+                  <span class="stratum-meta-sub">98.10% net sales · 1.90% fees · ASC 606</span>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                class="stratum-card"
+                role="tab"
+                aria-selected="false"
+                data-stratum-btn="sku_kirkland_aisle"
+              >
+                <img class="stratum-thumb" src="./assets/poolroom_sanctuary.jpg" alt="SKU Curation & Kirkland thumbnail" />
+                <span>
+                  <span class="stratum-meta-title">02 // &lt;4,000 SKUs &amp; kirkland</span>
+                  <span class="stratum-meta-sub">foods 40.65% · non-foods 25.63% · 890 clubs</span>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                class="stratum-card"
+                role="tab"
+                aria-selected="false"
+                data-stratum-btn="membership_renewal_halo"
+              >
+                <img class="stratum-thumb" src="./assets/sky_staircase.jpg" alt="Membership Renewal Halo thumbnail" />
+                <span>
+                  <span class="stratum-meta-title">03 // 92.9% renewal &amp; executive halo</span>
+                  <span class="stratum-meta-sub">76.2M paid · 73.3% exec sales · $65/$130</span>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                class="stratum-card"
+                role="tab"
+                aria-selected="false"
+                data-stratum-btn="ancillary_digital_drift"
+              >
+                <img class="stratum-thumb" src="./assets/meadow_portal.jpg" alt="Ancillary & Digital Drift thumbnail" />
+                <span>
+                  <span class="stratum-meta-title">04 // 719 gas pumps &amp; digital drift</span>
+                  <span class="stratum-meta-sub">$49,969M ancillary · +16% e-comm · citi visa</span>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                class="stratum-card"
+                role="tab"
+                aria-selected="false"
+                data-stratum-btn="flywheel_working_capital"
+              >
+                <img class="stratum-thumb" src="./assets/poolroom_sanctuary.jpg" alt="Gross Margin Ceiling & Working Capital thumbnail" />
+                <span>
+                  <span class="stratum-meta-title">05 // 10.92% ceiling &amp; 104.15% float</span>
+                  <span class="stratum-meta-sub">52.00% fee op-inc · 12.60x turn · AP &gt; Inv</span>
+                </span>
+              </button>
+            </div>
+
+            <div class="liminal-telemetry-grid" aria-live="polite">
+              <div class="telemetry-cell">
+                <span>AISLE ATMOSPHERE</span>
+                <strong id="tel-scent">fresh pallet wrap &amp; warm receipt paper</strong>
+              </div>
+              <div class="telemetry-cell">
+                <span>STRUCTURAL INVARIANT</span>
+                <strong id="tel-familiarity">98.10% Net Sales / 1.90% Fees</strong>
+              </div>
+              <div class="telemetry-cell">
+                <span>COHORT SCALE</span>
+                <strong id="tel-people">136.8M cardholders (76.2M paid)</strong>
+              </div>
+              <div class="telemetry-cell">
+                <span>CASH CONVERSION</span>
+                <strong id="tel-exit">receipt check at the glowing doorway</strong>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Window 3: receipt_check.msg -->
+        <aside class="dream-window" id="win-reminder" data-draggable-window>
+          <div class="window-titlebar" data-drag-handle>
+            <div class="titlebar-label">
+              <span class="titlebar-glyph" aria-hidden="true"></span>
+              <span>receipt_check.msg — yellow highlighter</span>
+            </div>
+            <div class="titlebar-buttons">
+              <button type="button" class="win-ctrl-btn" data-win-action="whisper" title="another audit whisper">?</button>
+              <button type="button" class="win-ctrl-btn" data-win-action="reset-pos" title="re-center window">❖</button>
+            </div>
+          </div>
+
+          <div class="window-body">
+            <div class="dialog-prompt-layout">
+              <div class="dialog-key-orb" aria-hidden="true">🏷️</div>
+              <div>
+                <p id="dialog-question-text" class="dialog-question-text">
+                  why would a quarter-trillion-dollar warehouse refuse to mark up its goods above eleven percent?
+                </p>
+                <p id="dialog-response-echo" class="dialog-response-echo">
+                  &gt; status: VERIFIED (0 network calls · CIK 0000909832)
+                </p>
+              </div>
+            </div>
+
+            <div class="dialog-actions">
+              <button type="button" class="bevel-btn" id="btn-dialog-remember">
+                renew membership ($65)
+              </button>
+              <button type="button" class="bevel-btn" id="btn-dialog-stay">
+                upgrade to executive ($130)
+              </button>
+              <button type="button" class="bevel-btn" id="btn-dialog-wake">
+                mark up prices &gt;15%?
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Lower Interactive Analytical Deck: GAAP Waterfall + Interactive Simulator + Wayfinder/Monograph Explorer -->
+    <section class="analytical-deck" aria-label="Costco Revenue Decomposition and Wayfinder Audit Deck">
+      <!-- Window 4: costco_flywheel_model.exe -->
+      <article class="dream-window" id="win-flywheel" data-draggable-window>
+        <div class="window-titlebar" data-drag-handle>
+          <div class="titlebar-label">
+            <span class="titlebar-glyph" aria-hidden="true"></span>
+            <span>costco_flywheel_model.exe — [FY2022–FY2024 GAAP Conservation &amp; Simulator]</span>
+          </div>
+          <div class="titlebar-buttons">
+            <button type="button" class="win-ctrl-btn" data-win-action="reset-pos" title="re-center window">❖</button>
+          </div>
+        </div>
+
+        <div class="window-body">
+          <div class="year-pill-bar">
+            <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #2b4478;">
+              CONSOLIDATED INCOME STATEMENT (USD MILLIONS)
+            </span>
+            <div>
+              <button type="button" class="bevel-btn" data-fy-btn="2022" aria-pressed="false">FY2022 (52w)</button>
+              <button type="button" class="bevel-btn" data-fy-btn="2023" aria-pressed="false">FY2023 (53w)</button>
+              <button type="button" class="bevel-btn" data-fy-btn="2024" aria-pressed="true">FY2024 (52w)</button>
+            </div>
+          </div>
+
+          <table class="waterfall-table" aria-label="Costco Consolidated GAAP Waterfall">
+            <thead>
+              <tr>
+                <th>GAAP Line Item / Flywheel Metric</th>
+                <th class="num" id="th-fy-col">FY2024 ($M)</th>
+                <th class="num">Share / Ratio</th>
+                <th>Economic Role in Flywheel</th>
+              </tr>
+            </thead>
+            <tbody id="gaap-waterfall-tbody"></tbody>
+          </table>
+
+          <!-- Interactive Flywheel Stress-Test Simulator -->
+          <div class="sim-controls">
+            <div style="font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; color: #2b4478; margin-bottom: 6px;">
+              INTERACTIVE FLYWHEEL SENSITIVITY RIG (TEST THE GROSS MARGIN CEILING)
+            </div>
+            <div class="sim-row">
+              <label for="sim-gm-slider">Merchandise Gross Margin %</label>
+              <input type="range" id="sim-gm-slider" min="9.50" max="14.00" step="0.05" value="10.92" />
+              <span id="sim-gm-val">10.92%</span>
+            </div>
+            <div class="sim-row">
+              <label for="sim-sga-slider">SG&amp;A % of Net Sales</label>
+              <input type="range" id="sim-sga-slider" min="8.50" max="10.50" step="0.05" value="9.14" />
+              <span id="sim-sga-val">9.14%</span>
+            </div>
+            <div class="sim-row">
+              <label for="sim-fee-slider">Sept 2024 Fee Lift ($M)</label>
+              <input type="range" id="sim-fee-slider" min="0" max="370" step="10" value="0" />
+              <span id="sim-fee-val">+$0M</span>
+            </div>
+            <div class="sim-output-banner" id="sim-output-banner"></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Window 5: wayfinder_monograph.hlp -->
+      <article class="dream-window" id="win-monograph" data-draggable-window>
+        <div class="window-titlebar" data-drag-handle>
+          <div class="titlebar-label">
+            <span class="titlebar-glyph" aria-hidden="true"></span>
+            <span>wayfinder_monograph.hlp — [Primary-Source SEC 10-K Disaggregation &amp; Tickets]</span>
+          </div>
+          <div class="titlebar-buttons">
+            <button type="button" class="win-ctrl-btn" data-win-action="reset-pos" title="re-center window">❖</button>
+          </div>
+        </div>
+
+        <div class="window-body">
+          <div style="font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; color: #2b4478; margin-bottom: 6px;">
+            NOTE 11 DISAGGREGATED {NET SALES} ($249,625M) &amp; WORKING CAPITAL
+          </div>
+
+          <div class="bar-list">
+            
+            <div class="bar-item">
+              <div class="bar-item-head">
+                <span>Foods and Sundries</span>
+                <span>$101,463M (40.65%)</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 40.65%"></div>
+              </div>
+              <div class="bar-note">High-frequency staple repeat-visit anchor driving predictable pallet velocity and household pantry consolidation</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-item-head">
+                <span>Non-Foods</span>
+                <span>$63,973M (25.63%)</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 25.63%"></div>
+              </div>
+              <div class="bar-note">Treasure-hunt discretionary basket builder showcasing extreme brand-name and Kirkland Signature price gaps</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-item-head">
+                <span>Fresh Foods</span>
+                <span>$34,220M (13.71%)</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 13.71%"></div>
+              </div>
+              <div class="bar-note">Perishable weekly trip driver and rapid inventory-turn engine minimizing spoilage while anchoring perceived member value</div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-item-head">
+                <span>Warehouse Ancillary and Other Businesses</span>
+                <span>$49,969M (20.02%)</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 20.02%"></div>
+              </div>
+              <div class="bar-note">High-frequency member trip and renewal magnet led by 719 gas stations (~12% of net sales), pharmacy, optical, food court, and Costco Travel</div>
+            </div>
+          </div>
+
+          <div style="font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; color: #2b4478; margin: 12px 0 6px;">
+            RESOLVED WAYFINDER DECISION TICKETS &amp; SEC EDGAR MONOGRAPH
+          </div>
+
+          <div class="wayfinder-ticket-tabs" role="tablist" aria-label="Wayfinder Tickets">
+            <button type="button" class="bevel-btn" data-ticket-tab="0" aria-pressed="true">Ticket 001</button>
+            <button type="button" class="bevel-btn" data-ticket-tab="1" aria-pressed="false">Ticket 002</button>
+            <button type="button" class="bevel-btn" data-ticket-tab="2" aria-pressed="false">Ticket 003</button>
+            <button type="button" class="bevel-btn" data-ticket-tab="3" aria-pressed="false">Ticket 004</button>
+            <button type="button" class="bevel-btn" data-ticket-tab="4" aria-pressed="false">Ticket 005</button>
+          </div>
+
+          <div class="ticket-Inspector-box" id="ticket-inspector-box" aria-live="polite"></div>
+        </div>
+      </article>
+    </section>
+
+    <footer class="liminal-footer-note">
+      don't rush past the exit receipt check — accounts payable ($19,421m) already funded 104.15% of the inventory on the floor.
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      function mustGetById(id) {
+        const el = document.getElementById(id);
+        if (!el) {
+          throw new Error("[CostcoDreamcoreBreach] Missing required DOM element #" + id);
+        }
+        return el;
+      }
+
+      const COSTCO_DATA = {"company":{"name":"Costco Wholesale Corporation","ticker":"COST","exchange":"NASDAQ","cik":"0000909832","fiscal_year":2024,"fiscal_year_end":"2024-09-01","fiscal_weeks":52,"currency":"USD","units":"millions"},"consolidated_income_statement":{"net_sales_usd_m":249625,"membership_fees_usd_m":4828,"total_revenue_usd_m":254453,"merchandise_costs_usd_m":222358,"selling_general_and_administrative_usd_m":22810,"operating_income_usd_m":9285,"interest_expense_usd_m":169,"interest_income_and_other_net_usd_m":624,"income_before_taxes_usd_m":9740,"provision_for_income_taxes_usd_m":2373,"net_income_usd_m":7367},"historical_comparison":[{"fiscal_year":2022,"fiscal_year_end":"2022-08-28","fiscal_weeks":52,"net_sales_usd_m":222730,"membership_fees_usd_m":4224,"total_revenue_usd_m":226954,"merchandise_costs_usd_m":199382,"selling_general_and_administrative_usd_m":19779,"operating_income_usd_m":7793,"net_income_usd_m":5844,"net_income_including_noncontrolling_interests_usd_m":5915},{"fiscal_year":2023,"fiscal_year_end":"2023-09-03","fiscal_weeks":53,"net_sales_usd_m":237710,"membership_fees_usd_m":4580,"total_revenue_usd_m":242290,"merchandise_costs_usd_m":212586,"selling_general_and_administrative_usd_m":21590,"operating_income_usd_m":8114,"net_income_usd_m":6292,"net_income_including_noncontrolling_interests_usd_m":6292},{"fiscal_year":2024,"fiscal_year_end":"2024-09-01","fiscal_weeks":52,"net_sales_usd_m":249625,"membership_fees_usd_m":4828,"total_revenue_usd_m":254453,"merchandise_costs_usd_m":222358,"selling_general_and_administrative_usd_m":22810,"operating_income_usd_m":9285,"net_income_usd_m":7367,"net_income_including_noncontrolling_interests_usd_m":7367}],"merchandise_categories":[{"category_id":"foods_and_sundries","name":"Foods and Sundries","share_of_net_sales_pct":40.65,"estimated_net_sales_usd_m":101463,"fy2023_net_sales_usd_m":96175,"fy2022_net_sales_usd_m":85629,"role_in_flywheel":"High-frequency staple repeat-visit anchor driving predictable pallet velocity and household pantry consolidation","examples":["sundries","dry grocery","candy","cooler","freezer","deli","liquor","tobacco"]},{"category_id":"non_foods","name":"Non-Foods","share_of_net_sales_pct":25.63,"estimated_net_sales_usd_m":63973,"fy2023_net_sales_usd_m":60865,"fy2022_net_sales_usd_m":61100,"role_in_flywheel":"Treasure-hunt discretionary basket builder showcasing extreme brand-name and Kirkland Signature price gaps","examples":["major appliances","small electronics","health and beauty aids","hardware","lawn and garden","sporting goods","tires","toys and seasonal","office supplies","automotive","apparel","furniture","domestics","housewares","special order kiosk","jewelry"]},{"category_id":"fresh_foods","name":"Fresh Foods","share_of_net_sales_pct":13.71,"estimated_net_sales_usd_m":34220,"fy2023_net_sales_usd_m":31977,"fy2022_net_sales_usd_m":29527,"role_in_flywheel":"Perishable weekly trip driver and rapid inventory-turn engine minimizing spoilage while anchoring perceived member value","examples":["meat","produce","service deli","bakery"]},{"category_id":"warehouse_ancillary_and_other","name":"Warehouse Ancillary and Other Businesses","share_of_net_sales_pct":20.02,"estimated_net_sales_usd_m":49969,"fy2023_net_sales_usd_m":48693,"fy2022_net_sales_usd_m":46474,"role_in_flywheel":"High-frequency member trip and renewal magnet led by 719 gas stations (~12% of net sales), pharmacy, optical, food court, and Costco Travel","examples":["gasoline","pharmacy","optical","food court","hearing aids","tire installation","costco travel"]}],"geographic_segments":[{"segment_id":"united_states","name":"United States","share_of_net_sales_pct":72.37,"total_revenue_usd_m":184143,"operating_income_usd_m":6217,"warehouse_count":614,"owned_warehouses":499,"leased_warehouses":115,"floor_space_sq_ft_m":91.1,"employees":219000,"basis_note":"Note 11 reports segment top-line revenue on a consolidated total revenue basis ($184,143M / $254,453M = 72.37%, inclusive of Puerto Rico); Net Sales represent 98.10% of consolidated revenue across uniform warehouse operations."},{"segment_id":"canada","name":"Canada","share_of_net_sales_pct":13.71,"total_revenue_usd_m":34874,"operating_income_usd_m":1648,"warehouse_count":108,"owned_warehouses":91,"leased_warehouses":17,"floor_space_sq_ft_m":15.5,"employees":53000,"basis_note":"Note 11 reports segment top-line revenue on a consolidated total revenue basis ($34,874M / $254,453M = 13.71%); Net Sales represent 98.10% of consolidated revenue across uniform warehouse operations."},{"segment_id":"other_international","name":"Other International","share_of_net_sales_pct":13.93,"total_revenue_usd_m":35436,"operating_income_usd_m":1420,"warehouse_count":168,"owned_warehouses":113,"leased_warehouses":55,"floor_space_sq_ft_m":24.3,"employees":61000,"basis_note":"Note 11 reports segment top-line revenue on a consolidated total revenue basis ($35,436M / $254,453M = 13.93%) across Mexico (40), Japan (35), U.K. (29), Korea (19), Australia (15), Taiwan (14), China (7), Spain (4), France (2), Iceland (1), New Zealand (1), and Sweden (1)."}],"membership_metrics":{"gold_star_paid_members_m":63.7,"business_paid_members_m":12.5,"paid_household_members_m":76.2,"household_cards_m":60.6,"cardholders_total_m":136.8,"executive_paid_members_m":35.4,"executive_share_of_paid_members_pct":46.5,"executive_share_of_worldwide_sales_pct":73.3,"executive_reward_contra_revenue_usd_m":2804,"accrued_member_rewards_liability_usd_m":2435,"renewal_rate_us_canada_pct":92.9,"renewal_rate_worldwide_pct":90.5,"gold_star_annual_fee_usd":65,"gold_star_annual_fee_fy2024_prior_to_sept_2024_usd":60,"executive_annual_fee_usd":130,"executive_annual_fee_fy2024_prior_to_sept_2024_usd":120,"executive_annual_reward_cap_usd":1250,"fee_increase_effective_date":"2024-09-01"},"working_capital_balance_sheet":{"merchandise_inventories_usd_m":18647,"accounts_payable_usd_m":19421,"deferred_membership_fees_liability_usd_m":2501,"accrued_member_rewards_liability_usd_m":2435,"prior_year_merchandise_inventories_usd_m":16651,"prior_year_accounts_payable_usd_m":17483,"prior_year_deferred_membership_fees_liability_usd_m":2337},"primary_sources":[{"source_id":"sec-10k-fy2024","title":"Costco Wholesale Corporation Form 10-K for the Fiscal Year Ended September 1, 2024","filing_type":"Form 10-K","cik":"0000909832","accession_number":"0000909832-24-000049","filing_date":"2024-10-09","period_end":"2024-09-01","url":"https://www.sec.gov/Archives/edgar/data/909832/000090983224000049/cost-20240901.htm","items_referenced":["Item 1 — Business (General, Core Merchandise Categories, Warehouse Ancillary, E-Commerce, Kirkland Signature, Membership, Human Capital)","Item 2 — Properties (Warehouse Properties & Square Footage by Geographic Segment)","Item 7 — Management's Discussion and Analysis of Financial Condition and Results of Operations (Net Sales, Membership Fees, Gross Margin, SG&A)","Item 8 — Consolidated Statements of Income & Consolidated Balance Sheets","Note 1 — Summary of Significant Accounting Policies (Revenue Recognition under ASC 606, Merchandise Inventories LIFO/FIFO, Merchandise Costs, Vendor Consideration, SG&A)","Note 11 — Segment Reporting (Reportable Geographic Segments & Disaggregated Revenue by Merchandise Category)"]},{"source_id":"sec-8k-q4-fy2024","title":"Costco Wholesale Corporation Form 8-K: Fourth Quarter and Fiscal Year 2024 Operating Results","filing_type":"Form 8-K","cik":"0000909832","accession_number":"0000909832-24-000043","filing_date":"2024-09-26","period_end":"2024-09-01","url":"https://www.sec.gov/Archives/edgar/data/909832/000090983224000043/cost-20240926.htm","items_referenced":["Item 2.02 — Results of Operations and Financial Condition (Fourth Quarter and 52-Week Fiscal Year 2024 Summary)"]}]};
+      const DREAM_STRATA = {"two_pillar_engine":{"id":"two_pillar_engine","plateId":"plate-sunday_meadow","windowFile":"01_two_pillar_asc606.bmp","osdTitle":"TICKET-001 // TWO-PILLAR REVENUE ENGINE ($254,453M)","heroWhisper":"you paid sixty-five dollars at the door so the pallets inside could stay near cost.","defaultCaption":"ninety-eight point one percent is merchandise passing through; one point nine percent is the key that unlocks the door.","defaultTrace":"FY2024 SEC Form 10-K (Item 8, p. 35): $249,625M {Net Sales} (98.10%) + $4,828M {Membership Fees} (1.90%) = $254,453M Consolidated Revenue.","hudBadge":{"title":"WAYFINDER TICKET-001 // ASC 606 TWO-PILLAR IDENTITY","body":"Principal gross recognition at POS & shipment; ratable 12-month deferred fee amortization.","eq":"R_total ($254,453M) = Net Sales ($249,625M) + Fees ($4,828M)"},"telemetry":{"scent":"fresh pallet wrap & warm receipt paper","familiarity":"98.10% Net Sales / 1.90% Fees","people":"136.8M cardholders (76.2M paid)","exit":"receipt check at the glowing doorway"},"cssVars":{"--sky-top":"#358bf2","--sky-mid":"#8bcbff","--sky-horizon":"#fff3d6","--titlebar-start":"#4f8df0","--titlebar-end":"#b9a7f7","--halo-glow":"rgba(255, 229, 190, 0.80)","--periphery-mist":"rgba(255, 248, 236, 0.62)"},"canvasPalette":{"skyTop":[53,139,242],"skyMid":[139,203,255],"horizon":[255,243,214],"gridLine":[255,255,255],"orbTint":[255,235,208]},"chordHz":[174.61,220,261.63,329.63,392],"portals":[{"label":"$249,625M net sales threshold","x":41,"y":48,"chimeHz":523.25,"caption":"every register scan recognizes principal gross revenue immediately at point-of-sale, net of sales taxes and return reserves.","trace":"Note 1 (ASC 606, p. 46): Warehouse sales recognized at POS; e-commerce recognized upon shipment; shipping costs inside Merchandise Costs ($222,358M)."},{"label":"$2,501M deferred fee arch","x":19.2,"y":51.5,"chimeHz":659.25,"caption":"annual membership cash arrives on day one, waiting quietly on the balance sheet as a current liability until twelve months pass.","trace":"Consolidated Balance Sheet (Item 8, p. 37): $2,501M Deferred Membership Fees liability amortized ratably into $4,828M earned fee revenue."},{"label":"$2,804M 2% reward path","x":58.5,"y":73,"chimeHz":587.33,"caption":"the two-percent executive certificate is never an expense — it subtracts directly from net sales as contra-revenue.","trace":"Note 1 (pp. 46-47): $2,804M FY2024 Executive 2% reward reduction against {Net Sales} ($2,576M FY23; $2,307M FY22), with $2,435M Accrued Member Rewards."}]},"sku_kirkland_aisle":{"id":"sku_kirkland_aisle","plateId":"plate-warm_poolroom","windowFile":"02_4000_sku_kirkland.bmp","osdTitle":"TICKET-002 // <4,000 SKUs & KIRKLAND SIGNATURE","heroWhisper":"thirty thousand supermarket items vanished; only thirty-eight hundred pallets remain.","defaultCaption":"when you channel two hundred fifty billion dollars into fewer than four thousand items, every supplier bends toward the aisle.","defaultTrace":"Note 11 (p. 61): Foods & Sundries $101,463M (40.65%), Non-Foods $63,973M (25.63%), Warehouse Ancillary $49,969M (20.02%), Fresh Foods $34,220M (13.71%).","hudBadge":{"title":"WAYFINDER TICKET-002 // CATEGORY MIX & <4,000 SKUs","body":">$62M annual volume per average warehouse SKU; 890 warehouses across 14 territories.","eq":"Foods 40.65% | Non-Foods 25.63% | Ancillary 20.02% | Fresh 13.71%"},"telemetry":{"scent":"bakery brioche & chilled produce mist","familiarity":"< 4,000 active warehouse SKUs","people":"890 clubs (614 US · 108 CA · 168 Intl)","exit":"cross-docked depot floor (31.9M sq ft)"},"cssVars":{"--sky-top":"#49b7c2","--sky-mid":"#a9e8e4","--sky-horizon":"#ffe9ef","--titlebar-start":"#4fb6c4","--titlebar-end":"#f0aecf","--halo-glow":"rgba(182, 246, 240, 0.82)","--periphery-mist":"rgba(239, 255, 252, 0.64)"},"canvasPalette":{"skyTop":[73,183,194],"skyMid":[169,232,228],"horizon":[255,233,239],"gridLine":[232,255,252],"orbTint":[255,214,234]},"chordHz":[146.83,185,220,277.18,329.63],"portals":[{"label":"foods & sundries ($101.5B)","x":64.5,"y":78.5,"chimeHz":554.37,"caption":"forty point six five percent of net sales live in dry grocery, cooler, freezer, and sundries — the weekly pantry heartbeat.","trace":"Note 11: Foods & Sundries reached $101,463M in FY2024 (up from $96,175M in FY23 and $85,629M in FY22) + Fresh Foods at $34,220M (13.71%)."},{"label":"<4,000 SKU skylight ($62M/SKU)","x":49,"y":15,"chimeHz":659.25,"caption":"traditional grocers stock thirty thousand items; costco curates under four thousand so each item commands sixty-two million dollars of buying power.","trace":"Item 1 (p. 4) & Note 1 (p. 47): Extreme SKU concentration unlocks deep vendor volume rebates (recorded as reductions to Merchandise Costs)."},{"label":"kirkland signature sanctuary","x":50,"y":50,"chimeHz":739.99,"caption":"private-label pallets priced below national brands yet earning higher gross margin bps to keep every vendor honest.","trace":"Item 1 (p. 6): Kirkland Signature spans meat, bakery, optical, coffee roasteries, and sundries (~30%+ sales share), lifting core gross margin +36 bps in FY2024."}]},"membership_renewal_halo":{"id":"membership_renewal_halo","plateId":"plate-twilight_staircase","windowFile":"03_executive_renewal_halo.bmp","osdTitle":"TICKET-003 // 92.9% RENEWAL & EXECUTIVE HALO","heroWhisper":"ninety-two point nine percent renew before the card ever expires.","defaultCaption":"thirty-five point four million executive households represent under half of paid members, yet carry seventy-three point three percent of worldwide sales.","defaultTrace":"Item 1 (pp. 4-5) & Item 7 (p. 25): 76.2M paid members (63.7M Gold Star, 12.5M Business), 136.8M cardholders; Sept 1, 2024 fee lift ($60->$65, $120->$130).","hudBadge":{"title":"WAYFINDER TICKET-003 // TIER MIX & SEPT 2024 FEE CADENCE","body":"35.4M Executive members (46.5% of paid base) generate 73.3% of worldwide Net Sales.","eq":"US/CA Renewal: 92.9% | Worldwide: 90.5% | 2-Yr Fee Lift: +$370M"},"telemetry":{"scent":"laminated gold star badge & ozone","familiarity":"92.9% US/CA Renewal Rate","people":"35.4M Executive Paid Households","exit":"sept 1, 2024 fee stair ($65 / $130)"},"cssVars":{"--sky-top":"#5d6eb8","--sky-mid":"#d4b2ea","--sky-horizon":"#ffd8bf","--titlebar-start":"#847be3","--titlebar-end":"#f5b2c8","--halo-glow":"rgba(255, 214, 188, 0.86)","--periphery-mist":"rgba(251, 240, 255, 0.64)"},"canvasPalette":{"skyTop":[93,110,184],"skyMid":[212,178,234],"horizon":[255,216,191],"gridLine":[255,240,255],"orbTint":[238,214,255]},"chordHz":[116.54,174.61,220,293.66,329.63],"portals":[{"label":"executive 73.3% sales halo","x":49.5,"y":43,"chimeHz":587.33,"caption":"at the top of the staircase, executive members pay double the annual fee and self-select seventy-three point three percent of every dollar spent.","trace":"Item 1 (pp. 4-5): 35.4M Executive members (+9.60% YoY from 32.3M) = 46.5% of 76.2M paid members, driving 73.3% of worldwide {Net Sales}."},{"label":"92.9% US/CA renewal wing","x":13.5,"y":56,"chimeHz":659.25,"caption":"nine out of ten members worldwide — and ninety-two point nine percent in north america — never walk away from the club.","trace":"Item 7 (p. 25): Trailing 7-to-18-month renewal capture reached 92.9% in U.S./Canada and 90.5% worldwide at FY2024 end."},{"label":"$65/$130 fee increase orb","x":73.7,"y":49.5,"chimeHz":880,"caption":"after seven years of stillness, the september 2024 fee step adds three hundred seventy million dollars of pure subscription float.","trace":"Item 7 (p. 25): Effective Sept 1, 2024, U.S./Canada fees rose $60->$65 (Gold Star/Business) and $120->$130 (Executive, cap $1,000->$1,250), adding ~$370M over FY25-FY26."}]},"ancillary_digital_drift":{"id":"ancillary_digital_drift","plateId":"plate-sunday_meadow","windowFile":"04_719_gas_ancillary.bmp","osdTitle":"TICKET-004 // 719 GAS STATIONS & DIGITAL LOGISTICS","heroWhisper":"you came for cheap gasoline at four-fifteen and left with a cart full of treasure.","defaultCaption":"nearly fifty billion dollars flow through gas pumps, pharmacies, optical counters, food courts, and costco logistics.","defaultTrace":"Note 11 & Item 7 (p. 24): Warehouse Ancillary & Other = $49,969M (20.02% of Net Sales); 719 gas stations (~12% of Net Sales); E-Commerce ~7% (+16% comp growth).","hudBadge":{"title":"WAYFINDER TICKET-004 // ANCILLARY & OMNICHANNEL MAGNETS","body":"719 gas stations (~$30B sales) + Pharmacy (+3% YoY) + E-Commerce (~7%, +16% comp).","eq":"Ancillary: $49,969M (20.02%) | Gas: ~12% | Digital Originated: ~9%"},"telemetry":{"scent":"unleaded vapor & $1.50 hot dog steam","familiarity":"719 Member-Only Gas Stations","people":"+16% E-Commerce Comp Growth","exit":"costco logistics & citi visa loop"},"cssVars":{"--sky-top":"#2f7fe0","--sky-mid":"#98d2ff","--sky-horizon":"#ffe8cc","--titlebar-start":"#4987e6","--titlebar-end":"#e39dc9","--halo-glow":"rgba(255, 224, 184, 0.82)","--periphery-mist":"rgba(255, 246, 232, 0.62)"},"canvasPalette":{"skyTop":[47,127,224],"skyMid":[152,210,255],"horizon":[255,232,204],"gridLine":[255,252,245],"orbTint":[255,225,195]},"chordHz":[164.81,207.65,246.94,311.13,369.99],"portals":[{"label":"719 gas stations (~12% sales)","x":41,"y":48,"chimeHz":523.25,"caption":"seven hundred nineteen fuel canopies pull members onto the parking lot every week before they ever step through the warehouse doors.","trace":"Item 1 (p. 4) & Item 7 (p. 24): Gasoline represents ~12% of consolidated {Net Sales} (~$30B); physical gallon volume grew ~1% (+$400M) in FY2024."},{"label":"pharmacy, optical & food court","x":19.2,"y":51.5,"chimeHz":659.25,"caption":"prescriptions, eyeglasses, hearing aids, and the unchanging food court anchor trust that no competitor can replicate.","trace":"Item 7 (pp. 24-25): Pharmacy led ancillary dollar growth (+3%, +$1,276M) in FY2024; ancillary & e-commerce lifted consolidated gross margin by +19 bps."},{"label":"costco logistics & citi visa","x":58.5,"y":73,"chimeHz":783.99,"caption":"nine thousand online items, big-and-bulky appliance delivery, costco next, and feb credit card rebate certificates close the loop.","trace":"Item 1 (p. 4) & Note 1 (p. 47): E-commerce (~7% of sales, +16% comp), Digitally Originated (~9%), Costco Travel, and Citibank co-branded Visa royalties."}]},"flywheel_working_capital":{"id":"flywheel_working_capital","plateId":"plate-warm_poolroom","windowFile":"05_flywheel_104pct_ap.bmp","osdTitle":"TICKET-005 // 10.92% CEILING & 104.15% AP/INVENTORY","heroWhisper":"the merchandise is sold and turned into cash before the supplier invoice even comes due.","defaultCaption":"a ten point nine two percent gross margin ceiling covers warehouse costs, letting four point eight billion in membership fees become fifty-two percent of operating profit.","defaultTrace":"Item 8 (pp. 35, 37): Gross Margin $27,267M (10.92%) - SG&A $22,810M (9.14%) = $4,457M (48.00%) + Fees $4,828M (52.00%) = $9,285M Operating Income; AP/Inv = 104.15%.","hudBadge":{"title":"WAYFINDER TICKET-005 // OPERATING FLYWHEEL & NEGATIVE WORKING CAPITAL","body":"Merchandise Gross Margin capped at 10.92%; Suppliers fund 104.15% of floor inventory.","eq":"OpInc ($9,285M) = Merch ($4,457M, 48%) + Fees ($4,828M, 52%) | AP/Inv = 104.15%"},"telemetry":{"scent":"warm chlorine & negative working capital","familiarity":"10.92% Gross Margin Ceiling","people":"52.00% OpInc from Membership Fees","exit":"104.15% AP / Inventory ($19,421M / $18,647M)"},"cssVars":{"--sky-top":"#3e9ec4","--sky-mid":"#9be0e8","--sky-horizon":"#fff0dc","--titlebar-start":"#3d97bf","--titlebar-end":"#c99bf2","--halo-glow":"rgba(195, 245, 255, 0.85)","--periphery-mist":"rgba(240, 252, 255, 0.65)"},"canvasPalette":{"skyTop":[62,158,196],"skyMid":[155,224,232],"horizon":[255,240,220],"gridLine":[235,255,255],"orbTint":[255,230,210]},"chordHz":[130.81,196,246.94,293.66,369.99],"portals":[{"label":"10.92% gross margin ceiling","x":64.5,"y":78.5,"chimeHz":554.37,"caption":"costco refuses to let merchandise gross margin drift above eleven percent — every extra basis point is returned to the member on the price tag.","trace":"Item 7 (p. 25): FY2024 Merchandise Gross Margin = ($249,625M - $222,358M) / $249,625M = $27,267M (10.9232%), paired with 9.1377% SG&A ($22,810M)."},{"label":"52.00% membership profit engine","x":49,"y":15,"chimeHz":659.25,"caption":"because net sales cover warehouse payroll and overhead with $4,457M to spare, $4,828M of membership fees generate 52.00% of operating profit.","trace":"Item 8 (p. 35): Operating Income = $9,285M ($4,828M Fees [52.00%] + $4,457M Net Merchandise Contribution [48.00%]); Net Income = $7,367M."},{"label":"104.15% AP / inventory float","x":50,"y":50,"chimeHz":880,"caption":"nineteen point four billion in accounts payable exceeds eighteen point six billion in inventory — suppliers fund the entire warehouse floor.","trace":"Consolidated Balance Sheet (Item 8, p. 37): Accounts Payable ($19,421M) / Merchandise Inventories ($18,647M) = 104.1508% (+$774M net float; 12.60x inventory turn)."}]}};
+      const WAYFINDER_TICKETS = [{"id":"ticket-001","stratumId":"two_pillar_engine","title":"Two-Pillar Revenue Engine and ASC 606 Recognition Mechanics","file":"wayfinder/tickets/ticket-001.md","citation":"SEC Form 10-K (FY2024, CIK 0000909832), Item 7, Item 8 (p. 35, 37) & Note 1 (pp. 46-47)","question":"How does Costco partition consolidated top-line revenue between {Net Sales} and {Membership Fees}, and what ASC 606 recognition rules govern POS sales, shipments, return reserves, deferred fees, and Executive 2% rewards?","bullets":["<strong>Consolidated Revenue Conservation:</strong> <code>$249,625M</code> {Net Sales} (<code>98.10%</code>) + <code>$4,828M</code> {Membership Fees} (<code>1.90%</code>) = <code>$254,453M</code> Total Revenue in FY2024 (52 weeks ended Sept 1, 2024).","<strong>Principal Gross Recognition (ASC 606):</strong> Warehouse register sales recognized at point-of-sale; e-commerce orders recognized upon shipment; fulfillment/shipping costs included in <code>Merchandise costs</code> (<code>$222,358M</code>).","<strong>Deferred Membership Fee Liability:</strong> Upfront annual fees are recorded in <code>Deferred membership fees</code> (<code>$2,501M</code> current liability at FY24 end) and amortized ratably over 12 months.","<strong>Executive 2% Reward Contra-Revenue:</strong> Net of estimated breakage, the 2% reward reduces <code>{Net Sales}</code> directly by <code>$2,804M</code> in FY2024 (<code>$2,576M</code> FY23; <code>$2,307M</code> FY22), with <code>$2,435M</code> carried in <code>Accrued member rewards</code>."]},{"id":"ticket-002","stratumId":"sku_kirkland_aisle","title":"Merchandise Category Disaggregation, SKU Discipline, and Kirkland Signature Economics","file":"wayfinder/tickets/ticket-002.md","citation":"SEC Form 10-K (FY2024, CIK 0000909832), Item 1 (pp. 4, 6), Item 2 & Note 11 (p. 61)","question":"How do Costco's $249,625M FY2024 {Net Sales} disaggregate across merchandise categories and geographic segments, and how do <4,000 warehouse SKUs and Kirkland Signature drive purchasing leverage?","bullets":["<strong>Note 11 Merchandise Disaggregation:</strong> Foods & Sundries <code>$101,463M</code> (<code>40.65%</code>), Non-Foods <code>$63,973M</code> (<code>25.63%</code>), Warehouse Ancillary & Other <code>$49,969M</code> (<code>20.02%</code>), and Fresh Foods <code>$34,220M</code> (<code>13.71%</code>) = <code>$249,625M</code>.","<strong>Geographic Footprint (890 Warehouses):</strong> United States <code>$184,143M</code> total revenue (<code>72.37%</code>, <code>614</code> clubs), Canada <code>$34,874M</code> (<code>13.71%</code>, <code>108</code> clubs), Other International <code>$35,436M</code> (<code>13.93%</code>, <code>168</code> clubs across 12 countries).","<strong>Extreme SKU Discipline:</strong> Fewer than <code>4,000</code> active warehouse SKUs (vs. 30,000+ at supermarkets) concentrates <code>>$62M</code> of annual buying volume per average SKU and enables cross-docked pallet floor display.","<strong>Kirkland Signature Private Label:</strong> Priced below national brands while earning higher gross margins (~30%+ penetration), contributing to FY2024's <code>+36 bps</code> core merchandise gross margin expansion."]},{"id":"ticket-003","stratumId":"membership_renewal_halo","title":"Membership Fee Tier Structure, Renewal Rate Dynamics, and Fee Increase Cadence","file":"wayfinder/tickets/ticket-003.md","citation":"SEC Form 10-K (FY2024, CIK 0000909832), Item 1 (pp. 4-5) & Item 7 (p. 25)","question":"How do paid membership tiers, renewal rate dynamics (92.9% US/Canada, 90.5% worldwide), Executive sales concentration (73.3%), and the Sept 1, 2024 fee increase compound recurring {Membership Fees}?","bullets":["<strong>Global Cardholder Base:</strong> <code>76.2M</code> total paid members (<code>63.7M</code> Gold Star + <code>12.5M</code> Business, +7.32% YoY) plus <code>60.6M</code> household cards = <code>136.8M</code> total cardholders.","<strong>Executive Tier Concentration:</strong> <code>35.4M</code> paid Executive members represent <code>46.5%</code> of paid members while generating <code>73.3%</code> of worldwide <code>{Net Sales}</code>.","<strong>Industry-Leading Retention:</strong> Trailing 7-to-18-month renewal rates reached <code>92.9%</code> in the U.S. and Canada and <code>90.5%</code> worldwide.","<strong>Sept 1, 2024 U.S./Canada Fee Increase:</strong> Base fee rose <code>$60→$65</code> and Executive rose <code>$120→$130</code> (reward cap <code>$1,000→$1,250</code>), projected to add <code>~$370M</code> over FY2025-FY2026 (<code>~$190M</code> in FY2025)."]},{"id":"ticket-004","stratumId":"ancillary_digital_drift","title":"Warehouse Ancillary Traffic Drivers, E-Commerce, Costco Logistics, and Emerging Retail Media","file":"wayfinder/tickets/ticket-004.md","citation":"SEC Form 10-K (FY2024, CIK 0000909832), Item 1 (pp. 3-4), Item 7 (pp. 24-25) & Note 1 (p. 47)","question":"What quantitative roles do Gasoline, Pharmacy, Optical, Food Court, E-Commerce, Costco Logistics, Costco Next, Costco Travel, and Citibank Visa play in trip frequency and revenue?","bullets":["<strong>719 Member-Only Gas Stations:</strong> Generated <code>~12%</code> of consolidated <code>{Net Sales}</code> (<code>~$30B</code>); FY2024 gallon volume rose <code>~1%</code> (<code>+$400M</code>), driving high-frequency weekly lot visits.","<strong>Healthcare & Service Anchors:</strong> Pharmacy led ancillary dollar growth (<code>+3%</code>, <code>+$1,276M</code>) alongside Optical, Hearing Aids, Tire Installation, and Food Courts.","<strong>E-Commerce & Costco Logistics:</strong> E-commerce reached <code>~7%</code> of <code>{Net Sales}</code> (<code>+16%</code> comp growth; 9,000-10,000 online SKUs), while total Digitally Originated sales reached <code>~9%</code> (supported by Costco Logistics big-and-bulky delivery, Costco Next, and Costco Travel).","<strong>Citibank Co-Branded Visa:</strong> Royalty consideration on out-of-club spend funds annual February warehouse rebate certificates, locking in closed-loop member spend and retail media data."]},{"id":"ticket-005","stratumId":"flywheel_working_capital","title":"Gross Margin Ceiling, Negative Working-Capital Inventory Funding, and Operating Income Flywheel","file":"wayfinder/tickets/ticket-005.md","citation":"SEC Form 10-K (FY2024, CIK 0000909832), Item 7 (pp. 25-26), Item 8 (pp. 35, 37) & Note 1 (pp. 45-47)","question":"What is the exact mathematical relationship connecting Costco's 10.92% {Gross Margin Ceiling}, 9.14% SG&A, 104.15% AP/Inventory working-capital cycle, and the {Operating Income Flywheel}?","bullets":["<strong>{Gross Margin Ceiling} Adherence:</strong> FY2024 Merchandise Gross Margin = <code>$249,625M - $222,358M = $27,267M</code> (<code>10.9232%</code> of Net Sales), paired with lean SG&A of <code>$22,810M</code> (<code>9.1377%</code> of Net Sales, inclusive of preopening costs).","<strong>{Operating Income Flywheel}:</strong> Net Merchandise Operating Contribution = <code>$27,267M - $22,810M = $4,457M</code> (<code>48.00%</code> of Operating Income) + <code>$4,828M</code> {Membership Fees} (<code>52.00%</code> of Operating Income) = <code>$9,285M</code> Operating Income (and <code>$7,367M</code> Net Income).","<strong>Negative Working-Capital Float:</strong> Ending <code>Accounts payable</code> (<code>$19,421M</code>) divided by <code>Merchandise inventories</code> (<code>$18,647M</code>) = <code>104.1508%</code> (<code>+$774M</code> supplier-funded float).","<strong>12.60x Inventory Turnover:</strong> Inventory turns every <code>~28.97 days</code> vs. <code>~31.88 days</code> payable outstanding, reinforced by <code>$2,501M</code> Deferred Membership Fees and <code>$2,435M</code> Accrued Member Rewards."]}];
+
+      const DRIFT_WHISPERS = [
+        "why does a $254.5 billion retailer cap its own merchandise gross margin at 10.92%?",
+        "thirty-five point four million executive households generate 73.3% of every dollar in the warehouse.",
+        "accounts payable ($19,421M) divided by merchandise inventories ($18,647M) equals 104.15% — suppliers finance the entire floor.",
+        "membership fees are only 1.90% of revenue ($4,828M), yet they generate 52.00% of consolidated operating income ($9,285M).",
+        "fewer than 4,000 active warehouse SKUs means over $62 million of buying leverage concentrated on every single item.",
+        "the executive 2% reward ($2,804M in FY2024) is accounted for under ASC 606 as a direct contra-revenue reduction to Net Sales.",
+        "effective september 1, 2024, gold star rose to $65 and executive to $130 — adding ~$370M over two fiscal years."
+      ];
+
+      const ECHO_PHRASES = [
+        "10.92% gross margin ceiling",
+        "92.9% US/CA renewal rate",
+        "104.15% AP/inventory float",
+        "52.00% fee operating profit",
+        "< 4,000 curated SKUs",
+        "$254,453M FY2024 revenue",
+        "kirkland signature velocity"
+      ];
+
+      const skyCanvas = /** @type {HTMLCanvasElement} */ (mustGetById("dream-sky-canvas"));
+      const grainOverlay = mustGetById("film-grain-overlay");
+      const echoLayer = mustGetById("floating-echo-layer");
+      const stuckClockEl = mustGetById("stuck-clock");
+      const btnAudioToggle = mustGetById("btn-audio-toggle");
+      const audioBtnLabel = mustGetById("audio-btn-label");
+      const btnVhsToggle = mustGetById("btn-vhs-toggle");
+      const btnHalfAsleep = mustGetById("btn-half-asleep");
+      const btnDriftDeeper = mustGetById("btn-drift-deeper");
+      const watcherBtn = mustGetById("seraphic-watcher-btn");
+      const watcherIrisGroup = mustGetById("watcher-iris-group");
+      const heroWhisperTitle = mustGetById("hero-whisper-title");
+      const viewerWindowTitle = mustGetById("viewer-window-title");
+      const osdStratumCode = mustGetById("osd-stratum-code");
+      const osdTapeCounter = mustGetById("osd-tape-counter");
+      const hudCardTitle = mustGetById("hud-card-title");
+      const hudCardBody = mustGetById("hud-card-body");
+      const hudCardEq = mustGetById("hud-card-eq");
+      const hotspotLayer = mustGetById("hotspot-layer");
+      const sceneWhisperCaption = mustGetById("scene-whisper-caption");
+      const memoryFragmentReadout = mustGetById("memory-fragment-readout");
+      const portalCoordsReadout = mustGetById("portal-coords-readout");
+      const telScent = mustGetById("tel-scent");
+      const telFamiliarity = mustGetById("tel-familiarity");
+      const telPeople = mustGetById("tel-people");
+      const telExit = mustGetById("tel-exit");
+      const dialogQuestionText = mustGetById("dialog-question-text");
+      const dialogResponseEcho = mustGetById("dialog-response-echo");
+      const btnDialogRemember = mustGetById("btn-dialog-remember");
+      const btnDialogStay = mustGetById("btn-dialog-stay");
+      const btnDialogWake = mustGetById("btn-dialog-wake");
+      const winReminder = mustGetById("win-reminder");
+      const gaapTbody = mustGetById("gaap-waterfall-tbody");
+      const thFyCol = mustGetById("th-fy-col");
+      const simGmSlider = /** @type {HTMLInputElement} */ (mustGetById("sim-gm-slider"));
+      const simSgaSlider = /** @type {HTMLInputElement} */ (mustGetById("sim-sga-slider"));
+      const simFeeSlider = /** @type {HTMLInputElement} */ (mustGetById("sim-fee-slider"));
+      const simGmVal = mustGetById("sim-gm-val");
+      const simSgaVal = mustGetById("sim-sga-val");
+      const simFeeVal = mustGetById("sim-fee-val");
+      const simOutputBanner = mustGetById("sim-output-banner");
+      const ticketInspectorBox = mustGetById("ticket-inspector-box");
+
+      const plateElements = {
+        "plate-sunday_meadow": /** @type {HTMLImageElement} */ (mustGetById("plate-sunday_meadow")),
+        "plate-warm_poolroom": /** @type {HTMLImageElement} */ (mustGetById("plate-warm_poolroom")),
+        "plate-twilight_staircase": /** @type {HTMLImageElement} */ (mustGetById("plate-twilight_staircase"))
+      };
+
+      Object.keys(plateElements).forEach(function (key) {
+        const img = plateElements[key];
+        img.addEventListener("error", function () {
+          throw new Error("[CostcoAssetBreach] Failed to decode Dream Stratum visual plate: " + img.src);
+        });
+      });
+
+      /* 1. Pre-Baked 128x128 Tileable 35mm Film Grain */
+      (function initPrebakedFilmGrain() {
+        const tile = document.createElement("canvas");
+        tile.width = 128;
+        tile.height = 128;
+        const gctx = tile.getContext("2d");
+        if (!gctx) {
+          throw new Error("[CostcoCanvasBreach] Could not acquire 2D context for film grain tile.");
+        }
+        const imgData = gctx.createImageData(128, 128);
+        const buf = imgData.data;
+        let seed = 19990901;
+        for (let i = 0; i < buf.length; i += 4) {
+          seed = (seed * 1664525 + 1013904223) >>> 0;
+          const v = (seed >>> 24) & 0xff;
+          buf[i] = v;
+          buf[i + 1] = Math.min(255, v + 6);
+          buf[i + 2] = Math.min(255, v + 14);
+          buf[i + 3] = 255;
+        }
+        gctx.putImageData(imgData, 0, 0);
+        grainOverlay.style.backgroundImage = "url(" + tile.toDataURL("image/png") + ")";
+      })();
+
+      /* 2. Procedural Tape-Warbled Web Audio Dream Pad & Portal Chime Engine */
+      const DreamAudioEngine = (function () {
+        let ctx = null;
+        let masterGain = null;
+        let lowpass = null;
+        let echoDelay = null;
+        let voices = [];
+        let isPlaying = false;
+
+        function ensureGraph(initialChordHz) {
+          if (ctx) return;
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) {
+            throw new Error("[CostcoAudioBreach] Web Audio API is not supported in this browser runtime.");
+          }
+          ctx = new AudioCtx();
+          masterGain = ctx.createGain();
+          masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+
+          lowpass = ctx.createBiquadFilter();
+          lowpass.type = "lowpass";
+          lowpass.frequency.setValueAtTime(720, ctx.currentTime);
+          lowpass.Q.setValueAtTime(0.85, ctx.currentTime);
+
+          echoDelay = ctx.createDelay(1.5);
+          echoDelay.delayTime.setValueAtTime(0.46, ctx.currentTime);
+          const feedbackGain = ctx.createGain();
+          feedbackGain.gain.setValueAtTime(0.38, ctx.currentTime);
+          const wetGain = ctx.createGain();
+          wetGain.gain.setValueAtTime(0.34, ctx.currentTime);
+
+          lowpass.connect(masterGain);
+          lowpass.connect(echoDelay);
+          echoDelay.connect(feedbackGain);
+          feedbackGain.connect(echoDelay);
+          echoDelay.connect(wetGain);
+          wetGain.connect(masterGain);
+          masterGain.connect(ctx.destination);
+
+          const wowLfo = ctx.createOscillator();
+          wowLfo.type = "sine";
+          wowLfo.frequency.setValueAtTime(0.18, ctx.currentTime);
+
+          const filterModGain = ctx.createGain();
+          filterModGain.gain.setValueAtTime(145, ctx.currentTime);
+          wowLfo.connect(filterModGain);
+          filterModGain.connect(lowpass.frequency);
+
+          const pitchModGain = ctx.createGain();
+          pitchModGain.gain.setValueAtTime(3.2, ctx.currentTime);
+          wowLfo.connect(pitchModGain);
+
+          voices = initialChordHz.map(function (hz) {
+            const oscA = ctx.createOscillator();
+            const oscB = ctx.createOscillator();
+            const vGain = ctx.createGain();
+
+            oscA.type = "sine";
+            oscB.type = "triangle";
+            oscA.frequency.setValueAtTime(hz, ctx.currentTime);
+            oscB.frequency.setValueAtTime(hz * 1.0035, ctx.currentTime);
+
+            pitchModGain.connect(oscA.detune);
+            pitchModGain.connect(oscB.detune);
+
+            vGain.gain.setValueAtTime(0.14 / initialChordHz.length, ctx.currentTime);
+            oscA.connect(vGain);
+            oscB.connect(vGain);
+            vGain.connect(lowpass);
+
+            oscA.start();
+            oscB.start();
+            return { oscA: oscA, oscB: oscB, gain: vGain };
+          });
+
+          wowLfo.start();
+        }
+
+        return {
+          toggle: function (chordHz) {
+            ensureGraph(chordHz);
+            if (ctx.state === "suspended") {
+              ctx.resume();
+            }
+            const now = ctx.currentTime;
+            isPlaying = !isPlaying;
+            masterGain.gain.cancelScheduledValues(now);
+            masterGain.gain.setTargetAtTime(isPlaying ? 0.18 : 0.0001, now, 0.35);
+            return isPlaying;
+          },
+          setChord: function (chordHz) {
+            if (!ctx || voices.length === 0) return;
+            const now = ctx.currentTime;
+            voices.forEach(function (v, idx) {
+              const targetHz = chordHz[idx % chordHz.length];
+              v.oscA.frequency.setTargetAtTime(targetHz, now, 0.42);
+              v.oscB.frequency.setTargetAtTime(targetHz * 1.0035, now, 0.42);
+            });
+          },
+          playChime: function (hz) {
+            if (!isPlaying || !ctx || !lowpass) return;
+            const now = ctx.currentTime;
+            const bell = ctx.createOscillator();
+            const bellGain = ctx.createGain();
+            bell.type = "sine";
+            bell.frequency.setValueAtTime(Math.max(110, Math.min(2400, hz)), now);
+            bell.frequency.exponentialRampToValueAtTime(Math.max(110, hz * 1.006), now + 0.9);
+
+            bellGain.gain.setValueAtTime(0.0001, now);
+            bellGain.gain.linearRampToValueAtTime(0.11, now + 0.025);
+            bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.45);
+
+            bell.connect(bellGain);
+            bellGain.connect(lowpass);
+            bell.start(now);
+            bell.stop(now + 1.5);
+          }
+        };
+      })();
+
+      /* 3. Stratum Switching, Portals & Echoes */
+      let currentStratumId = "two_pillar_engine";
+      let driftIndex = 0;
+
+      function spawnFloatingEcho(text, clientX, clientY) {
+        const note = document.createElement("div");
+        note.className = "floating-echo-note";
+        note.textContent = text;
+
+        const clampedX = Math.max(120, Math.min(window.innerWidth - 120, clientX));
+        const clampedY = Math.max(90, Math.min(window.innerHeight - 60, clientY));
+        note.style.left = clampedX + "px";
+        note.style.top = clampedY + "px";
+
+        echoLayer.appendChild(note);
+        window.setTimeout(function () {
+          if (note.parentNode) {
+            note.parentNode.removeChild(note);
+          }
+        }, 5400);
+      }
+
+      function updateDreamCaption(newCaption) {
+        sceneWhisperCaption.classList.add("is-updating");
+        window.setTimeout(function () {
+          sceneWhisperCaption.textContent = newCaption;
+          sceneWhisperCaption.classList.remove("is-updating");
+        }, 170);
+      }
+
+      function renderHotspots(stratum) {
+        hotspotLayer.innerHTML = "";
+        stratum.portals.forEach(function (portal, idx) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className =
+            "dream-hotspot" +
+            (idx === 0 ? " is-selected" : "") +
+            (portal.y >= 64 ? " tag-above" : "");
+          btn.style.left = portal.x + "%";
+          btn.style.top = portal.y + "%";
+          btn.setAttribute("aria-label", "Inspect Costco portal: " + portal.label);
+
+          const tag = document.createElement("span");
+          tag.className = "hotspot-tag";
+          tag.textContent = portal.label;
+          btn.appendChild(tag);
+
+          btn.addEventListener("click", function (ev) {
+            const siblings = hotspotLayer.querySelectorAll(".dream-hotspot");
+            siblings.forEach(function (s) { s.classList.remove("is-selected"); });
+            btn.classList.add("is-selected");
+
+            updateDreamCaption(portal.caption);
+            memoryFragmentReadout.innerHTML =
+              "<strong>sec 10-k trace [" + portal.label + "]:</strong> " +
+              "<span>" + portal.trace + "</span>";
+            portalCoordsReadout.textContent =
+              "PORTAL: (" + portal.x.toFixed(1) + "%, " + portal.y.toFixed(1) + "%)";
+
+            DreamAudioEngine.playChime(portal.chimeHz);
+            const rect = btn.getBoundingClientRect();
+            spawnFloatingEcho(portal.label, rect.left + rect.width / 2, rect.top);
+            ev.stopPropagation();
+          });
+
+          hotspotLayer.appendChild(btn);
+        });
+      }
+
+      const currentCanvasPalette = {
+        skyTop: [53, 139, 242],
+        skyMid: [139, 203, 255],
+        horizon: [255, 243, 214],
+        gridLine: [255, 255, 255],
+        orbTint: [255, 235, 208]
+      };
+      let targetCanvasPalette = DREAM_STRATA.two_pillar_engine.canvasPalette;
+
+      function renderTicketTab(ticketIndex) {
+        const t = WAYFINDER_TICKETS[ticketIndex];
+        if (!t) return;
+        document.querySelectorAll("[data-ticket-tab]").forEach(function (btn) {
+          const active = Number(btn.getAttribute("data-ticket-tab")) === ticketIndex;
+          btn.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        ticketInspectorBox.innerHTML =
+          "<h3>" + t.id.toUpperCase() + " — " + t.title + "</h3>" +
+          "<div class='ticket-meta'>Status: resolved · File: " + t.file + " · Primary Source: " + t.citation + "</div>" +
+          "<p style='font-style:italic; color:#3d4f78; margin-bottom:6px;'>" + t.question + "</p>" +
+          "<ul>" + t.bullets.map(function (b) { return "<li>" + b + "</li>"; }).join("") + "</ul>";
+      }
+
+      function applyStratum(stratumId) {
+        const stratum = DREAM_STRATA[stratumId];
+        if (!stratum) {
+          throw new Error("[CostcoStateBreach] Unknown Dream Stratum id: " + stratumId);
+        }
+        currentStratumId = stratumId;
+        targetCanvasPalette = stratum.canvasPalette;
+
+        const rootStyle = document.documentElement.style;
+        Object.keys(stratum.cssVars).forEach(function (prop) {
+          rootStyle.setProperty(prop, stratum.cssVars[prop]);
+        });
+
+        Object.keys(plateElements).forEach(function (key) {
+          plateElements[key].classList.toggle("is-active", key === stratum.plateId);
+        });
+
+        document.querySelectorAll("[data-stratum-btn]").forEach(function (btn) {
+          const active = btn.getAttribute("data-stratum-btn") === stratumId;
+          btn.classList.toggle("is-active", active);
+          btn.setAttribute("aria-selected", active ? "true" : "false");
+        });
+
+        viewerWindowTitle.textContent = "warehouse_viewer.exe — [" + stratum.windowFile + "]";
+        osdStratumCode.textContent = stratum.osdTitle;
+        heroWhisperTitle.textContent = stratum.heroWhisper;
+        hudCardTitle.textContent = stratum.hudBadge.title;
+        hudCardBody.textContent = stratum.hudBadge.body;
+        hudCardEq.textContent = stratum.hudBadge.eq;
+        updateDreamCaption(stratum.defaultCaption);
+
+        memoryFragmentReadout.innerHTML =
+          "<strong>sec 10-k trace:</strong> <span>" + stratum.defaultTrace + "</span>";
+        const firstPortal = stratum.portals[0];
+        portalCoordsReadout.textContent =
+          "PORTAL: (" + firstPortal.x.toFixed(1) + "%, " + firstPortal.y.toFixed(1) + "%)";
+
+        telScent.textContent = stratum.telemetry.scent;
+        telFamiliarity.textContent = stratum.telemetry.familiarity;
+        telPeople.textContent = stratum.telemetry.people;
+        telExit.textContent = stratum.telemetry.exit;
+
+        renderHotspots(stratum);
+        DreamAudioEngine.setChord(stratum.chordHz);
+        DreamAudioEngine.playChime(firstPortal.chimeHz);
+
+        const matchingTicketIdx = WAYFINDER_TICKETS.findIndex(function (t) {
+          return t.stratumId === stratumId;
+        });
+        if (matchingTicketIdx >= 0) {
+          renderTicketTab(matchingTicketIdx);
+        }
+      }
+
+      /* 4. Multi-Year GAAP Waterfall & Flywheel Simulator */
+      function renderFiscalYearTable(fy) {
+        const row = COSTCO_DATA.historical_comparison.find(function (r) {
+          return r.fiscal_year === fy;
+        });
+        if (!row) return;
+
+        document.querySelectorAll("[data-fy-btn]").forEach(function (btn) {
+          btn.setAttribute("aria-pressed", Number(btn.getAttribute("data-fy-btn")) === fy ? "true" : "false");
+        });
+
+        thFyCol.textContent = "FY" + fy + " ($M)";
+
+        const netSalesShare = ((row.net_sales_usd_m / row.total_revenue_usd_m) * 100).toFixed(2) + "%";
+        const feeShareRev = ((row.membership_fees_usd_m / row.total_revenue_usd_m) * 100).toFixed(2) + "%";
+        const grossMarginDollar = row.net_sales_usd_m - row.merchandise_costs_usd_m;
+        const grossMarginPct = ((grossMarginDollar / row.net_sales_usd_m) * 100).toFixed(2) + "%";
+        const sgaPct = ((row.selling_general_and_administrative_usd_m / row.net_sales_usd_m) * 100).toFixed(2) + "%";
+        const merchOpContrib = grossMarginDollar - row.selling_general_and_administrative_usd_m;
+        const merchOpShare = ((merchOpContrib / row.operating_income_usd_m) * 100).toFixed(2) + "%";
+        const feeOpShare = ((row.membership_fees_usd_m / row.operating_income_usd_m) * 100).toFixed(2) + "%";
+        const opMarginPct = ((row.operating_income_usd_m / row.total_revenue_usd_m) * 100).toFixed(2) + "%";
+
+        const rowsHtml = [
+          {
+            label: "{Net Sales} (Warehouse & E-Commerce)",
+            val: "$" + row.net_sales_usd_m.toLocaleString() + "M",
+            ratio: netSalesShare + " of Rev",
+            role: "High-velocity pallet volume (<4,000 SKUs)",
+            hi: false
+          },
+          {
+            label: "{Membership Fees} (ASC 606 Ratable)",
+            val: "$" + row.membership_fees_usd_m.toLocaleString() + "M",
+            ratio: feeShareRev + " of Rev",
+            role: "Recurring subscription club annuity",
+            hi: false
+          },
+          {
+            label: "Consolidated Total Revenue",
+            val: "$" + row.total_revenue_usd_m.toLocaleString() + "M",
+            ratio: "100.00%",
+            role: "Exact GAAP identity: Net Sales + Fees",
+            hi: true
+          },
+          {
+            label: "Merchandise Costs (incl. LIFO/Freight)",
+            val: "-$" + row.merchandise_costs_usd_m.toLocaleString() + "M",
+            ratio: (100 - parseFloat(grossMarginPct)).toFixed(2) + "% of Sales",
+            role: "Vendor rebates & Kirkland efficiencies",
+            hi: false
+          },
+          {
+            label: "Merchandise Gross Margin ({Gross Margin Ceiling})",
+            val: "$" + grossMarginDollar.toLocaleString() + "M",
+            ratio: grossMarginPct + " GM%",
+            role: "Capped ~10.5%–11.0% to maximize renewal",
+            hi: true
+          },
+          {
+            label: "Selling, General & Administrative (SG&A)",
+            val: "-$" + row.selling_general_and_administrative_usd_m.toLocaleString() + "M",
+            ratio: sgaPct + " of Sales",
+            role: "Pallet-floor labor & warehouse operations",
+            hi: false
+          },
+          {
+            label: "Net Merchandise Operating Contribution",
+            val: "$" + merchOpContrib.toLocaleString() + "M",
+            ratio: merchOpShare + " of OpInc",
+            role: "Merchandise profit after all SG&A",
+            hi: false
+          },
+          {
+            label: "{Membership Fees} Operating Share",
+            val: "$" + row.membership_fees_usd_m.toLocaleString() + "M",
+            ratio: feeOpShare + " of OpInc",
+            role: "Majority driver of operating profit",
+            hi: true
+          },
+          {
+            label: "Consolidated Operating Income",
+            val: "$" + row.operating_income_usd_m.toLocaleString() + "M",
+            ratio: opMarginPct + " Op Margin",
+            role: "Merchandise Contribution + Membership Fees",
+            hi: true
+          },
+          {
+            label: "Consolidated Net Income (Costco)",
+            val: "$" + row.net_income_usd_m.toLocaleString() + "M",
+            ratio: ((row.net_income_usd_m / row.total_revenue_usd_m) * 100).toFixed(2) + "% Net",
+            role: "After net interest (+$455M FY24) & taxes",
+            hi: false
+          }
+        ];
+
+        gaapTbody.innerHTML = rowsHtml
+          .map(function (r) {
+            return (
+              "<tr class='" + (r.hi ? "highlight-row" : "") + "'>" +
+              "<td>" + r.label + "</td>" +
+              "<td class='num'>" + r.val + "</td>" +
+              "<td class='num'>" + r.ratio + "</td>" +
+              "<td>" + r.role + "</td>" +
+              "</tr>"
+            );
+          })
+          .join("");
+      }
+
+      function updateSimulator() {
+        const gmPct = parseFloat(simGmSlider.value);
+        const sgaPct = parseFloat(simSgaSlider.value);
+        const feeLift = parseFloat(simFeeSlider.value);
+
+        simGmVal.textContent = gmPct.toFixed(2) + "%";
+        simSgaVal.textContent = sgaPct.toFixed(2) + "%";
+        simFeeVal.textContent = "+$" + feeLift.toFixed(0) + "M";
+
+        const netSales = 249625;
+        const fees = 4828 + feeLift;
+        const gmDollars = Math.round(netSales * (gmPct / 100));
+        const sgaDollars = Math.round(netSales * (sgaPct / 100));
+        const merchContrib = gmDollars - sgaDollars;
+        const opInc = merchContrib + fees;
+        const feeShareOp = ((fees / Math.max(1, opInc)) * 100).toFixed(2);
+        const ceilingWarning =
+          gmPct > 11.5
+            ? " ⚠️ BREACHES 11.5% GROSS MARGIN CEILING (threatens 92.9% renewal flywheel!)"
+            : " ✓ WITHIN STRUCTURAL GROSS MARGIN CEILING (10.0%–11.5%)";
+
+        simOutputBanner.innerHTML =
+          "<strong>SIMULATED FY2024 FLYWHEEL:</strong> " +
+          "Merchandise Gross Margin = <code>$" + gmDollars.toLocaleString() + "M</code> | " +
+          "SG&amp;A = <code>$" + sgaDollars.toLocaleString() + "M</code> | " +
+          "Merchandise Operating Contrib = <code>$" + merchContrib.toLocaleString() + "M</code> + " +
+          "Membership Fees = <code>$" + fees.toLocaleString() + "M</code> &rarr; " +
+          "<strong>Operating Income = <code>$" + opInc.toLocaleString() + "M</code></strong> " +
+          "(Fees = <code>" + feeShareOp + "%</code> of OpInc)." +
+          "<br/><span style='color:" + (gmPct > 11.5 ? "#a12856" : "#256648") + "; font-weight:700;'>" +
+          ceilingWarning +
+          "</span>";
+      }
+
+      document.querySelectorAll("[data-fy-btn]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          renderFiscalYearTable(Number(btn.getAttribute("data-fy-btn")));
+        });
+      });
+
+      document.querySelectorAll("[data-ticket-tab]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const idx = Number(btn.getAttribute("data-ticket-tab"));
+          renderTicketTab(idx);
+          const ticket = WAYFINDER_TICKETS[idx];
+          if (ticket && ticket.stratumId) {
+            applyStratum(ticket.stratumId);
+          }
+        });
+      });
+
+      simGmSlider.addEventListener("input", updateSimulator);
+      simSgaSlider.addEventListener("input", updateSimulator);
+      simFeeSlider.addEventListener("input", updateSimulator);
+
+      /* 5. Controls, Seraphic Eye Tracking & Dialog Interactions */
+      document.querySelectorAll("[data-stratum-btn]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const targetId = btn.getAttribute("data-stratum-btn");
+          if (targetId) {
+            applyStratum(targetId);
+          }
+        });
+      });
+
+      window.addEventListener("keydown", function (ev) {
+        if (ev.key === "1") applyStratum("two_pillar_engine");
+        if (ev.key === "2") applyStratum("sku_kirkland_aisle");
+        if (ev.key === "3") applyStratum("membership_renewal_halo");
+        if (ev.key === "4") applyStratum("ancillary_digital_drift");
+        if (ev.key === "5") applyStratum("flywheel_working_capital");
+      });
+
+      btnAudioToggle.addEventListener("click", function () {
+        const stratum = DREAM_STRATA[currentStratumId];
+        const active = DreamAudioEngine.toggle(stratum.chordHz);
+        btnAudioToggle.setAttribute("aria-pressed", active ? "true" : "false");
+        document.body.classList.toggle("audio-playing", active);
+        audioBtnLabel.textContent = active ? "tape hum: on" : "tape hum: off";
+        if (active) {
+          DreamAudioEngine.playChime(stratum.portals[0].chimeHz);
+        }
+      });
+
+      btnVhsToggle.addEventListener("click", function () {
+        const active = document.body.classList.toggle("vhs-active");
+        btnVhsToggle.setAttribute("aria-pressed", active ? "true" : "false");
+        btnVhsToggle.innerHTML = "<span>" + (active ? "📼 vhs halation: on" : "📼 vhs halation: off") + "</span>";
+      });
+
+      function toggleHalfAsleep() {
+        const asleep = document.body.classList.toggle("half-asleep");
+        btnHalfAsleep.setAttribute("aria-pressed", asleep ? "true" : "false");
+        btnHalfAsleep.innerHTML = "<span>" + (asleep ? "☾ eyelids: half-closed" : "☾ half-asleep blur") + "</span>";
+      }
+
+      btnHalfAsleep.addEventListener("click", toggleHalfAsleep);
+
+      watcherBtn.addEventListener("click", function (ev) {
+        watcherBtn.classList.add("blinking");
+        window.setTimeout(function () {
+          watcherBtn.classList.remove("blinking");
+        }, 240);
+        toggleHalfAsleep();
+        DreamAudioEngine.playChime(783.99);
+        spawnFloatingEcho("the warehouse skylight blinked", ev.clientX || window.innerWidth / 2, (ev.clientY || 110) + 12);
+      });
+
+      function triggerDriftWhisper(originX, originY) {
+        const whisper = DRIFT_WHISPERS[driftIndex % DRIFT_WHISPERS.length];
+        driftIndex += 1;
+        dialogQuestionText.textContent = whisper;
+        updateDreamCaption(whisper);
+        dialogResponseEcho.textContent = "> sec edgar 10-k trace verified (CIK 0000909832)...";
+        DreamAudioEngine.playChime(659.25);
+        spawnFloatingEcho(
+          ECHO_PHRASES[driftIndex % ECHO_PHRASES.length],
+          originX || window.innerWidth * 0.5,
+          originY || window.innerHeight * 0.35
+        );
+      }
+
+      btnDriftDeeper.addEventListener("click", function (ev) {
+        const rect = btnDriftDeeper.getBoundingClientRect();
+        triggerDriftWhisper(rect.left + rect.width / 2, rect.bottom + 18);
+      });
+
+      let echoPhraseCursor = 0;
+      btnDialogRemember.addEventListener("click", function () {
+        const phrase = ECHO_PHRASES[echoPhraseCursor % ECHO_PHRASES.length];
+        echoPhraseCursor += 1;
+        dialogResponseEcho.textContent = '> renewed at $65/yr (92.9% US/CA retention): "' + phrase + '"';
+        const rect = btnDialogRemember.getBoundingClientRect();
+        spawnFloatingEcho("92.9% renewal locked", rect.left + rect.width / 2, rect.top);
+        DreamAudioEngine.playChime(587.33);
+      });
+
+      btnDialogStay.addEventListener("click", function () {
+        dialogResponseEcho.textContent = "> executive tier active ($130/yr · 2% reward up to $1,250 · 73.3% of sales).";
+        const rect = btnDialogStay.getBoundingClientRect();
+        spawnFloatingEcho("2% reward contra-revenue ($2,804M)", rect.left + rect.width / 2, rect.top);
+        DreamAudioEngine.playChime(523.25);
+      });
+
+      btnDialogWake.addEventListener("click", function () {
+        winReminder.classList.remove("gentle-shake");
+        void winReminder.offsetWidth;
+        winReminder.classList.add("gentle-shake");
+        dialogResponseEcho.textContent = "> markup_breach.exe rejected: gross margin ceiling strictly capped at 10.92%!";
+        const rect = btnDialogWake.getBoundingClientRect();
+        spawnFloatingEcho("ceiling enforced: 10.92%", rect.left + rect.width / 2, rect.top);
+        DreamAudioEngine.playChime(440.00);
+      });
+
+      /* 6. Bounded Viewport-Safe Window Dragging */
+      let topZIndex = 20;
+      document.querySelectorAll("[data-draggable-window]").forEach(function (winEl) {
+        const win = /** @type {HTMLElement} */ (winEl);
+        let offsetX = 0;
+        let offsetY = 0;
+        let startPointerX = 0;
+        let startPointerY = 0;
+        let dragging = false;
+
+        win.addEventListener("pointerdown", function () {
+          document.querySelectorAll(".dream-window").forEach(function (w) {
+            w.classList.remove("is-focused");
+          });
+          win.classList.add("is-focused");
+          topZIndex += 1;
+          win.style.zIndex = String(topZIndex);
+        });
+
+        const handle = win.querySelector("[data-drag-handle]");
+        if (handle) {
+          handle.addEventListener("pointerdown", function (ev) {
+            const e = /** @type {PointerEvent} */ (ev);
+            if ((/** @type {HTMLElement} */ (e.target)).closest("button")) return;
+            if (window.innerWidth <= 980) return;
+            dragging = true;
+            startPointerX = e.clientX - offsetX;
+            startPointerY = e.clientY - offsetY;
+            (/** @type {HTMLElement} */ (handle)).setPointerCapture(e.pointerId);
+          });
+
+          handle.addEventListener("pointermove", function (ev) {
+            if (!dragging) return;
+            const e = /** @type {PointerEvent} */ (ev);
+            const rawX = e.clientX - startPointerX;
+            const rawY = e.clientY - startPointerY;
+            offsetX = Math.max(-220, Math.min(220, rawX));
+            offsetY = Math.max(-110, Math.min(180, rawY));
+            win.style.transform = "translate3d(" + offsetX + "px, " + offsetY + "px, 0)";
+          });
+
+          const stopDrag = function () { dragging = false; };
+          handle.addEventListener("pointerup", stopDrag);
+          handle.addEventListener("pointercancel", stopDrag);
+        }
+
+        win.querySelectorAll("[data-win-action]").forEach(function (ctrlBtn) {
+          ctrlBtn.addEventListener("click", function () {
+            const action = ctrlBtn.getAttribute("data-win-action");
+            if (action === "reset-pos") {
+              offsetX = 0;
+              offsetY = 0;
+              win.style.transform = "translate3d(0, 0, 0)";
+            } else if (action === "whisper") {
+              const rect = ctrlBtn.getBoundingClientRect();
+              triggerDriftWhisper(rect.left, rect.bottom + 14);
+            }
+          });
+        });
+      });
+
+      /* 7. Stuck-in-1999 Looping Clock */
+      let dreamSeconds = 8;
+      let tapeTotalSeconds = 42 * 60 + 19;
+      window.setInterval(function () {
+        dreamSeconds = (dreamSeconds + 1) % 60;
+        const secStr = dreamSeconds < 10 ? "0" + dreamSeconds : String(dreamSeconds);
+        stuckClockEl.textContent = "04:15:" + secStr + " PM";
+
+        tapeTotalSeconds += 1;
+        const mins = Math.floor(tapeTotalSeconds / 60) % 60;
+        const secs = tapeTotalSeconds % 60;
+        osdTapeCounter.textContent =
+          "SP · 00:" + (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
+      }, 1000);
+
+      window.setInterval(function () {
+        if (document.body.classList.contains("half-asleep")) return;
+        watcherBtn.classList.add("blinking");
+        window.setTimeout(function () {
+          watcherBtn.classList.remove("blinking");
+        }, 190);
+      }, 6800);
+
+      /* 8. 60fps Pre-Allocated Sky, Perspective Checkerboard & Iridescent Orbs Loop */
+      const sctx = skyCanvas.getContext("2d");
+      if (!sctx) {
+        throw new Error("[CostcoCanvasBreach] Failed to initialize 2D context on #dream-sky-canvas.");
+      }
+
+      let vpWidth = window.innerWidth;
+      let vpHeight = window.innerHeight;
+
+      function resizeSkyCanvas() {
+        vpWidth = window.innerWidth;
+        vpHeight = window.innerHeight;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        skyCanvas.width = Math.floor(vpWidth * dpr);
+        skyCanvas.height = Math.floor(vpHeight * dpr);
+        sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resizeSkyCanvas();
+      window.addEventListener("resize", resizeSkyCanvas);
+
+      let targetNormX = 0;
+      let targetNormY = 0;
+      let smoothNormX = 0;
+      let smoothNormY = 0;
+
+      window.addEventListener("pointermove", function (ev) {
+        targetNormX = (ev.clientX / Math.max(1, vpWidth)) * 2 - 1;
+        targetNormY = (ev.clientY / Math.max(1, vpHeight)) * 2 - 1;
+      });
+
+      const ORB_COUNT = 38;
+      const orbs = new Array(ORB_COUNT);
+      for (let i = 0; i < ORB_COUNT; i++) {
+        orbs[i] = {
+          x: Math.random(),
+          y: Math.random(),
+          r: 5 + Math.random() * 22,
+          speedY: 0.00012 + Math.random() * 0.00028,
+          phase: Math.random() * Math.PI * 2,
+          swayAmp: 10 + Math.random() * 24,
+          alpha: 0.16 + Math.random() * 0.34
+        };
+      }
+
+      function lerpChannel(curr, targ, factor) {
+        return curr + (targ - curr) * factor;
+      }
+
+      function lerpRgb(currArr, targArr, factor) {
+        currArr[0] = lerpChannel(currArr[0], targArr[0], factor);
+        currArr[1] = lerpChannel(currArr[1], targArr[1], factor);
+        currArr[2] = lerpChannel(currArr[2], targArr[2], factor);
+      }
+
+      function rgbString(arr, alpha) {
+        return (
+          "rgba(" +
+          Math.round(arr[0]) + "," +
+          Math.round(arr[1]) + "," +
+          Math.round(arr[2]) + "," +
+          alpha + ")"
+        );
+      }
+
+      let grainTick = 0;
+
+      function animateDreamscape(nowMs) {
+        const t = nowMs * 0.001;
+
+        smoothNormX += (targetNormX - smoothNormX) * 0.075;
+        smoothNormY += (targetNormY - smoothNormY) * 0.075;
+
+        const irisDx = (smoothNormX * 8.5).toFixed(2);
+        const irisDy = (smoothNormY * 4.2).toFixed(2);
+        watcherIrisGroup.setAttribute("transform", "translate(" + irisDx + ", " + irisDy + ")");
+
+        const activeStratum = DREAM_STRATA[currentStratumId];
+        const activePlate = activeStratum ? plateElements[activeStratum.plateId] : null;
+        if (activePlate) {
+          activePlate.style.transform =
+            "scale(1.022) translate3d(" + (-smoothNormX * 7).toFixed(2) + "px, " + (-smoothNormY * 5).toFixed(2) + "px, 0)";
+        }
+
+        grainTick += 1;
+        if (grainTick % 7 === 0) {
+          const gx = ((grainTick * 19) % 64) - 32;
+          const gy = ((grainTick * 31) % 64) - 32;
+          grainOverlay.style.transform = "translate3d(" + gx + "px, " + gy + "px, 0)";
+        }
+
+        lerpRgb(currentCanvasPalette.skyTop, targetCanvasPalette.skyTop, 0.045);
+        lerpRgb(currentCanvasPalette.skyMid, targetCanvasPalette.skyMid, 0.045);
+        lerpRgb(currentCanvasPalette.horizon, targetCanvasPalette.horizon, 0.045);
+        lerpRgb(currentCanvasPalette.gridLine, targetCanvasPalette.gridLine, 0.045);
+        lerpRgb(currentCanvasPalette.orbTint, targetCanvasPalette.orbTint, 0.045);
+
+        const skyGrad = sctx.createLinearGradient(0, 0, 0, vpHeight);
+        skyGrad.addColorStop(0, rgbString(currentCanvasPalette.skyTop, 1));
+        skyGrad.addColorStop(0.58, rgbString(currentCanvasPalette.skyMid, 1));
+        skyGrad.addColorStop(1, rgbString(currentCanvasPalette.horizon, 1));
+        sctx.fillStyle = skyGrad;
+        sctx.fillRect(0, 0, vpWidth, vpHeight);
+
+        const sunX = vpWidth * (0.5 + smoothNormX * 0.03);
+        const sunY = vpHeight * (0.64 + smoothNormY * 0.02);
+        const sunGrad = sctx.createRadialGradient(sunX, sunY, 10, sunX, sunY, vpWidth * 0.45);
+        sunGrad.addColorStop(0, "rgba(255, 252, 240, 0.55)");
+        sunGrad.addColorStop(0.45, rgbString(currentCanvasPalette.horizon, 0.28));
+        sunGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+        sctx.fillStyle = sunGrad;
+        sctx.fillRect(0, 0, vpWidth, vpHeight);
+
+        const horizonY = vpHeight * 0.68;
+        const vanishX = vpWidth * (0.5 - smoothNormX * 0.04);
+        sctx.strokeStyle = rgbString(currentCanvasPalette.gridLine, 0.24);
+        sctx.lineWidth = 1;
+        sctx.beginPath();
+        for (let i = -9; i <= 9; i++) {
+          const bottomX = vanishX + i * (vpWidth * 0.13);
+          sctx.moveTo(vanishX, horizonY);
+          sctx.lineTo(bottomX, vpHeight);
+        }
+        const scrollOffset = (t * 0.22) % 1;
+        for (let row = 1; row <= 7; row++) {
+          const normRow = (row - 1 + scrollOffset) / 7;
+          const y = horizonY + Math.pow(normRow, 1.85) * (vpHeight - horizonY);
+          sctx.moveTo(0, y);
+          sctx.lineTo(vpWidth, y);
+        }
+        sctx.stroke();
+
+        for (let i = 0; i < ORB_COUNT; i++) {
+          const orb = orbs[i];
+          orb.y -= orb.speedY;
+          if (orb.y < -0.08) {
+            orb.y = 1.08;
+            orb.x = Math.random();
+          }
+          const px = orb.x * vpWidth + Math.sin(t * 0.7 + orb.phase) * orb.swayAmp - smoothNormX * 14;
+          const py = orb.y * vpHeight - smoothNormY * 10;
+
+          const orbGrad = sctx.createRadialGradient(
+            px - orb.r * 0.3,
+            py - orb.r * 0.3,
+            orb.r * 0.08,
+            px,
+            py,
+            orb.r
+          );
+          orbGrad.addColorStop(0, "rgba(255, 255, 255, " + (orb.alpha * 1.35).toFixed(3) + ")");
+          orbGrad.addColorStop(0.55, rgbString(currentCanvasPalette.orbTint, Number((orb.alpha * 0.45).toFixed(3))));
+          orbGrad.addColorStop(0.88, "rgba(195, 224, 255, " + (orb.alpha * 0.5).toFixed(3) + ")");
+          orbGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+          sctx.fillStyle = orbGrad;
+          sctx.beginPath();
+          sctx.arc(px, py, orb.r, 0, Math.PI * 2);
+          sctx.fill();
+        }
+
+        window.requestAnimationFrame(animateDreamscape);
+      }
+
+      renderFiscalYearTable(2024);
+      updateSimulator();
+      renderTicketTab(0);
+      applyStratum("two_pillar_engine");
+      window.requestAnimationFrame(animateDreamscape);
+    })();
+  </script>
+</body>
+</html>
