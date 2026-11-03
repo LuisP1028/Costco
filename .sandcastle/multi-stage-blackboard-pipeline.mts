@@ -2057,7 +2057,10 @@ function defaultAgentTaskRunner(repoDir: string): AgentTaskRunner {
                         SEED_PATH: seed,
                         PLAN_BRANCH: planBranch,
                     },
-                    branchStrategy: { type: "branch", branch },
+                    branchStrategy:
+                        branch === "main" || branch === "HEAD"
+                            ? { type: "head" }
+                            : { type: "branch", branch },
                     logging: {
                         type: "file",
                         verbose: true,
@@ -2614,72 +2617,88 @@ export async function runImplementationSession(options: {
     }
 
     const testerLeadBranch = `agent/tester-${runId}`;
-    await ensureWorktree(testerLeadBranch, repoDir, planBranch);
-    for (const imp of implementerDefs) {
-        await ensureWorktree(imp.branch, repoDir, planBranch);
+    let stage3AlreadyComplete = false;
+    for (const checkBr of [testerLeadBranch, planBranch]) {
+        if (branchExists(checkBr, repoDir)) {
+            try {
+                assertStageManifest("tester", checkBr, `handoff/${runId}/tester.txt`, repoDir);
+                stage3AlreadyComplete = true;
+                console.log(`[pipeline] Stage 3 manifest already verified on ${checkBr}; skipping Stage 3 agent re-runs and joining branches.`);
+                break;
+            } catch {
+                // Not yet complete on checkBr
+            }
+        }
     }
 
-    const testerWorktree = worktreeDir(testerLeadBranch, repoDir);
-    const workerIds = implementerDefs.map((d) => d.name);
+    if (!stage3AlreadyComplete) {
+        await ensureWorktree(testerLeadBranch, repoDir, planBranch);
+        for (const imp of implementerDefs) {
+            await ensureWorktree(imp.branch, repoDir, planBranch);
+        }
 
-    const blackboard = new BlackboardServer(runId, {
-        repoDir,
-        sessionName: "stage3-implementation",
-        activeAgents: [...workerIds, "tester"],
-        workerAgents: workerIds,
-    });
-    await blackboard.start();
+        const testerWorktree = worktreeDir(testerLeadBranch, repoDir);
+        const workerIds = implementerDefs.map((d) => d.name);
 
-    try {
-        const impTasks = implementerDefs.map((imp) =>
-            taskRunner({
-                name: imp.name,
-                branch: imp.branch,
-                promptFile: imp.promptFile,
-                model: STAGE_MODELS[imp.name],
-                manifestPaths: imp.manifest,
+        const blackboard = new BlackboardServer(runId, {
+            repoDir,
+            sessionName: "stage3-implementation",
+            activeAgents: [...workerIds, "tester"],
+            workerAgents: workerIds,
+        });
+        await blackboard.start();
+
+        try {
+            const impTasks = implementerDefs.map((imp) =>
+                taskRunner({
+                    name: imp.name,
+                    branch: imp.branch,
+                    promptFile: imp.promptFile,
+                    model: STAGE_MODELS[imp.name],
+                    manifestPaths: imp.manifest,
+                    baseRef: planBranch,
+                    runId,
+                    seed,
+                    planBranch,
+                    env: blackboard.agentEnv(imp.name),
+                    onAttemptStart: () => blackboard.markAgentActive(imp.name),
+                    onStageSettled: (outcome, err) => {
+                        const impWt = worktreeDir(imp.branch, repoDir);
+                        syncRelativeFilesBetweenWorktrees(impWt, testerWorktree, [imp.manifest]);
+                        if (outcome === "settled") {
+                            blackboard.markAgentSettled(imp.name);
+                        } else {
+                            blackboard.markAgentTerminated(imp.name, errorText(err));
+                        }
+                    },
+                }),
+            );
+
+            const testerListenerTask = taskRunner({
+                name: "tester",
+                branch: testerLeadBranch,
+                promptFile: "./.sandcastle/tester.md",
+                model: STAGE_MODELS.tester,
+                manifestPaths: `handoff/${runId}/tester.txt`,
                 baseRef: planBranch,
                 runId,
                 seed,
                 planBranch,
-                env: blackboard.agentEnv(imp.name),
-                onAttemptStart: () => blackboard.markAgentActive(imp.name),
+                env: blackboard.agentEnv("tester"),
+                onAttemptStart: () => blackboard.markAgentActive("tester"),
                 onStageSettled: (outcome, err) => {
-                    const impWt = worktreeDir(imp.branch, repoDir);
-                    syncRelativeFilesBetweenWorktrees(impWt, testerWorktree, [imp.manifest]);
                     if (outcome === "settled") {
-                        blackboard.markAgentSettled(imp.name);
+                        blackboard.markAgentSettled("tester");
                     } else {
-                        blackboard.markAgentTerminated(imp.name, errorText(err));
+                        blackboard.markAgentTerminated("tester", errorText(err));
                     }
                 },
-            }),
-        );
+            });
 
-        const testerListenerTask = taskRunner({
-            name: "tester",
-            branch: testerLeadBranch,
-            promptFile: "./.sandcastle/tester.md",
-            model: STAGE_MODELS.tester,
-            manifestPaths: `handoff/${runId}/tester.txt`,
-            baseRef: planBranch,
-            runId,
-            seed,
-            planBranch,
-            env: blackboard.agentEnv("tester"),
-            onAttemptStart: () => blackboard.markAgentActive("tester"),
-            onStageSettled: (outcome, err) => {
-                if (outcome === "settled") {
-                    blackboard.markAgentSettled("tester");
-                } else {
-                    blackboard.markAgentTerminated("tester", errorText(err));
-                }
-            },
-        });
-
-        await Promise.all([...impTasks, testerListenerTask]);
-    } finally {
-        await blackboard.close();
+            await Promise.all([...impTasks, testerListenerTask]);
+        } finally {
+            await blackboard.close();
+        }
     }
 
     for (const imp of implementerDefs) {
@@ -2758,46 +2777,64 @@ export async function runTestingSession(options: {
         });
     }
 
-    for (const tst of testerDefs) {
-        await ensureWorktree(tst.branch, repoDir, planBranch);
+    let stage4AlreadyComplete = false;
+    if (branchExists(planBranch, repoDir)) {
+        try {
+            assertStageManifest(
+                "tester-all",
+                planBranch,
+                testerDefs.map((t) => t.manifest),
+                repoDir,
+            );
+            stage4AlreadyComplete = true;
+            console.log(`[pipeline] Stage 4 manifests already verified on ${planBranch}; skipping Stage 4 agent re-runs and joining branches.`);
+        } catch {
+            stage4AlreadyComplete = false;
+        }
     }
 
-    const workerIds = testerDefs.map((d) => d.name);
-    const blackboard = new BlackboardServer(runId, {
-        repoDir,
-        sessionName: "stage4-testing",
-        activeAgents: workerIds,
-        workerAgents: workerIds,
-    });
-    await blackboard.start();
+    if (!stage4AlreadyComplete) {
+        for (const tst of testerDefs) {
+            await ensureWorktree(tst.branch, repoDir, planBranch);
+        }
 
-    try {
-        await Promise.all(
-            testerDefs.map((tst) =>
-                taskRunner({
-                    name: tst.name,
-                    branch: tst.branch,
-                    promptFile: tst.promptFile,
-                    model: STAGE_MODELS[tst.name],
-                    manifestPaths: tst.manifest,
-                    baseRef: planBranch,
-                    runId,
-                    seed,
-                    planBranch,
-                    env: blackboard.agentEnv(tst.name),
-                    onAttemptStart: () => blackboard.markAgentActive(tst.name),
-                    onStageSettled: (outcome, err) => {
-                        if (outcome === "settled") {
-                            blackboard.markAgentSettled(tst.name);
-                        } else {
-                            blackboard.markAgentTerminated(tst.name, errorText(err));
-                        }
-                    },
-                }),
-            ),
-        );
-    } finally {
-        await blackboard.close();
+        const workerIds = testerDefs.map((d) => d.name);
+        const blackboard = new BlackboardServer(runId, {
+            repoDir,
+            sessionName: "stage4-testing",
+            activeAgents: workerIds,
+            workerAgents: workerIds,
+        });
+        await blackboard.start();
+
+        try {
+            await Promise.all(
+                testerDefs.map((tst) =>
+                    taskRunner({
+                        name: tst.name,
+                        branch: tst.branch,
+                        promptFile: tst.promptFile,
+                        model: STAGE_MODELS[tst.name],
+                        manifestPaths: tst.manifest,
+                        baseRef: planBranch,
+                        runId,
+                        seed,
+                        planBranch,
+                        env: blackboard.agentEnv(tst.name),
+                        onAttemptStart: () => blackboard.markAgentActive(tst.name),
+                        onStageSettled: (outcome, err) => {
+                            if (outcome === "settled") {
+                                blackboard.markAgentSettled(tst.name);
+                            } else {
+                                blackboard.markAgentTerminated(tst.name, errorText(err));
+                            }
+                        },
+                    }),
+                ),
+            );
+        } finally {
+            await blackboard.close();
+        }
     }
 
     for (const tst of testerDefs) {
