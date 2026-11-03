@@ -1,0 +1,316 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CostcoRevenueBreakdownDataset",
+  "type": "object",
+  "required": [
+    "company",
+    "consolidated_income_statement",
+    "historical_comparison",
+    "merchandise_categories",
+    "geographic_segments",
+    "membership_metrics",
+    "working_capital_balance_sheet",
+    "primary_sources"
+  ],
+  "properties": {
+    "company": {
+      "type": "object",
+      "required": [
+        "name",
+        "ticker",
+        "exchange",
+        "cik",
+        "fiscal_year",
+        "fiscal_year_end",
+        "fiscal_weeks",
+        "currency",
+        "units"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "ticker": {
+          "type": "string"
+        },
+        "exchange": {
+          "type": "string"
+        },
+        "cik": {
+          "type": "string"
+        },
+        "fiscal_year": {
+          "type": "integer"
+        },
+        "fiscal_year_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "fiscal_weeks": {
+          "type": "integer"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "units": {
+          "type": "string"
+        }
+      }
+    },
+    "consolidated_income_statement": {
+      "type": "object",
+      "required": [
+        "net_sales_usd_m",
+        "membership_fees_usd_m",
+        "total_revenue_usd_m",
+        "merchandise_costs_usd_m",
+        "selling_general_and_administrative_usd_m",
+        "operating_income_usd_m",
+        "interest_expense_usd_m",
+        "interest_income_and_other_net_usd_m",
+        "income_before_taxes_usd_m",
+        "provision_for_income_taxes_usd_m",
+        "net_income_usd_m"
+      ],
+      "properties": {
+        "net_sales_usd_m": {
+          "type": "number"
+        },
+        "membership_fees_usd_m": {
+          "type": "number"
+        },
+        "total_revenue_usd_m": {
+          "type": "number"
+        },
+        "merchandise_costs_usd_m": {
+          "type": "number"
+        },
+        "selling_general_and_administrative_usd_m": {
+          "type": "number"
+        },
+        "operating_income_usd_m": {
+          "type": "number"
+        },
+        "interest_expense_usd_m": {
+          "type": "number"
+        },
+        "interest_income_and_other_net_usd_m": {
+          "type": "number"
+        },
+        "income_before_taxes_usd_m": {
+          "type": "number"
+        },
+        "provision_for_income_taxes_usd_m": {
+          "type": "number"
+        },
+        "net_income_usd_m": {
+          "type": "number"
+        }
+      }
+    },
+    "historical_comparison": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "fiscal_year",
+          "fiscal_year_end",
+          "fiscal_weeks",
+          "net_sales_usd_m",
+          "membership_fees_usd_m",
+          "total_revenue_usd_m",
+          "merchandise_costs_usd_m",
+          "selling_general_and_administrative_usd_m",
+          "operating_income_usd_m",
+          "net_income_usd_m"
+        ],
+        "properties": {
+          "fiscal_year": {
+            "type": "integer"
+          },
+          "fiscal_year_end": {
+            "type": "string"
+          },
+          "fiscal_weeks": {
+            "type": "integer"
+          },
+          "net_sales_usd_m": {
+            "type": "number"
+          },
+          "membership_fees_usd_m": {
+            "type": "number"
+          },
+          "total_revenue_usd_m": {
+            "type": "number"
+          },
+          "merchandise_costs_usd_m": {
+            "type": "number"
+          },
+          "selling_general_and_administrative_usd_m": {
+            "type": "number"
+          },
+          "operating_income_usd_m": {
+            "type": "number"
+          },
+          "net_income_usd_m": {
+            "type": "number"
+          },
+          "net_income_including_noncontrolling_interests_usd_m": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "merchandise_categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "category_id",
+          "name",
+          "share_of_net_sales_pct",
+          "estimated_net_sales_usd_m",
+          "fy2023_net_sales_usd_m",
+          "fy2022_net_sales_usd_m",
+          "role_in_flywheel",
+          "examples"
+        ],
+        "properties": {
+          "category_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "share_of_net_sales_pct": {
+            "type": "number"
+          },
+          "estimated_net_sales_usd_m": {
+            "type": "number"
+          },
+          "fy2023_net_sales_usd_m": {
+            "type": "number"
+          },
+          "fy2022_net_sales_usd_m": {
+            "type": "number"
+          },
+          "role_in_flywheel": {
+            "type": "string"
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "geographic_segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "segment_id",
+          "name",
+          "share_of_net_sales_pct",
+          "total_revenue_usd_m",
+          "operating_income_usd_m",
+          "warehouse_count",
+          "owned_warehouses",
+          "leased_warehouses",
+          "floor_space_sq_ft_m",
+          "employees",
+          "basis_note"
+        ],
+        "properties": {
+          "segment_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "share_of_net_sales_pct": {
+            "type": "number"
+          },
+          "total_revenue_usd_m": {
+            "type": "number"
+          },
+          "operating_income_usd_m": {
+            "type": "number"
+          },
+          "warehouse_count": {
+            "type": "integer"
+          },
+          "owned_warehouses": {
+            "type": "integer"
+          },
+          "leased_warehouses": {
+            "type": "integer"
+          },
+          "floor_space_sq_ft_m": {
+            "type": "number"
+          },
+          "employees": {
+            "type": "integer"
+          },
+          "basis_note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "membership_metrics": {
+      "type": "object",
+      "required": [
+        "gold_star_paid_members_m",
+        "business_paid_members_m",
+        "paid_household_members_m",
+        "household_cards_m",
+        "cardholders_total_m",
+        "executive_paid_members_m",
+        "executive_share_of_paid_members_pct",
+        "executive_share_of_worldwide_sales_pct",
+        "executive_reward_contra_revenue_usd_m",
+        "accrued_member_rewards_liability_usd_m",
+        "renewal_rate_us_canada_pct",
+        "renewal_rate_worldwide_pct",
+        "gold_star_annual_fee_usd",
+        "gold_star_annual_fee_fy2024_prior_to_sept_2024_usd",
+        "executive_annual_fee_usd",
+        "executive_annual_fee_fy2024_prior_to_sept_2024_usd",
+        "executive_annual_reward_cap_usd",
+        "fee_increase_effective_date"
+      ]
+    },
+    "working_capital_balance_sheet": {
+      "type": "object",
+      "required": [
+        "merchandise_inventories_usd_m",
+        "accounts_payable_usd_m",
+        "deferred_membership_fees_liability_usd_m",
+        "accrued_member_rewards_liability_usd_m",
+        "prior_year_merchandise_inventories_usd_m",
+        "prior_year_accounts_payable_usd_m",
+        "prior_year_deferred_membership_fees_liability_usd_m"
+      ]
+    },
+    "primary_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "title",
+          "filing_type",
+          "cik",
+          "accession_number",
+          "filing_date",
+          "period_end",
+          "url",
+          "items_referenced"
+        ]
+      }
+    }
+  }
+}

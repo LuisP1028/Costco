@@ -1,0 +1,209 @@
+{
+  "runId": "20261103T204534-693-1b8y",
+  "agent": "tester-3",
+  "role": "Stack, API, MCP & Library Reviewer/Tester — Straightforward Technical English Editorial Audit, Sticky TOC Scroll-Spy & Keyboard A11y (Module B & Module C Controllers)",
+  "status": "VERIFIED",
+  "remediationRequired": false,
+  "remediatedSourceFiles": [],
+  "acceptanceCriteriaVerified": [
+    "AC-01",
+    "AC-02",
+    "AC-04",
+    "AC-05"
+  ],
+  "mcpServersVerified": [
+    {
+      "server": "puppeteer",
+      "transport": "file:///Users/diesel/Desktop/Costco/.sandcastle/worktrees/agent-tester-3-20261103T204534-693-1b8y/index.html",
+      "status": "VERIFIED",
+      "toolsInvoked": [
+        "puppeteer_navigate",
+        "puppeteer_evaluate"
+      ]
+    },
+    {
+      "server": "playwright",
+      "transport": "http://127.0.0.1:8783/index.html",
+      "status": "VERIFIED",
+      "toolsInvoked": [
+        "browser_navigate",
+        "browser_evaluate",
+        "browser_press_key",
+        "browser_console_messages",
+        "browser_network_requests",
+        "browser_close"
+      ]
+    }
+  ],
+  "playbook1_editorialTechnicalEnglishAudit": {
+    "passed": true,
+    "totalInteractiveStatesSwept": 15,
+    "statesSwept": [
+      "step-1",
+      "step-2",
+      "step-3",
+      "step-4",
+      "step-5",
+      "ticket-1",
+      "ticket-2",
+      "ticket-3",
+      "ticket-4",
+      "ticket-5",
+      "ticket-6",
+      "gaap-2022",
+      "gaap-2023",
+      "gaap-2024",
+      "simulator-breach"
+    ],
+    "rawCurlyBraceTokensInBodyText": [],
+    "rawSpecTokensInHtml": [],
+    "pseudoCodeSlashDividersInBodyText": [],
+    "promotionalMetaphorsDetected": [],
+    "undefinedEmeraldAuditTokenDetected": false
+  },
+  "playbook4A_stickyTocScrollSpyAndParentSync": {
+    "passed": true,
+    "totalTocTargetsVerified": 13,
+    "sublinkParentSynchronizationVerified": true,
+    "stepLinkActivationVerified": true,
+    "clickResults": [
+      {
+        "target": "section-executive-summary",
+        "isSublink": false,
+        "activeLinks": ["section-executive-summary"],
+        "ariaCurrentLinks": ["section-executive-summary"]
+      },
+      {
+        "target": "section-polar-graphs",
+        "isSublink": false,
+        "activeLinks": ["section-polar-graphs"],
+        "ariaCurrentLinks": ["section-polar-graphs"]
+      },
+      {
+        "target": "polar-chart-categories",
+        "isSublink": true,
+        "activeLinks": ["section-polar-graphs", "polar-chart-categories"],
+        "ariaCurrentLinks": ["polar-chart-categories"]
+      },
+      {
+        "target": "polar-chart-geography",
+        "isSublink": true,
+        "activeLinks": ["section-polar-graphs", "polar-chart-geography"],
+        "ariaCurrentLinks": ["polar-chart-geography"]
+      },
+      {
+        "target": "polar-chart-flywheel",
+        "isSublink": true,
+        "activeLinks": ["section-polar-graphs", "polar-chart-flywheel"],
+        "ariaCurrentLinks": ["polar-chart-flywheel"]
+      },
+      {
+        "target": "section-five-steps",
+        "isSublink": false,
+        "activeLinks": ["section-five-steps"],
+        "ariaCurrentLinks": ["section-five-steps"]
+      },
+      {
+        "target": "step-1",
+        "isSublink": true,
+        "activeLinks": ["section-five-steps", "step-1"],
+        "ariaCurrentLinks": ["step-1"],
+        "stepCardActive": true
+      },
+      {
+        "target": "step-2",
+        "isSublink": true,
+        "activeLinks": ["section-five-steps", "step-2"],
+        "ariaCurrentLinks": ["step-2"],
+        "stepCardActive": true
+      },
+      {
+        "target": "step-3",
+        "isSublink": true,
+        "activeLinks": ["section-five-steps", "step-3"],
+        "ariaCurrentLinks": ["step-3"],
+        "stepCardActive": true
+      },
+      {
+        "target": "step-4",
+        "isSublink": true,
+        "activeLinks": ["section-five-steps", "step-4"],
+        "ariaCurrentLinks": ["step-4"],
+        "stepCardActive": true
+      },
+      {
+        "target": "step-5",
+        "isSublink": true,
+        "activeLinks": ["section-five-steps", "step-5"],
+        "ariaCurrentLinks": ["step-5"],
+        "stepCardActive": true
+      },
+      {
+        "target": "section-gaap-model",
+        "isSublink": false,
+        "activeLinks": ["section-gaap-model"],
+        "ariaCurrentLinks": ["section-gaap-model"]
+      },
+      {
+        "target": "section-wayfinder-audit",
+        "isSublink": false,
+        "activeLinks": ["section-wayfinder-audit"],
+        "ariaCurrentLinks": ["section-wayfinder-audit"]
+      }
+    ],
+    "scrollSpyMatchedAll13Targets": true
+  },
+  "playbook4B_svgPolarKeyboardAccessibility": {
+    "passed": true,
+    "allSectorPathsHaveRoleButtonAndTabindex0": true,
+    "categoriesEnterKey": {
+      "targetSelector": "#svg-polar-categories [data-cat-sector=\"2\"]",
+      "keyPressed": "Enter",
+      "drilldownTitleUpdated": "Warehouse Ancillary and Other Businesses — $49,969M (20.02% of FY2024 Net Sales)",
+      "focusRestoredAfterSvgReRender": true,
+      "selectedClassApplied": true
+    },
+    "geographySpaceKey": {
+      "targetSelector": "#svg-polar-geography [data-geo-sector=\"2\"]",
+      "keyPressed": " ",
+      "drilldownTitleUpdated": "Canada — $34,874M Revenue (13.71%) · $1,648M Operating Income",
+      "item2OwnershipVerified": "91 Owned · 17 Leased",
+      "defaultScrollPrevented": true,
+      "focusRestoredAfterSvgReRender": true
+    },
+    "flywheelDualRingEnterKey": {
+      "outerAndInnerRingAttributesVerified": true,
+      "sector0InnerTitle": "Net Sales (Merchandise & Ancillary) — 98.10% of Revenue → 48.00% of Operating Income",
+      "sector0InnerFocusRestored": true,
+      "sector1InnerTitle": "Membership Fees (Annual Club Subscriptions) — 1.90% of Revenue → 52.00% of Operating Income",
+      "sector1InnerFocusRestored": true
+    },
+    "flywheelAncillaryRoseSpaceKey": {
+      "targetSelector": "#svg-polar-flywheel [data-fly-sector=\"2\"]",
+      "keyPressed": " ",
+      "drilldownTitleUpdated": "Core E-Commerce & Costco Logistics — ~$17.5B (~7.0% of Net Sales)",
+      "focusRestoredAfterSvgReRender": true
+    }
+  },
+  "playbook5_simulatorCeilingBreachAndTicketBadge": {
+    "passed": true,
+    "breachSliderValue": "12.00",
+    "breachClassApplied": true,
+    "breachBorderLeftColor": "rgb(227, 24, 55)",
+    "breachBackgroundColor": "rgba(227, 24, 55, 0.08)",
+    "breachGovernanceAlertText": "GOVERNANCE ALERT — Gross Margin Ceiling Breach (12.00% > 11.50% Cap): Raising merchandise gross margin above Costco's 11.50% ceiling reduces Costco's price advantage over supermarkets and risks lowering the 92.9% U.S./Canada membership renewal rate.",
+    "resetButtonRestoresBaseline": true,
+    "resetSliderValue": "10.92",
+    "resetBreachClassRemoved": true,
+    "wayfinderTicketTabsUseCatEmerald": true,
+    "undefinedEmeraldAuditOccurrences": 0
+  },
+  "runtimeAndCliGate": {
+    "browserConsoleErrors": 0,
+    "browserConsoleWarnings": 0,
+    "externalNetworkRequests": 0,
+    "cliVerifyStatus": "VERIFIED",
+    "cliElapsedMs": 12.6985,
+    "cliRssMb": 46.5938
+  }
+}

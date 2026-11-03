@@ -1,0 +1,207 @@
+{
+  "runId": "20261103T204534-693-1b8y",
+  "agent": "tester-2",
+  "role": "Storage Engine, Primary-Source Note 11 / Item 2 Data Reconciliation & Wayfinder Governance Verifier",
+  "status": "VERIFIED",
+  "storageEnginePhysics": {
+    "architecture": "Immutable Git-Versioned JSON Document Store + In-Memory V8 Hidden-Class Constant Tables",
+    "primaryDatasetBytes": 9583,
+    "primaryDatasetPosix4KbPages": 2.34,
+    "readAmplificationFactor": 1,
+    "writeAmplificationFactor": 1,
+    "spaceAmplificationFactor": 1,
+    "jsonReadAndParseMs": 0.3906,
+    "tenThousandInMemoryIndexLookupsMs": 1.1872,
+    "externalNetworkRequests": 0
+  },
+  "note11CategoryReconciliation": {
+    "reconciled": true,
+    "categories": [
+      {
+        "category_id": "foods_and_sundries",
+        "name": "Foods and Sundries",
+        "salesByYearUsdM": {
+          "2022": 85629,
+          "2023": 96175,
+          "2024": 101463
+        },
+        "shareByYearPct": {
+          "2022": 38.45,
+          "2023": 40.46,
+          "2024": 40.65
+        },
+        "yoy24": "+5.50%",
+        "matchesPrimarySourceJson": true
+      },
+      {
+        "category_id": "non_foods",
+        "name": "Non-Foods (Hardlines & Softlines)",
+        "salesByYearUsdM": {
+          "2022": 61100,
+          "2023": 60865,
+          "2024": 63973
+        },
+        "shareByYearPct": {
+          "2022": 27.43,
+          "2023": 25.6,
+          "2024": 25.63
+        },
+        "yoy24": "+5.11%",
+        "matchesPrimarySourceJson": true
+      },
+      {
+        "category_id": "warehouse_ancillary_and_other",
+        "name": "Warehouse Ancillary and Other Businesses",
+        "salesByYearUsdM": {
+          "2022": 46474,
+          "2023": 48693,
+          "2024": 49969
+        },
+        "shareByYearPct": {
+          "2022": 20.87,
+          "2023": 20.48,
+          "2024": 20.02
+        },
+        "yoy24": "+2.62%",
+        "matchesPrimarySourceJson": true
+      },
+      {
+        "category_id": "fresh_foods",
+        "name": "Fresh Foods",
+        "salesByYearUsdM": {
+          "2022": 29527,
+          "2023": 31977,
+          "2024": 34220
+        },
+        "shareByYearPct": {
+          "2022": 13.26,
+          "2023": 13.45,
+          "2024": 13.71
+        },
+        "yoy24": "+7.01%",
+        "matchesPrimarySourceJson": true
+      }
+    ],
+    "consolidatedNetSalesByYearUsdM": {
+      "2022": 222730,
+      "2023": 237710,
+      "2024": 249625
+    },
+    "roundedShareSumsByYearPct": {
+      "2022": 100.01,
+      "2023": 99.99,
+      "2024": 100.01
+    },
+    "legacyFiguresDetected": 0
+  },
+  "item2GeographyAndOwnershipReconciliation": {
+    "reconciled": true,
+    "segments": [
+      {
+        "segment_id": "united_states",
+        "name": "United States",
+        "revenueUsdM": 184143,
+        "revSharePct": 72.37,
+        "operatingIncomeUsdM": 6217,
+        "opMarginPct": 3.38,
+        "warehouses": 614,
+        "ownedWarehouses": 499,
+        "leasedWarehouses": 115,
+        "floorSpaceSqFtM": 91.1,
+        "employees": 219000,
+        "matchesPrimarySourceJson": true
+      },
+      {
+        "segment_id": "other_international",
+        "name": "Other International (12 Countries)",
+        "revenueUsdM": 35436,
+        "revSharePct": 13.93,
+        "operatingIncomeUsdM": 1420,
+        "opMarginPct": 4.01,
+        "warehouses": 168,
+        "ownedWarehouses": 113,
+        "leasedWarehouses": 55,
+        "floorSpaceSqFtM": 24.3,
+        "employees": 61000,
+        "matchesPrimarySourceJson": true
+      },
+      {
+        "segment_id": "canada",
+        "name": "Canada",
+        "revenueUsdM": 34874,
+        "revSharePct": 13.71,
+        "operatingIncomeUsdM": 1648,
+        "opMarginPct": 4.73,
+        "warehouses": 108,
+        "ownedWarehouses": 91,
+        "leasedWarehouses": 17,
+        "floorSpaceSqFtM": 15.5,
+        "employees": 53000,
+        "matchesPrimarySourceJson": true
+      }
+    ],
+    "consolidatedTotals": {
+      "totalRevenueUsdM": 254453,
+      "operatingIncomeUsdM": 9285,
+      "totalWarehouses": 890,
+      "ownedLandAndBuilding": 703,
+      "leasedWarehouses": 187,
+      "landLeasesWithOwnedBuilding": 134,
+      "totalOwnedBuildings": 837,
+      "warehouseFloorSpaceSqFtM": 130.9,
+      "depotFloorSpaceSqFtM": 31.9,
+      "totalEmployees": 333000,
+      "spainClubCount": 4
+    },
+    "legacyOwnershipTokensDetected": 0
+  },
+  "concurrencyIsolationAndAcidAudit": {
+    "browserIsolationLevel": "Strict Serializability (Single-Threaded ES2022 Run-to-Completion)",
+    "cliIsolationLevel": "Point-in-Time Snapshot Isolation + Pure In-Memory Override Injection",
+    "dirtyReadsDetected": 0,
+    "lostUpdatesOrFocusClobberDetected": 0,
+    "phantomReadsDetected": 0,
+    "writeSkewTocParentChildDetected": 0,
+    "focusPreservedOnEnter": true,
+    "tocParentChildSynced": true,
+    "zeroRuntimeDiskWrites": true,
+    "concurrentIsolationTests": [
+      {
+        "test": "concurrent_valid_snapshot_1",
+        "passed": true
+      },
+      {
+        "test": "gate_fin_03_category_drift_rejected",
+        "passed": true,
+        "errorMessage": "Merchandise category dollar sum mismatch: estimated_net_sales_usd_m sums to 237110 USD million vs. net_sales_usd_m 249625 USD million."
+      },
+      {
+        "test": "gate_fin_04_warehouse_sum_rejected",
+        "passed": true,
+        "errorMessage": "Geographic segment warehouse count mismatch for FY2024: expected 890 warehouses, received 891."
+      },
+      {
+        "test": "gate_web_04_legacy_category_rejected",
+        "passed": true,
+        "errorMessage": "Corporate web report audit failed for /Users/diesel/Desktop/Costco/.sandcastle/worktrees/agent-tester-2-20261103T204534-693-1b8y/index.html: missing audited Note 11 / Item 2 figure \"85,629\"."
+      },
+      {
+        "test": "gate_web_04_legacy_ownership_rejected",
+        "passed": true,
+        "errorMessage": "Corporate web report audit failed for /Users/diesel/Desktop/Costco/.sandcastle/worktrees/agent-tester-2-20261103T204534-693-1b8y/index.html: unverified historical figure \"704/124/62\" detected (diverges from Note 11 / Item 2)."
+      },
+      {
+        "test": "concurrent_valid_snapshot_2_uncontaminated",
+        "passed": true
+      }
+    ]
+  },
+  "wayfinderAndDocumentationAudit": {
+    "wayfinderMapValid": true,
+    "resolvedTicketsVerified": 6,
+    "ticket006SpecTokensDetected": 0,
+    "readmeSpecTokensDetected": 0,
+    "indexHtmlSpecTokensDetected": 0,
+    "remediationRequired": false
+  }
+}

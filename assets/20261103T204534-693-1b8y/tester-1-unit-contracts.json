@@ -1,0 +1,194 @@
+{
+  "runId": "20261103T204534-693-1b8y",
+  "agent": "tester-1",
+  "role": "System Architecture, Execution DAG, Unit Tests, Exported Function Contracts & Negative Gate Verification",
+  "timestamp": "2026-11-03T22:02:50.742Z",
+  "summary": {
+    "totalSuites": 7,
+    "totalTestCases": 15,
+    "totalIndividualAssertions": 239,
+    "passed": 15,
+    "failed": 0,
+    "remediationsRequired": 0,
+    "status": "VERIFIED",
+    "totalElapsedMs": 379.671
+  },
+  "suites": {
+    "Suite1_ExportedContracts": {
+      "passed": 2,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "All 6 exported functions exist and verifyIndexHtml aliases verifyCorporateWebReport",
+          "status": "PASS",
+          "assertionsRun": 7,
+          "elapsedMs": 0.0975,
+          "detail": {
+            "exportedFunctions": [
+              "verifyFinancialDataset",
+              "verifyWayfinderArtifacts",
+              "verifyResearchMonograph",
+              "verifyCorporateWebReport",
+              "verifyIndexHtml",
+              "loadAndVerifyCostcoModel"
+            ]
+          }
+        },
+        {
+          "name": "Option polymorphism across string paths, plain objects, and in-memory override aliases",
+          "status": "PASS",
+          "assertionsRun": 11,
+          "elapsedMs": 30.964,
+          "detail": {
+            "variantsTested": 10
+          }
+        }
+      ]
+    },
+    "Suite2_ReturnSchemaAndMath": {
+      "passed": 1,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "loadAndVerifyCostcoModel({ verifyOnly: true }) exact schema and GAAP ratios",
+          "status": "PASS",
+          "assertionsRun": 23,
+          "elapsedMs": 6.0985,
+          "detail": {
+            "elapsedMs": 5.618,
+            "rssMb": 51.6094
+          }
+        }
+      ]
+    },
+    "Suite3_FinancialNegativeGates": {
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Rejects null/non-object dataset and missing top-level keys",
+          "status": "PASS",
+          "assertionsRun": 10,
+          "elapsedMs": 0.4545,
+          "detail": {
+            "keysTested": 8
+          }
+        },
+        {
+          "name": "GATE-FIN-01..03: Rejects GAAP Consolidated Revenue, Operating Income, Pre-Tax, and Net Income identity breaches",
+          "status": "PASS",
+          "assertionsRun": 6,
+          "elapsedMs": 0.2542
+        },
+        {
+          "name": "GATE-FIN-04..05: Rejects historical comparison, Note 11 category sum, Item 2 warehouse count, Gross Margin Ceiling, and Flywheel breaches",
+          "status": "PASS",
+          "assertionsRun": 7,
+          "elapsedMs": 0.3651
+        }
+      ]
+    },
+    "Suite4_WayfinderAndResearchNegativeGates": {
+      "passed": 2,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Rejects missing Wayfinder H2 sections, bare ticket links, and unresolved tickets",
+          "status": "PASS",
+          "assertionsRun": 7,
+          "elapsedMs": 0.8427
+        },
+        {
+          "name": "Rejects short or uncited research monograph overrides",
+          "status": "PASS",
+          "assertionsRun": 9,
+          "elapsedMs": 0.8717
+        }
+      ]
+    },
+    "Suite5_WebReportNegativeGates": {
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "GATE-WEB-01: Rejects all 4 prohibited raw curly-brace specification tokens",
+          "status": "PASS",
+          "assertionsRun": 4,
+          "elapsedMs": 5.9747,
+          "detail": {
+            "prohibitedTokensTested": 4
+          }
+        },
+        {
+          "name": "GATE-WEB-02: Rejects visible pseudo-code // dividers while allowing valid JS comments inside <script>",
+          "status": "PASS",
+          "assertionsRun": 7,
+          "elapsedMs": 17.2731,
+          "detail": {
+            "dividersTested": 6,
+            "jsCommentSafe": true
+          }
+        },
+        {
+          "name": "GATE-WEB-03: Rejects missing polar/drill-down/breach CSS selectors in <style> and undefined --emerald-audit",
+          "status": "PASS",
+          "assertionsRun": 9,
+          "elapsedMs": 29.7514,
+          "detail": {
+            "selectorsTested": 8,
+            "emeraldAuditTested": true
+          }
+        },
+        {
+          "name": "GATE-WEB-04: Rejects missing audited Note 11 / Item 2 figures and rejects legacy unverified historical figures",
+          "status": "PASS",
+          "assertionsRun": 28,
+          "elapsedMs": 103.1816,
+          "detail": {
+            "auditedPairsTested": 10,
+            "legacyFiguresTested": 18
+          }
+        },
+        {
+          "name": "Rejects Dreamcore markers, missing DOM IDs, and broken internal anchor links",
+          "status": "PASS",
+          "assertionsRun": 3,
+          "elapsedMs": 2.3955
+        }
+      ]
+    },
+    "Suite6_CliExecutionAndArgParser": {
+      "passed": 1,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "CLI executes --verify, default report, explicit path flags, and fails fast on invalid flags",
+          "status": "PASS",
+          "assertionsRun": 10,
+          "elapsedMs": 161.4796,
+          "detail": {
+            "cliRunsVerified": 4
+          }
+        }
+      ]
+    },
+    "Suite7_ClientModuleDataflowAndDag": {
+      "passed": 1,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Extracts index.html IIFE, verifies pure polar geometry math, and reconciles embedded datasets with canonical JSON",
+          "status": "PASS",
+          "assertionsRun": 98,
+          "elapsedMs": 14.7211,
+          "detail": {
+            "clientFunctionsVerified": 17,
+            "categoriesReconciled": 4,
+            "geoSegmentsReconciled": 3,
+            "gaapYearsReconciled": 3
+          }
+        }
+      ]
+    }
+  }
+}
