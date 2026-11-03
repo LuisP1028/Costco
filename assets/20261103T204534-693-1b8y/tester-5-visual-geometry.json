@@ -1,0 +1,231 @@
+{
+  "agent": "tester-5",
+  "role": "Multimodal Taste & Visual Reviewer/Tester",
+  "runId": "20261103T204534-693-1b8y",
+  "timestamp": "2026-11-03T22:09:31.418Z",
+  "status": "VERIFIED",
+  "acceptanceCriteriaVerified": [
+    "AC-02",
+    "AC-04",
+    "AC-05"
+  ],
+  "remediationsApplied": [
+    {
+      "id": "REM-T5-01",
+      "file": "index.html",
+      "location": "renderPolarCategories() lines 2483-2489",
+      "issue": "In 3-Year Overlay mode, the SVG overlay legend <text> (width 468.9px, local getBBox x=-234.5..+234.5 inside <g transform='translate(200, 398)'>) overflowed its 350px <rect x='-175' width='350'> box by 59.5px on both sides and tripped local getBBox() < -55.",
+      "fix": "Placed the overlay key directly in root SVG coordinate space (<rect x='-20' y='384' width='440' height='22' rx='4' /> and <text x='200' y='399' text-anchor='middle'>Overlay Key: FY24 Filled · FY23 Dashed (5-2) · FY22 Dotted (2-2)</text>), eliminating box overflow and keeping getBBox() 100% inside [-55, 455] x [-28, 428]."
+    },
+    {
+      "id": "REM-T5-02",
+      "file": "index.html",
+      "location": "renderPolarGrid() & renderPolarRingLabels() lines 2348-2377",
+      "issue": "Concentric grid rings used r = maxR * [0.25, 0.50, 0.75, 1.0], placing the 25% ring (r=30px) and its scale label ($25B / $45B / $7.5B) inside the solid white center hub circle (rInner=36px), and rendered ring scale labels behind opaque Sector 0 (#005DAA).",
+      "fix": "Aligned concentric grid rings with the annular data band r = rBase + (maxR - rBase) * rings[i] (rBase=36px) and rendered radial ring scale labels in the foreground layer with a 2.5px #FFFFFF paint-order halo so all 4 scale markers sit cleanly outside the center hub with high contrast."
+    },
+    {
+      "id": "REM-T5-03",
+      "file": "index.html",
+      "location": "<style> lines 535-540, 777-785, 1132-1139 & renderPolarFlywheel() lines 2762-2779",
+      "issue": "At 1440px desktop, the 6-column tables in .polar-details-column overflowed .corp-table-wrap by 20-99px (568-647px vs 548px clientWidth); in Flywheel Dual-Ring mode, white inner-ring labels touched the white ring gap; at 390px mobile, sticky .corporate-header consumed ~310px of vertical viewport.",
+      "fix": "Tuned .polar-grid-layout to minmax(280px, 400px) minmax(0, 1fr) with compact 11.5px / 7px 6px cell padding so all 3 polar tables fit with 0px overflow (scrollWidth === clientWidth === 548px at 1440px), widened the Dual-Ring inner band (r=44..95) with #0F172A paint-order stroke on white inner labels, and set .corporate-header to position: static inside @media (max-width: 640px)."
+    }
+  ],
+  "playbook6_responsiveViewportsAndNetwork": {
+    "desktop_1440x900": {
+      "width": 1440,
+      "height": 900,
+      "scrollWidth": 1440,
+      "horizontalOverflowPx": 0,
+      "polarTables": [
+        { "table": "tbody-polar-categories", "clientWidth": 548, "scrollWidth": 548, "overflowPx": 0 },
+        { "table": "tbody-polar-geography", "clientWidth": 548, "scrollWidth": 548, "overflowPx": 0 },
+        { "table": "polar-flywheel-table", "clientWidth": 548, "scrollWidth": 548, "overflowPx": 0 }
+      ],
+      "passed": true
+    },
+    "mobile_390x844": {
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "horizontalOverflowPx": 0,
+      "passed": true
+    },
+    "consoleErrors": 0,
+    "externalNetworkRequests": 0
+  },
+  "playbook2A_computedStyles": {
+    "polarGridRing": {
+      "fill": "none",
+      "stroke": "rgb(203, 213, 225)",
+      "strokeWidth": "1px",
+      "strokeDasharray": "3px, 3px",
+      "passed": true
+    },
+    "polarAxisSpoke": {
+      "stroke": "rgb(203, 213, 225)",
+      "strokeWidth": "1px",
+      "passed": true
+    },
+    "polarCenterTitle": {
+      "textAnchor": "middle",
+      "fontSize": "11px",
+      "fontWeight": "800",
+      "fill": "rgb(15, 23, 42)",
+      "passed": true
+    },
+    "polarCenterSub": {
+      "textAnchor": "middle",
+      "fontSize": "9px",
+      "fontWeight": "600",
+      "fill": "rgb(100, 116, 139)",
+      "passed": true
+    },
+    "polarSectorLabel": {
+      "fontSize": "11px",
+      "fontWeight": "700",
+      "fill": "rgb(15, 23, 42)",
+      "passed": true
+    },
+    "polarAxisLabel": {
+      "fontSize": "9.5px",
+      "fontWeight": "600",
+      "fill": "rgb(51, 65, 85)",
+      "passed": true
+    },
+    "drilldownMetaGrid": {
+      "display": "grid",
+      "passed": true
+    },
+    "drilldownMetaItem": {
+      "display": "flex",
+      "flexDirection": "column",
+      "backgroundColor": "rgb(241, 245, 249)",
+      "passed": true
+    },
+    "simOutputBannerBreach": {
+      "hasIsBreachClass": true,
+      "borderLeftColor": "rgb(227, 24, 55)",
+      "backgroundColor": "rgba(227, 24, 55, 0.08)",
+      "passed": true
+    }
+  },
+  "playbook2B_polarModes": [
+    {
+      "svgId": "svg-polar-categories",
+      "modeName": "1. Categories FY2024 + Area sqrt",
+      "viewBox": "-55 -28 510 456",
+      "svgBBox": { "x": 13, "y": 74, "width": 380.2, "height": 252, "right": 393.2, "bottom": 326 },
+      "hubRadius": 36,
+      "centerInsideHub": true,
+      "labelCount": 12,
+      "clippedCount_1440px": 0,
+      "clippedCount_390px": 0,
+      "passed": true
+    },
+    {
+      "svgId": "svg-polar-categories",
+      "modeName": "2. Categories FY2023 + Linear r",
+      "viewBox": "-55 -28 510 456",
+      "svgBBox": { "x": 13, "y": 74, "width": 380.2, "height": 252, "right": 393.2, "bottom": 326 },
+      "hubRadius": 36,
+      "centerInsideHub": true,
+      "labelCount": 12,
+      "clippedCount_1440px": 0,
+      "clippedCount_390px": 0,
+      "passed": true
+    },
+    {
+      "svgId": "svg-polar-categories",
+      "modeName": "3. Categories FY2022 + Share Angle",
+      "viewBox": "-55 -28 510 456",
+      "svgBBox": { "x": -26, "y": 62.2, "width": 449.9, "height": 283.7, "right": 423.9, "bottom": 345.9 },
+      "hubRadius": 36,
+      "centerInsideHub": true,
+      "labelCount": 12,
+      "clippedCount_1440px": 0,
+      "clippedCount_390px": 0,
+      "passed": true
+    },
+    {
+      "svgId": "svg-polar-categories",
+      "modeName": "4. Categories 3-Year Overlay",
+      "viewBox": "-55 -28 510 456",
+      "svgBBox": { "x": -20, "y": 74, "width": 440, "height": 332, "right": 420, "bottom": 406 },
+      "hubRadius": 36,
+      "centerInsideHub": true,
+      "overlayLegendKeyPresent": true,
+      "labelCount": 13,
+      "clippedCount_1440px": 0,
+      "clippedCount_390px": 0,
+      "passed": true
+    },
+    {
+      "svgId": "svg-polar-geography",
+      "modeName": "5. Geography Total Revenue ($254.5B)",
+      "viewBox": "-55 -28 510 456",
+      "svgBBox": { "x": -5.8, "y": 76, "width": 417.3, "height": 268.1, "right": 411.5, "bottom": 344.1 },
+      "hubRadius": 36,
+      "centerInsideHub": true,
+      "labelCount": 10,
+      "clippedCount_1440px": 0,
+      "clippedCount_390px": 0,
+      "passed": true
+    },
+    {
+      "svgId": "svg-polar-geography",
+      "modeName": "6. Geography Operating Income ($9.29B)",
+      "viewBox": "-55 -28 510 456",
+      "svgBBox": { "x": -0.1, "y": 76, "width": 400.1, "height": 268.1, "right": 400.1, "bottom": 344.1 },
+      "hubRadius": 36,
+      "centerInsideHub": true,
+      "labelCount": 10,
+      "clippedCount_1440px": 0,
+      "clippedCount_390px": 0,
+      "passed": true
+    },
+    {
+      "svgId": "svg-polar-geography",
+      "modeName": "7. Geography Warehouses (890)",
+      "viewBox": "-55 -28 510 456",
+      "svgBBox": { "x": -11.5, "y": 76, "width": 423, "height": 268.1, "right": 411.5, "bottom": 344.1 },
+      "hubRadius": 36,
+      "centerInsideHub": true,
+      "labelCount": 10,
+      "clippedCount_1440px": 0,
+      "clippedCount_390px": 0,
+      "passed": true
+    },
+    {
+      "svgId": "svg-polar-flywheel",
+      "modeName": "8. Flywheel Dual-Ring Asymmetry",
+      "viewBox": "-55 -28 510 456",
+      "svgBBox": { "x": 58, "y": 21.7, "width": 284, "height": 348.4, "right": 342, "bottom": 370.1 },
+      "hubRadius": 38,
+      "centerInsideHub": true,
+      "labelCount": 10,
+      "clippedCount_1440px": 0,
+      "clippedCount_390px": 0,
+      "passed": true
+    },
+    {
+      "svgId": "svg-polar-flywheel",
+      "modeName": "9. Flywheel Ancillary & E-Commerce Rose",
+      "viewBox": "-55 -28 510 456",
+      "svgBBox": { "x": -23.5, "y": 84, "width": 471.5, "height": 232, "right": 447.9, "bottom": 316 },
+      "hubRadius": 36,
+      "centerInsideHub": true,
+      "labelCount": 12,
+      "clippedCount_1440px": 0,
+      "clippedCount_390px": 0,
+      "passed": true
+    }
+  ],
+  "screenshotsCaptured": [
+    "assets/20261103T204534-693-1b8y/tester-5-polar-categories.png",
+    "assets/20261103T204534-693-1b8y/tester-5-polar-geography.png",
+    "assets/20261103T204534-693-1b8y/tester-5-polar-flywheel.png",
+    "assets/20261103T204534-693-1b8y/tester-5-mobile-390px.png"
+  ]
+}
