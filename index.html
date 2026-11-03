@@ -347,6 +347,7 @@
       box-shadow: var(--shadow-md);
       padding: 28px;
       contain: layout style;
+      scroll-margin-top: 96px;
     }
 
     .section-eyebrow {
@@ -463,6 +464,7 @@
       background: var(--bg-canvas);
       padding: 22px;
       contain: layout style;
+      scroll-margin-top: 96px;
     }
 
     .polar-panel-header {
@@ -532,8 +534,8 @@
 
     .polar-grid-layout {
       display: grid;
-      grid-template-columns: minmax(280px, 440px) minmax(0, 1fr);
-      gap: 24px;
+      grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
+      gap: 22px;
       align-items: center;
     }
 
@@ -771,6 +773,15 @@
       text-align: right;
       font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
+    }
+
+    .polar-details-column .corp-table {
+      font-size: 11.5px;
+    }
+
+    .polar-details-column .corp-table th,
+    .polar-details-column .corp-table td {
+      padding: 7px 6px;
     }
 
     .swatch-dot {
@@ -1119,6 +1130,13 @@
     }
 
     @media (max-width: 640px) {
+      .corporate-header {
+        position: static;
+      }
+      .header-top-strip,
+      .header-main-bar {
+        padding: 8px 14px;
+      }
       .corporate-shell {
         padding: 12px;
       }
@@ -2345,17 +2363,32 @@
 
     function renderPolarGrid(cx, cy, maxR, ringLabels, spokeAngles) {
       var html = "";
+      var rBase = 36;
       var rings = [0.25, 0.5, 0.75, 1.0];
       for (var i = 0; i < rings.length; i++) {
-        var r = maxR * rings[i];
+        var r = rBase + (maxR - rBase) * rings[i];
         html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r.toFixed(1) + '" class="polar-grid-ring" />';
-        if (ringLabels && ringLabels[i]) {
-          html += '<text x="' + (cx + 4) + '" y="' + (cy - r + 11).toFixed(1) + '" class="polar-axis-label">' + ringLabels[i] + "</text>";
-        }
       }
       for (var j = 0; j < spokeAngles.length; j++) {
         var pt = polarPoint(cx, cy, maxR + 6, spokeAngles[j]);
         html += '<line x1="' + cx + '" y1="' + cy + '" x2="' + pt.x.toFixed(1) + '" y2="' + pt.y.toFixed(1) + '" class="polar-axis-spoke" />';
+      }
+      if (ringLabels) {
+        html += renderPolarRingLabels(cx, cy, maxR, ringLabels);
+      }
+      return html;
+    }
+
+    function renderPolarRingLabels(cx, cy, maxR, ringLabels) {
+      if (!ringLabels) return "";
+      var html = "";
+      var rBase = 36;
+      var rings = [0.25, 0.5, 0.75, 1.0];
+      for (var i = 0; i < rings.length; i++) {
+        if (ringLabels[i]) {
+          var r = rBase + (maxR - rBase) * rings[i];
+          html += '<text x="' + (cx + 4) + '" y="' + (cy - r + 10).toFixed(1) + '" class="polar-axis-label" style="paint-order:stroke fill;stroke:#FFFFFF;stroke-width:2.5px;stroke-linejoin:round;pointer-events:none;">' + ringLabels[i] + "</text>";
+        }
       }
       return html;
     }
@@ -2408,7 +2441,7 @@
         : ["$25B", "$50B", "$75B", "$101.5B"];
 
       var spokeAngles = [0, 90, 180, 270];
-      var svgMarkup = renderPolarGrid(cx, cy, maxR, ringLabels, spokeAngles);
+      var svgMarkup = renderPolarGrid(cx, cy, maxR, null, spokeAngles);
 
       var currentAngle = 0;
       for (var i = 0; i < CATEGORY_DATA.length; i++) {
@@ -2459,7 +2492,8 @@
           formatUsdM(sales) + " (" + share.toFixed(1) + "%)</text>";
       }
 
-      /* Center hub */
+      /* Foreground ring scale labels + Center hub */
+      svgMarkup += renderPolarRingLabels(cx, cy, maxR, ringLabels);
       svgMarkup +=
         '<circle cx="' + cx + '" cy="' + cy + '" r="' + rInner + '" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />' +
         '<text x="' + cx + '" y="' + (cy - 3) + '" class="polar-center-title">FY' + String(activeYear).slice(2) + '</text>' +
@@ -2467,9 +2501,9 @@
 
       if (catState.year === "overlay") {
         svgMarkup +=
-          '<g transform="translate(200, 398)" text-anchor="middle">' +
-          '<rect x="-175" y="-12" width="350" height="22" rx="4" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" />' +
-          '<text x="0" y="3" class="polar-axis-label">Overlay Key: FY24 Filled Sector · FY23 Dark Dashed (5-2) · FY22 Slate Dotted (2-2)</text>' +
+          '<g class="polar-overlay-svg-key">' +
+          '<rect x="-20" y="384" width="440" height="22" rx="4" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" />' +
+          '<text x="200" y="399" text-anchor="middle" class="polar-axis-label">Overlay Key: FY24 Filled · FY23 Dashed (5-2) · FY22 Dotted (2-2)</text>' +
           "</g>";
       }
 
@@ -2577,7 +2611,7 @@
         : ["150", "300", "450", "614 Clubs"];
 
       var spokeAngles = [0, 120, 240];
-      var svgMarkup = renderPolarGrid(cx, cy, maxR, ringLabels, spokeAngles);
+      var svgMarkup = renderPolarGrid(cx, cy, maxR, null, spokeAngles);
 
       var maxVal = geoState.metric === "revenue" ? 184143 : geoState.metric === "opinc" ? 6217 : 614;
 
@@ -2620,6 +2654,7 @@
 
       var centerTop = geoState.metric === "revenue" ? "$254.5B" : geoState.metric === "opinc" ? "$9,285M" : "890 Clubs";
       var centerSub = geoState.metric === "revenue" ? "Total Rev" : geoState.metric === "opinc" ? "3.65% OpM" : "703/187";
+      svgMarkup += renderPolarRingLabels(cx, cy, maxR, ringLabels);
       svgMarkup +=
         '<circle cx="' + cx + '" cy="' + cy + '" r="' + rInner + '" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />' +
         '<text x="' + cx + '" y="' + (cy - 3) + '" class="polar-center-title">' + centerTop + '</text>' +
@@ -2713,7 +2748,7 @@
         /* Dual concentric polar rings:
            Outer Ring (r: 100..136) = Top-Line Revenue Share (98.10% Net Sales vs 1.90% Membership Fees)
            Inner Ring (r: 48..90)   = Operating Profit Contribution (48.00% Merch vs 52.00% Membership Fees) */
-        svgMarkup += renderPolarGrid(cx, cy, 136, ["25%", "50%", "75%", "100%"], [0, 90, 180, 270]);
+        svgMarkup += renderPolarGrid(cx, cy, 136, null, [0, 90, 180, 270]);
 
         var feeRevDeg = (1.90 / 100) * 360;
         var feeRevVisualSpan = Math.max(feeRevDeg, 9.0);
@@ -2733,22 +2768,23 @@
 
         /* Inner Ring: Operating Income Share — Membership Fees (52.00% = 187.2 deg) vs Net Merch Contribution (48.00% = 172.8 deg) */
         svgMarkup +=
-          '<path d="' + describeAnnularSector(cx, cy, 48, 90, 0, feeOpDeg) + '" fill="#E31837" fill-opacity="' + (isFeeSelected ? "0.95" : "0.80") + '" ' +
+          '<path d="' + describeAnnularSector(cx, cy, 44, 95, 0, feeOpDeg) + '" fill="#E31837" fill-opacity="' + (isFeeSelected ? "0.95" : "0.80") + '" ' +
           'class="polar-sector-path' + (isFeeSelected ? " is-selected" : "") + '" data-fly-sector="1" data-fly-ring="inner" role="button" tabindex="0" ' +
           'aria-label="Inner Ring Operating Profit: Membership Fees $4,828M (52.00% of Operating Income)" />';
         svgMarkup +=
-          '<path d="' + describeAnnularSector(cx, cy, 48, 90, feeOpDeg, 360) + '" fill="#005DAA" fill-opacity="' + (!isFeeSelected ? "0.92" : "0.72") + '" ' +
+          '<path d="' + describeAnnularSector(cx, cy, 44, 95, feeOpDeg, 360) + '" fill="#005DAA" fill-opacity="' + (!isFeeSelected ? "0.92" : "0.72") + '" ' +
           'class="polar-sector-path' + (!isFeeSelected ? " is-selected" : "") + '" data-fly-sector="0" data-fly-ring="inner" role="button" tabindex="0" ' +
           'aria-label="Inner Ring Operating Profit: Net Merchandise Contribution $4,457M (48.00% of Operating Income)" />';
 
         /* Labels */
+        svgMarkup += renderPolarRingLabels(cx, cy, 136, ["25%", "50%", "75%", "100%"]);
         svgMarkup +=
           '<text x="200" y="32" text-anchor="middle" class="polar-sector-label" style="fill:#E31837;">Outer Ring: Membership Fees 1.90% ($4,828M)</text>' +
           '<text x="200" y="368" text-anchor="middle" class="polar-sector-label" style="fill:#005DAA;">Outer Ring: Net Sales 98.10% ($249,625M)</text>' +
-          '<text x="268" y="196" text-anchor="middle" class="polar-sector-label" style="fill:#FFFFFF;">52.0%</text>' +
-          '<text x="268" y="208" text-anchor="middle" class="polar-axis-label" style="fill:#FFFFFF;">Fees OpInc</text>' +
-          '<text x="132" y="196" text-anchor="middle" class="polar-sector-label" style="fill:#FFFFFF;">48.0%</text>' +
-          '<text x="132" y="208" text-anchor="middle" class="polar-axis-label" style="fill:#FFFFFF;">Merch OpInc</text>';
+          '<text x="270" y="196" text-anchor="middle" class="polar-sector-label" style="fill:#FFFFFF;paint-order:stroke fill;stroke:#0F172A;stroke-width:2px;stroke-linejoin:round;pointer-events:none;">52.0%</text>' +
+          '<text x="270" y="208" text-anchor="middle" class="polar-axis-label" style="fill:#FFFFFF;paint-order:stroke fill;stroke:#0F172A;stroke-width:2px;stroke-linejoin:round;pointer-events:none;">Fees OpInc</text>' +
+          '<text x="130" y="196" text-anchor="middle" class="polar-sector-label" style="fill:#FFFFFF;paint-order:stroke fill;stroke:#0F172A;stroke-width:2px;stroke-linejoin:round;pointer-events:none;">48.0%</text>' +
+          '<text x="130" y="208" text-anchor="middle" class="polar-axis-label" style="fill:#FFFFFF;paint-order:stroke fill;stroke:#0F172A;stroke-width:2px;stroke-linejoin:round;pointer-events:none;">Merch OpInc</text>';
 
         svgMarkup +=
           '<circle cx="' + cx + '" cy="' + cy + '" r="38" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />' +
@@ -2775,7 +2811,7 @@
         var rInner = 36;
         var maxR = 110;
         var maxVolB = 30.0;
-        svgMarkup += renderPolarGrid(cx, cy, maxR, ["$7.5B", "$15B", "$22.5B", "$30B"], [0, 90, 180, 270]);
+        svgMarkup += renderPolarGrid(cx, cy, maxR, null, [0, 90, 180, 270]);
 
         for (var i = 0; i < ANCILLARY_ROSE_DATA.length; i++) {
           var item = ANCILLARY_ROSE_DATA[i];
@@ -2800,6 +2836,7 @@
             (item.svgBadge || item.metricBadge) + "</text>";
         }
 
+        svgMarkup += renderPolarRingLabels(cx, cy, maxR, ["$7.5B", "$15B", "$22.5B", "$30B"]);
         svgMarkup +=
           '<circle cx="' + cx + '" cy="' + cy + '" r="' + rInner + '" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />' +
           '<text x="' + cx + '" y="' + (cy - 3) + '" class="polar-center-title">$49.97B</text>' +
