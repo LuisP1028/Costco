@@ -166,7 +166,6 @@ const TRANSIENT_CACHE_NAMES = new Set([
     ".coverage",
     "scratch",
     ".scratch",
-    "logs",
 ]);
 
 export interface BlackboardEntry {
@@ -1645,7 +1644,8 @@ export function cleanTransientWorktreeArtifacts(dir: string): void {
 
 export function commitLeftovers(dir: string, branch: string, stageName = "stage"): boolean {
     if (!existsSync(dir)) return false;
-    ignoreMissing(["git", "checkout", "--", "logs"], dir);
+    ignoreMissing(["git", "checkout", "HEAD", "--", "logs"], dir);
+    ignoreMissing(["git", "clean", "-fd", "logs"], dir);
     cleanTransientWorktreeArtifacts(dir);
     const status = execFileSync("git", ["status", "--porcelain"], {
         cwd: dir,
@@ -1653,6 +1653,14 @@ export function commitLeftovers(dir: string, branch: string, stageName = "stage"
     });
     if (status.trim().length === 0) return false;
     execFileSync("git", ["add", "-A"], { cwd: dir, stdio: "inherit" });
+    ignoreMissing(["git", "reset", "HEAD", "--", "logs"], dir);
+    ignoreMissing(["git", "checkout", "HEAD", "--", "logs"], dir);
+    ignoreMissing(["git", "clean", "-fd", "logs"], dir);
+    const stagedStatus = execFileSync("git", ["diff", "--cached", "--name-only"], {
+        cwd: dir,
+        encoding: "utf8",
+    });
+    if (stagedStatus.trim().length === 0) return false;
     execFileSync(
         "git",
         ["commit", "-m", `chore(${stageName}): keep uncommitted stage files on ${branch}`],
@@ -1780,6 +1788,21 @@ export function ensureWorktree(
     return task;
 }
 
+function execMergeWithFallback(cwd: string, fromBranch: string): void {
+    try {
+        execFileSync("git", ["merge", "--no-ff", "--no-edit", "-X", "ours", fromBranch], {
+            cwd,
+            stdio: "inherit",
+        });
+    } catch {
+        // Resolve modify/delete conflicts (e.g. transient logs/) by keeping HEAD/theirs and committing
+        ignoreMissing(["git", "rm", "-rf", "--ignore-unmatch", "logs"], cwd);
+        ignoreMissing(["git", "checkout", "--ours", "."], cwd);
+        execFileSync("git", ["add", "-A"], { cwd, stdio: "inherit" });
+        execFileSync("git", ["commit", "--no-edit"], { cwd, stdio: "inherit" });
+    }
+}
+
 export function mergeInto(branch: string, fromBranch: string, repoDir: string = process.cwd()): void {
     if (!branchExists(fromBranch, repoDir)) return;
     const sourceWorktree = worktreeDir(fromBranch, repoDir);
@@ -1790,10 +1813,7 @@ export function mergeInto(branch: string, fromBranch: string, repoDir: string = 
     if (existsSync(existing)) {
         ignoreMissing(["git", "merge", "--abort"], existing);
         commitLeftovers(existing, branch, "pre-merge-target");
-        execFileSync("git", ["merge", "--no-ff", "--no-edit", "-X", "ours", fromBranch], {
-            cwd: existing,
-            stdio: "inherit",
-        });
+        execMergeWithFallback(existing, fromBranch);
         return;
     }
     const dir = join(repoDir, `.sandcastle/worktrees/merge-${branch.replaceAll("/", "-")}`);
@@ -1801,10 +1821,7 @@ export function mergeInto(branch: string, fromBranch: string, repoDir: string = 
     ignoreMissing(["rm", "-rf", dir], repoDir);
     execFileSync("git", ["worktree", "add", dir, branch], { cwd: repoDir, stdio: "inherit" });
     try {
-        execFileSync("git", ["merge", "--no-ff", "--no-edit", "-X", "ours", fromBranch], {
-            cwd: dir,
-            stdio: "inherit",
-        });
+        execMergeWithFallback(dir, fromBranch);
     } finally {
         ignoreMissing(["git", "worktree", "remove", "--force", dir], repoDir);
         ignoreMissing(["rm", "-rf", dir], repoDir);
