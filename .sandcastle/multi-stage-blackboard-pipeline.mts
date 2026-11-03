@@ -1509,6 +1509,7 @@ export function antigravity(
         name: "antigravity",
         env: {
             ...process.env,
+            SKIP_GLOBAL_AUTO_SYNC: "1",
             ...extraEnv,
             PATH: `${SHIM_BIN_DIR}:${process.env.PATH || ""}`,
         },
@@ -1839,6 +1840,47 @@ export function assertStageManifest(
     }
 }
 
+let launchStaggerChain: Promise<void> = Promise.resolve();
+
+async function staggerLaunchSlot(delayMs = 350): Promise<void> {
+    const slot = launchStaggerChain.then(() => sleep(delayMs));
+    launchStaggerChain = slot.then(
+        () => undefined,
+        () => undefined,
+    );
+    await slot;
+}
+
+export async function runWithLockRetry<T extends { commits: unknown[] }>(
+    name: string,
+    branch: string,
+    launch: () => Promise<T>,
+    options: {
+        maxAttempts?: number;
+        baseDelayMs?: number;
+        repoDir?: string;
+        baseRef?: string;
+    } = {},
+): Promise<T> {
+    const maxAttempts = options.maxAttempts ?? 6;
+    const baseDelayMs = options.baseDelayMs ?? 500;
+    const repoDir = options.repoDir ?? process.cwd();
+    const baseRef = options.baseRef ?? "HEAD";
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            await ensureWorktree(branch, repoDir, baseRef);
+            await staggerLaunchSlot(350);
+            const result = await launch();
+            return result;
+        } catch (error) {
+            if (!isGitLock(error) || attempt === maxAttempts) throw error;
+            console.log(`${name} (${branch}) hit git/config lock, retry ${attempt}/${maxAttempts - 1}`);
+            await sleep(baseDelayMs * attempt + Math.floor(Math.random() * 250));
+        }
+    }
+    throw new Error(`${name} (${branch}) failed after git lock retries`);
+}
+
 export async function runStageWithManifestGate<T extends { commits: unknown[] }>(
     stageName: string,
     branch: string,
@@ -1859,8 +1901,10 @@ export async function runStageWithManifestGate<T extends { commits: unknown[] }>
     try {
         for (let stageAttempt = 1; stageAttempt <= maxStageAttempts; stageAttempt++) {
             options.onAttemptStart?.(stageAttempt);
-            await ensureWorktree(branch, repoDir, baseRef);
-            const result = await launch();
+            const result = await runWithLockRetry(stageName, branch, launch, {
+                repoDir,
+                baseRef,
+            });
             const wtDir = worktreeDir(branch, repoDir);
             if (existsSync(wtDir)) {
                 commitLeftovers(wtDir, branch, stageName);
@@ -2716,9 +2760,26 @@ export async function runMultiStagePipeline(options: {
     bootstrapBlackboardShim(repoDir);
     mkdirSync(join(repoDir, ".sandcastle", "logs"), { recursive: true });
 
-    const seeds = Array.isArray(rawSeedsInput)
+    const rawSeedsList = Array.isArray(rawSeedsInput)
         ? rawSeedsInput
         : [rawSeedsInput as string];
+
+    const seeds: string[] = [];
+    for (const item of rawSeedsList) {
+        const trimmed = item.trim();
+        if (!trimmed) continue;
+        if (trimmed.endsWith(".txt") && existsSync(resolve(repoDir, trimmed))) {
+            const lines = readFileSync(resolve(repoDir, trimmed), "utf8")
+                .split("\n")
+                .map((l) => l.trim())
+                .filter((l) => l.length > 0);
+            if (lines.length > 0) {
+                seeds.push(...lines);
+                continue;
+            }
+        }
+        seeds.push(trimmed);
+    }
 
     for (const seed of seeds) {
         const runId = mintRunId();
