@@ -89,6 +89,14 @@ const REQUIRED_CORPORATE_BRAND_TOKENS = [
   "#FFFFFF"
 ];
 
+const REQUIRED_CORPORATE_BRAND_TOKENS_LOWER = REQUIRED_CORPORATE_BRAND_TOKENS.map((token) =>
+  token.toLowerCase()
+);
+
+const EXPECTED_TICKET_SLUGS_LOWER = EXPECTED_TICKET_FILES.map((file) =>
+  file.replace(/\.md$/, "").toLowerCase()
+);
+
 const REQUIRED_CORPORATE_WEB_FIGURES = [
   "254,453",
   "249,625",
@@ -107,6 +115,104 @@ const REQUIRED_CORPORATE_WEB_FIGURES = [
   "104.15%",
   "52.00%"
 ];
+
+const PROHIBITED_SPEC_TOKENS = [
+  "{Net Sales}",
+  "{Membership Fees}",
+  "{Gross Margin Ceiling}",
+  "{Operating Income Flywheel}"
+];
+
+const PROHIBITED_PSEUDOCODE_DIVIDERS = [
+  "Section 01 //",
+  "Section 02 //",
+  "Section 03 //",
+  "Section 04 //",
+  "Section 05 //",
+  "DRILLDOWN //",
+  "Step 01 //",
+  "Step 02 //",
+  "Step 03 //",
+  "Step 04 //",
+  "Step 05 //",
+  "ticket-001.md //",
+  "ticket-002.md //",
+  "ticket-003.md //",
+  "ticket-004.md //",
+  "ticket-005.md //",
+  "ticket-006.md //",
+  "WAYFINDER TICKET //"
+];
+
+const PROHIBITED_PSEUDOCODE_DIVIDER_REGEX =
+  /(?:Section\s+0[1-5]|Step\s+0[1-5]|ACTIVE\s+POLAR|DRILLDOWN|RESOLVED\s+WAYFINDER\s+TICKET|ticket-00[1-6]\.md)\s*\/\//i;
+
+const REQUIRED_POLAR_CSS_SELECTORS = [
+  ".polar-grid-ring",
+  ".polar-axis-spoke",
+  ".polar-sector-label",
+  ".polar-center-title",
+  ".polar-center-sub",
+  ".drilldown-meta-grid",
+  ".drilldown-meta-item",
+  ".sim-output-banner.is-breach"
+];
+
+const REQUIRED_RECONCILED_CATEGORY_FIGURES = [
+  ["85,629", "85629"],
+  ["96,175", "96175"],
+  ["101,463", "101463"],
+  ["61,100", "61100"],
+  ["60,865", "60865"],
+  ["63,973", "63973"],
+  ["46,474", "46474"],
+  ["48,693", "48693"],
+  ["49,969", "49969"],
+  ["29,527", "29527"],
+  ["31,977", "31977"],
+  ["34,220", "34220"],
+  ["703", "703/187"],
+  ["187", "703/187"],
+  ["499", "499/115"],
+  ["115", "499/115"],
+  ["113", "113/55"],
+  ["55", "113/55"],
+  ["91", "91/17"],
+  ["17", "91/17"]
+];
+
+const PROHIBITED_UNVERIFIED_HISTORICAL_FIGURES = [
+  "88,948",
+  "88948",
+  "96,936",
+  "96936",
+  "60,876",
+  "60876",
+  "60,292",
+  "60292",
+  "43,443",
+  "43443",
+  "29,463",
+  "29463",
+  "31,789",
+  "31789",
+  "704/124/62",
+  "505/80/29",
+  "103/35/30",
+  "96/9/3"
+];
+
+const NEXT_H2_HEADING_REGEX = /^##\s+/m;
+const BARE_TICKET_CLEAN_REGEX = /[`*_~]/g;
+const BARE_TICKET_DIRECT_REGEX = /^(?:ticket[-_\s#]*\d+(?:\.md)?|#?\d+|t[-_]?\d+)$/i;
+const BARE_TICKET_PATH_REGEX = /(?:^|[\\/])ticket[-_\s#]*\d+(?:\.md)?$/i;
+const MD_EXTENSION_REGEX = /\.md$/i;
+const WAYFINDER_RESEARCH_REGEX = /wayfinder:research/i;
+const CLAIMED_BY_REGEX = /claimed[_\s]+by\s*:/i;
+const RESOLVED_STATUS_REGEX = /(?:^|\n)[-*>\s]*\*?\*?status\*?\*?\s*:\s*`?resolved`?\s*(?:$|\n)/i;
+const BARE_TICKET_ID_IN_PROSE_REGEX = /\bticket[-_]\d+\b/i;
+const TICKET_HREF_REGEX = /ticket-\d+/i;
+const SCRIPT_BLOCK_STRIP_REGEX = /<script\b[^>]*>[\s\S]*?<\/script>/gi;
 
 function round4(value) {
   return Number(value.toFixed(4));
@@ -171,15 +277,15 @@ function resolveTicketsDir(rootDir, mapPath, explicitTicketsDir) {
 
 function isBareTicketLabel(rawLabel) {
   const cleaned = String(rawLabel ?? "")
-    .replace(/[`*_~]/g, "")
+    .replace(BARE_TICKET_CLEAN_REGEX, "")
     .trim();
   if (!cleaned || cleaned.length < 10) {
     return true;
   }
-  if (/^(?:ticket[-_\s#]*\d+(?:\.md)?|#?\d+|t[-_]?\d+)$/i.test(cleaned)) {
+  if (BARE_TICKET_DIRECT_REGEX.test(cleaned)) {
     return true;
   }
-  if (/(?:^|[\\/])ticket[-_\s#]*\d+(?:\.md)?$/i.test(cleaned) || /\.md$/i.test(cleaned)) {
+  if (BARE_TICKET_PATH_REGEX.test(cleaned) || MD_EXTENSION_REGEX.test(cleaned)) {
     return true;
   }
   return false;
@@ -192,7 +298,7 @@ function extractMarkdownSection(markdown, sectionHeadingRegex) {
   }
   const startOffset = match.index + match[0].length;
   const remainder = markdown.slice(startOffset);
-  const nextHeadingMatch = /^##\s+/m.exec(remainder);
+  const nextHeadingMatch = NEXT_H2_HEADING_REGEX.exec(remainder);
   return nextHeadingMatch ? remainder.slice(0, nextHeadingMatch.index) : remainder;
 }
 
@@ -626,15 +732,15 @@ function verifySingleTicketMarkdown(ticketMarkdown, ticketLabel) {
   if (typeof ticketMarkdown !== "string" || !ticketMarkdown.trim()) {
     throw new Error(`Wayfinder audit failed for ${ticketLabel}: ticket content is empty or invalid.`);
   }
-  if (!/wayfinder:research/i.test(ticketMarkdown)) {
+  if (!WAYFINDER_RESEARCH_REGEX.test(ticketMarkdown)) {
     throw new Error(
       `Wayfinder ticket audit failed for ${ticketLabel}: missing required "wayfinder:research" indicator.`
     );
   }
-  if (!/claimed[_\s]+by\s*:/i.test(ticketMarkdown)) {
+  if (!CLAIMED_BY_REGEX.test(ticketMarkdown)) {
     throw new Error(`Wayfinder ticket audit failed for ${ticketLabel}: missing required "Claimed by:" metadata.`);
   }
-  if (!/(?:^|\n)[-*>\s]*\*?\*?status\*?\*?\s*:\s*`?resolved`?\s*(?:$|\n)/i.test(ticketMarkdown)) {
+  if (!RESOLVED_STATUS_REGEX.test(ticketMarkdown)) {
     throw new Error(`Wayfinder ticket audit failed for ${ticketLabel}: ticket lacks "Status: resolved".`);
   }
 
@@ -646,7 +752,7 @@ function verifySingleTicketMarkdown(ticketMarkdown, ticketLabel) {
     }
   }
 
-  const blockedBySection = extractMarkdownSection(ticketMarkdown, /^##\s+Blocked By\s*$/m) ?? "";
+  const blockedBySection = extractMarkdownSection(ticketMarkdown, REQUIRED_TICKET_HEADINGS[1].regex) ?? "";
   for (const depLink of extractMarkdownLinks(blockedBySection)) {
     if (isBareTicketLabel(depLink.label)) {
       throw new Error(
@@ -655,13 +761,13 @@ function verifySingleTicketMarkdown(ticketMarkdown, ticketLabel) {
     }
   }
   const blockedByWithoutLinks = blockedBySection.replace(/\[([^\]]*)\]\(([^)]+)\)/g, "$1");
-  if (/\bticket[-_]\d+\b/i.test(blockedByWithoutLinks)) {
+  if (BARE_TICKET_ID_IN_PROSE_REGEX.test(blockedByWithoutLinks)) {
     throw new Error(
       `Wayfinder "Refer by name" invariant breach in ${ticketLabel} under "## Blocked By": bare ticket ID detected.`
     );
   }
 
-  const resolutionSection = extractMarkdownSection(ticketMarkdown, /^##\s+Resolution\s*$/m) ?? "";
+  const resolutionSection = extractMarkdownSection(ticketMarkdown, REQUIRED_TICKET_HEADINGS[2].regex) ?? "";
   if (!resolutionSection.includes("research/costco_revenue_architecture.md")) {
     throw new Error(
       `Wayfinder ticket audit failed for ${ticketLabel}: "## Resolution" must link to research/costco_revenue_architecture.md.`
@@ -730,14 +836,14 @@ export function verifyWayfinderArtifacts(rawOptions = {}) {
   }
 
   for (const link of extractMarkdownLinks(resolvedMapMarkdown)) {
-    if (/ticket-\d+/i.test(link.href) && isBareTicketLabel(link.label)) {
+    if (TICKET_HREF_REGEX.test(link.href) && isBareTicketLabel(link.label)) {
       throw new Error(
         `Wayfinder "Refer by name" link invariant breach in ${mapLabel}: bare ticket link label "[${link.label}](${link.href})" is prohibited; wrap a descriptive human-readable title.`
       );
     }
   }
 
-  const decisionsSection = extractMarkdownSection(resolvedMapMarkdown, /^##\s+Decisions so far\s*$/m);
+  const decisionsSection = extractMarkdownSection(resolvedMapMarkdown, REQUIRED_WAYFINDER_SECTIONS[2].pattern);
   if (!decisionsSection || !decisionsSection.trim()) {
     throw new Error(`Wayfinder audit failed for ${mapLabel}: "## Decisions so far" section is empty.`);
   }
@@ -752,7 +858,7 @@ export function verifyWayfinderArtifacts(rawOptions = {}) {
   }
 
   const decisionsWithoutLinks = decisionsSection.replace(/\[([^\]]*)\]\(([^)]+)\)/g, "$1");
-  if (/\bticket[-_]\d+\b/i.test(decisionsWithoutLinks)) {
+  if (BARE_TICKET_ID_IN_PROSE_REGEX.test(decisionsWithoutLinks)) {
     throw new Error(
       `Wayfinder "Refer by name" invariant breach under "## Decisions so far" in ${mapLabel}: bare ticket identifier detected in prose/label.`
     );
@@ -943,7 +1049,7 @@ export function verifyCorporateWebReport(rawOptions = {}) {
 
   const lowerHtml = resolvedHtml.toLowerCase();
   for (const marker of PROHIBITED_DREAMCORE_MARKERS) {
-    if (lowerHtml.includes(marker.toLowerCase())) {
+    if (lowerHtml.includes(marker)) {
       throw new Error(
         `Corporate web report audit failed for ${htmlLabel}: residual Dreamcore/liminal marker "${marker}" detected.`
       );
@@ -965,19 +1071,22 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     }
   }
 
+  const observedHrefTargets = new Set();
+  const hrefAnchorRegex = /\bhref=["']#([a-zA-Z0-9_-]+)["']/g;
+  let hrefMatch;
+  while ((hrefMatch = hrefAnchorRegex.exec(resolvedHtml)) !== null) {
+    observedHrefTargets.add(hrefMatch[1]);
+  }
+
   for (const targetId of REQUIRED_TOC_ANCHOR_TARGETS) {
-    const hrefPattern = new RegExp(`href=["']#${targetId}["']`);
-    if (!hrefPattern.test(resolvedHtml)) {
+    if (!observedHrefTargets.has(targetId)) {
       throw new Error(
         `Corporate web report audit failed for ${htmlLabel}: Table of Contents is missing anchor link href="#${targetId}".`
       );
     }
   }
 
-  const hrefAnchorRegex = /\bhref=["']#([a-zA-Z0-9_-]+)["']/g;
-  let hrefMatch;
-  while ((hrefMatch = hrefAnchorRegex.exec(resolvedHtml)) !== null) {
-    const targetAnchor = hrefMatch[1];
+  for (const targetAnchor of observedHrefTargets) {
     if (!declaredIds.has(targetAnchor)) {
       throw new Error(
         `Corporate web report audit failed for ${htmlLabel}: broken internal anchor link href="#${targetAnchor}" (target ID not found in DOM).`
@@ -985,10 +1094,10 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     }
   }
 
-  for (const brandHex of REQUIRED_CORPORATE_BRAND_TOKENS) {
-    if (!lowerHtml.includes(brandHex.toLowerCase())) {
+  for (let i = 0; i < REQUIRED_CORPORATE_BRAND_TOKENS.length; i += 1) {
+    if (!lowerHtml.includes(REQUIRED_CORPORATE_BRAND_TOKENS_LOWER[i])) {
       throw new Error(
-        `Corporate web report audit failed for ${htmlLabel}: missing corporate design token "${brandHex}".`
+        `Corporate web report audit failed for ${htmlLabel}: missing corporate design token "${REQUIRED_CORPORATE_BRAND_TOKENS[i]}".`
       );
     }
   }
@@ -1001,11 +1110,71 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     }
   }
 
-  for (const ticketFile of EXPECTED_TICKET_FILES) {
-    const ticketSlug = ticketFile.replace(/\.md$/, "");
-    if (!lowerHtml.includes(ticketSlug.toLowerCase())) {
+  for (let i = 0; i < EXPECTED_TICKET_FILES.length; i += 1) {
+    if (!lowerHtml.includes(EXPECTED_TICKET_SLUGS_LOWER[i])) {
       throw new Error(
-        `Corporate web report audit failed for ${htmlLabel}: missing Wayfinder reference to "${ticketFile}".`
+        `Corporate web report audit failed for ${htmlLabel}: missing Wayfinder reference to "${EXPECTED_TICKET_FILES[i]}".`
+      );
+    }
+  }
+
+  for (const specToken of PROHIBITED_SPEC_TOKENS) {
+    if (resolvedHtml.includes(specToken)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: unrefined specification token "${specToken}" detected in reader-facing HTML.`
+      );
+    }
+  }
+
+  for (const divider of PROHIBITED_PSEUDOCODE_DIVIDERS) {
+    if (resolvedHtml.includes(divider)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: pseudo-code divider "${divider}" detected in reader-facing HTML.`
+      );
+    }
+  }
+
+  const htmlWithoutScripts = resolvedHtml.replace(SCRIPT_BLOCK_STRIP_REGEX, "");
+  const dividerMatch = PROHIBITED_PSEUDOCODE_DIVIDER_REGEX.exec(resolvedHtml);
+  if (dividerMatch || htmlWithoutScripts.includes(" // ")) {
+    const foundToken = dividerMatch ? dividerMatch[0] : " // ";
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: pseudo-code divider "${foundToken}" detected in reader-facing HTML.`
+    );
+  }
+
+  const styleBlocks = [];
+  const styleRegex = /<style\b[^>]*>([\s\S]*?)<\/style>/gi;
+  let styleMatch;
+  while ((styleMatch = styleRegex.exec(resolvedHtml)) !== null) {
+    styleBlocks.push(styleMatch[1]);
+  }
+  const combinedCss = styleBlocks.join("\n");
+  for (const selector of REQUIRED_POLAR_CSS_SELECTORS) {
+    if (!combinedCss.includes(selector)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing required CSS style rule "${selector}" in <style>.`
+      );
+    }
+  }
+  if (resolvedHtml.includes("--emerald-audit")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: undefined CSS custom property "--emerald-audit" detected.`
+    );
+  }
+
+  for (const [formattedFig, rawFig] of REQUIRED_RECONCILED_CATEGORY_FIGURES) {
+    if (!resolvedHtml.includes(formattedFig) && !resolvedHtml.includes(rawFig)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing audited Note 11 / Item 2 figure "${formattedFig}".`
+      );
+    }
+  }
+
+  for (const legacyFig of PROHIBITED_UNVERIFIED_HISTORICAL_FIGURES) {
+    if (resolvedHtml.includes(legacyFig)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: unverified historical figure "${legacyFig}" detected (diverges from Note 11 / Item 2).`
       );
     }
   }
@@ -1021,7 +1190,10 @@ export function verifyCorporateWebReport(rawOptions = {}) {
       "polar-chart-flywheel"
     ],
     fiveStepsVerified: ["step-1", "step-2", "step-3", "step-4", "step-5"],
-    dreamcoreMarkersDetected: 0
+    dreamcoreMarkersDetected: 0,
+    specTokensDetected: 0,
+    polarCssSelectorsVerified: true,
+    historicalNote11Reconciled: true
   };
 }
 
