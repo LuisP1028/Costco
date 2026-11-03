@@ -1,0 +1,5 @@
+wayfinder/tickets/ticket-006.md
+wayfinder/map.md
+README.md
+assets/20261103T204534-693-1b8y/implementer-5-polar-chart-categories-verified.png
+handoff/20261103T204534-693-1b8y/implementer-5.txt
