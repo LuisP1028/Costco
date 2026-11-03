@@ -1,0 +1,5 @@
+index.html
+src/costco_revenue_model.mjs
+README.md
+wayfinder/map.md
+wayfinder/tickets/ticket-006.md

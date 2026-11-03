@@ -20,7 +20,8 @@ const EXPECTED_TICKET_FILES = [
   "ticket-002.md",
   "ticket-003.md",
   "ticket-004.md",
-  "ticket-005.md"
+  "ticket-005.md",
+  "ticket-006.md"
 ];
 
 const REQUIRED_TICKET_HEADINGS = [
@@ -33,6 +34,79 @@ const REQUIRED_RESEARCH_CITATIONS = ["0000909832", "Form 10-K", "ASC 606"];
 const REQUIRED_RESEARCH_FIGURES = ["254,453", "249,625", "4,828", "9,285", "7,367"];
 const MIN_RESEARCH_MONOGRAPH_BYTES = 8000;
 const GAAP_CONSERVATION_EPSILON = 1e-9;
+
+const PROHIBITED_DREAMCORE_MARKERS = [
+  "dreamcore",
+  "seraphic",
+  "vhs-scanlines",
+  "film-grain-overlay",
+  "meadow_portal.jpg",
+  "poolroom_sanctuary.jpg",
+  "sky_staircase.jpg",
+  "tape hum",
+  "stuck-clock",
+  "dream-sky-canvas"
+];
+
+const REQUIRED_CORPORATE_DOM_IDS = [
+  "table-of-contents",
+  "section-executive-summary",
+  "section-polar-graphs",
+  "polar-chart-categories",
+  "polar-chart-geography",
+  "polar-chart-flywheel",
+  "section-five-steps",
+  "step-1",
+  "step-2",
+  "step-3",
+  "step-4",
+  "step-5",
+  "section-gaap-model",
+  "section-wayfinder-audit"
+];
+
+const REQUIRED_TOC_ANCHOR_TARGETS = [
+  "section-executive-summary",
+  "section-polar-graphs",
+  "polar-chart-categories",
+  "polar-chart-geography",
+  "polar-chart-flywheel",
+  "section-five-steps",
+  "step-1",
+  "step-2",
+  "step-3",
+  "step-4",
+  "step-5",
+  "section-gaap-model",
+  "section-wayfinder-audit"
+];
+
+const REQUIRED_CORPORATE_BRAND_TOKENS = [
+  "#E31837",
+  "#005DAA",
+  "#0F172A",
+  "#F8FAFC",
+  "#FFFFFF"
+];
+
+const REQUIRED_CORPORATE_WEB_FIGURES = [
+  "254,453",
+  "249,625",
+  "4,828",
+  "9,285",
+  "7,367",
+  "101,463",
+  "63,973",
+  "49,969",
+  "34,220",
+  "184,143",
+  "35,436",
+  "34,874",
+  "10.92%",
+  "92.9%",
+  "104.15%",
+  "52.00%"
+];
 
 function round4(value) {
   return Number(value.toFixed(4));
@@ -391,7 +465,7 @@ function verifyGeographicSegments(segments, fiscalYear) {
 /**
  * Validates Costco's structured financial dataset against all GAAP conservation
  * identities, disaggregation share bounds, membership invariants, and working-capital
- * ratios defined in functional_specification_001.md and LANGUAGE.md.
+ * ratios defined in functional_specification_001.md, functional_specification_002.md, and LANGUAGE.md.
  */
 export function verifyFinancialDataset(data) {
   if (!isPlainObject(data)) {
@@ -601,7 +675,7 @@ function verifySingleTicketMarkdown(ticketMarkdown, ticketLabel) {
 }
 
 /**
- * Audits wayfinder/map.md and wayfinder/tickets/ticket-001.md..ticket-005.md
+ * Audits wayfinder/map.md and wayfinder/tickets/ticket-001.md..ticket-006.md
  * enforcing required H2 headings, descriptive human-readable ticket links (zero bare IDs),
  * wayfinder:research classification, Status: resolved, and primary-source artifact links.
  */
@@ -706,9 +780,6 @@ export function verifyWayfinderArtifacts(rawOptions = {}) {
     throw new Error("Wayfinder audit failed: provided tickets override must be a non-null plain object.");
   }
 
-  // If in-memory ticket overrides are supplied, first validate every provided override entry
-  // so targeted single-ticket mutation checks fail fast on the exact malformed ticket, then
-  // enforce completeness across all five canonical tickets without silently falling back to disk.
   if (hasTicketContentsOverride) {
     for (const [providedKey, providedMarkdown] of Object.entries(ticketContents)) {
       const normalizedKey = providedKey.endsWith(".md") ? providedKey : `${providedKey}.md`;
@@ -827,6 +898,135 @@ export function verifyResearchMonograph(rawOptions = {}) {
   };
 }
 
+/**
+ * Audits index.html to verify the institutional Corporate Business aesthetic,
+ * sticky Table of Contents (#table-of-contents), 3 interactive Polar Graphs,
+ * 5-Step sequential revenue generation walkthrough (#step-1..#step-5),
+ * and complete elimination of deprecated Dreamcore markers.
+ */
+export function verifyCorporateWebReport(rawOptions = {}) {
+  let opts = null;
+  if (typeof rawOptions === "string") {
+    opts = { htmlPath: rawOptions };
+  } else if (isPlainObject(rawOptions)) {
+    opts = rawOptions;
+  }
+  if (!opts) {
+    throw new Error("Corporate web report audit failed: options must be an object or HTML file path string.");
+  }
+
+  const rootDir = opts.rootDir ? path.resolve(opts.rootDir) : DEFAULT_ROOT_DIR;
+  const htmlPath = opts.htmlPath ? path.resolve(opts.htmlPath) : path.join(rootDir, "index.html");
+  const hasHtmlContentOverride =
+    typeof opts.hasHtmlContentOverride === "boolean"
+      ? opts.hasHtmlContentOverride
+      : hasDefinedOwn(opts, "htmlContent") || hasDefinedOwn(opts, "indexHtml");
+  const htmlContent = hasDefinedOwn(opts, "indexHtml") ? opts.indexHtml : opts.htmlContent;
+
+  const htmlLabel = htmlPath || "index.html";
+  let resolvedHtml;
+
+  if (hasHtmlContentOverride) {
+    if (typeof htmlContent !== "string" || !htmlContent.trim()) {
+      throw new Error(`Corporate web report audit failed for ${htmlLabel}: provided HTML override is empty or invalid.`);
+    }
+    resolvedHtml = htmlContent;
+  } else {
+    if (!fs.existsSync(htmlPath)) {
+      throw new Error(`Corporate web report audit failed: file not found at ${htmlLabel}.`);
+    }
+    resolvedHtml = fs.readFileSync(htmlPath, "utf8");
+    if (!resolvedHtml.trim()) {
+      throw new Error(`Corporate web report audit failed for ${htmlLabel}: HTML file is empty.`);
+    }
+  }
+
+  const lowerHtml = resolvedHtml.toLowerCase();
+  for (const marker of PROHIBITED_DREAMCORE_MARKERS) {
+    if (lowerHtml.includes(marker.toLowerCase())) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: residual Dreamcore/liminal marker "${marker}" detected.`
+      );
+    }
+  }
+
+  const declaredIds = new Set();
+  const idRegex = /\bid=["']([a-zA-Z0-9_-]+)["']/g;
+  let idMatch;
+  while ((idMatch = idRegex.exec(resolvedHtml)) !== null) {
+    declaredIds.add(idMatch[1]);
+  }
+
+  for (const requiredId of REQUIRED_CORPORATE_DOM_IDS) {
+    if (!declaredIds.has(requiredId)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing required structural element "#${requiredId}".`
+      );
+    }
+  }
+
+  for (const targetId of REQUIRED_TOC_ANCHOR_TARGETS) {
+    const hrefPattern = new RegExp(`href=["']#${targetId}["']`);
+    if (!hrefPattern.test(resolvedHtml)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: Table of Contents is missing anchor link href="#${targetId}".`
+      );
+    }
+  }
+
+  const hrefAnchorRegex = /\bhref=["']#([a-zA-Z0-9_-]+)["']/g;
+  let hrefMatch;
+  while ((hrefMatch = hrefAnchorRegex.exec(resolvedHtml)) !== null) {
+    const targetAnchor = hrefMatch[1];
+    if (!declaredIds.has(targetAnchor)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: broken internal anchor link href="#${targetAnchor}" (target ID not found in DOM).`
+      );
+    }
+  }
+
+  for (const brandHex of REQUIRED_CORPORATE_BRAND_TOKENS) {
+    if (!lowerHtml.includes(brandHex.toLowerCase())) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing corporate design token "${brandHex}".`
+      );
+    }
+  }
+
+  for (const figure of REQUIRED_CORPORATE_WEB_FIGURES) {
+    if (!resolvedHtml.includes(figure)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing primary-source figure "${figure}".`
+      );
+    }
+  }
+
+  for (const ticketFile of EXPECTED_TICKET_FILES) {
+    const ticketSlug = ticketFile.replace(/\.md$/, "");
+    if (!lowerHtml.includes(ticketSlug.toLowerCase())) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing Wayfinder reference to "${ticketFile}".`
+      );
+    }
+  }
+
+  return {
+    valid: true,
+    htmlPath: htmlLabel,
+    byteLength: Buffer.byteLength(resolvedHtml, "utf8"),
+    tableOfContentsVerified: true,
+    polarChartsVerified: [
+      "polar-chart-categories",
+      "polar-chart-geography",
+      "polar-chart-flywheel"
+    ],
+    fiveStepsVerified: ["step-1", "step-2", "step-3", "step-4", "step-5"],
+    dreamcoreMarkersDetected: 0
+  };
+}
+
+export const verifyIndexHtml = verifyCorporateWebReport;
+
 function normalizeModelOptions(rawOptions) {
   if (rawOptions === undefined) {
     return {};
@@ -851,8 +1051,9 @@ function normalizeModelOptions(rawOptions) {
 
 /**
  * Loads and cross-verifies Costco Wholesale Corporation's structured SEC Form 10-K
- * financial dataset, canonical Wayfinder decision map and resolved tickets, and
- * primary-source research monograph with zero external network calls.
+ * financial dataset, canonical Wayfinder decision map and resolved tickets,
+ * primary-source research monograph, and corporate interactive web report
+ * with zero external network calls.
  */
 export function loadAndVerifyCostcoModel(rawOptions = {}) {
   const startTime = performance.now();
@@ -867,6 +1068,7 @@ export function loadAndVerifyCostcoModel(rawOptions = {}) {
   const researchPath = options.researchPath
     ? path.resolve(options.researchPath)
     : path.join(rootDir, "research", "costco_revenue_architecture.md");
+  const htmlPath = options.htmlPath ? path.resolve(options.htmlPath) : path.join(rootDir, "index.html");
 
   const hasDataOverride = hasDefinedOwn(options, "data") || hasDefinedOwn(options, "dataset");
   let dataset;
@@ -909,6 +1111,14 @@ export function loadAndVerifyCostcoModel(rawOptions = {}) {
     ...(hasResearchContentOverride ? { researchContent, hasResearchContentOverride: true } : {})
   });
 
+  const hasHtmlContentOverride = hasDefinedOwn(options, "htmlContent") || hasDefinedOwn(options, "indexHtml");
+  const htmlContent = hasDefinedOwn(options, "indexHtml") ? options.indexHtml : options.htmlContent;
+
+  const corporateWebAudit = verifyCorporateWebReport({
+    htmlPath,
+    ...(hasHtmlContentOverride ? { htmlContent, hasHtmlContentOverride: true } : {})
+  });
+
   const elapsedMs = round4(performance.now() - startTime);
   const rssMb = round4(process.memoryUsage().rss / (1024 * 1024));
 
@@ -919,6 +1129,7 @@ export function loadAndVerifyCostcoModel(rawOptions = {}) {
     ...financialMetrics,
     wayfinderAudit,
     researchAudit,
+    corporateWebAudit,
     telemetry: {
       elapsedMs,
       rssMb,
@@ -942,7 +1153,8 @@ function parseCliArgs(argv) {
     "--data": "dataPath",
     "--map": "mapPath",
     "--tickets": "ticketsDir",
-    "--research": "researchPath"
+    "--research": "researchPath",
+    "--html": "htmlPath"
   };
 
   for (let i = 0; i < argv.length; i += 1) {
