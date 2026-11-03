@@ -2366,150 +2366,166 @@ export async function runPlanningSession(options: {
     const plan2Branch = `agent/plan-2-${runId}`;
     const implementerLeadBranch = `agent/implementer-${runId}`;
 
-    await ensureWorktree(plan2Branch, repoDir, planBranch);
-    await ensureWorktree(implementerLeadBranch, repoDir, planBranch);
-    for (const pl of corePlanners) {
-        await ensureWorktree(pl.branch, repoDir, planBranch);
+    let stage2AlreadyComplete = false;
+    let spawnedVisualPlanner = branchExists(planner25Def.branch, repoDir);
+    for (const checkBr of [implementerLeadBranch, planBranch]) {
+        if (branchExists(checkBr, repoDir)) {
+            try {
+                assertStageManifest("implementer", checkBr, `handoff/${runId}/implementer.txt`, repoDir);
+                stage2AlreadyComplete = true;
+                console.log(`[pipeline] Stage 2 manifest already verified on ${checkBr}; skipping Stage 2 agent re-runs and joining branches.`);
+                break;
+            } catch {
+                // Not yet complete on checkBr
+            }
+        }
     }
 
-    const implementerWorktree = worktreeDir(implementerLeadBranch, repoDir);
-    const plan2Worktree = worktreeDir(plan2Branch, repoDir);
+    if (!stage2AlreadyComplete) {
+        await ensureWorktree(plan2Branch, repoDir, planBranch);
+        await ensureWorktree(implementerLeadBranch, repoDir, planBranch);
+        for (const pl of corePlanners) {
+            await ensureWorktree(pl.branch, repoDir, planBranch);
+        }
 
-    let planner25Task: Promise<{ commits: unknown[] }> | null = null;
-    let spawnedVisualPlanner = false;
+        const implementerWorktree = worktreeDir(implementerLeadBranch, repoDir);
+        const plan2Worktree = worktreeDir(plan2Branch, repoDir);
 
-    const blackboard = new BlackboardServer(runId, {
-        repoDir,
-        sessionName: "stage2-planning",
-        activeAgents: [
-            "plan-2",
-            "planner-2.1",
-            "planner-2.2",
-            "planner-2.3",
-            "planner-2.4",
-            "implementer",
-        ],
-        conditionalAgents: ["planner-2.5"],
-        workerAgents: [
-            "plan-2",
-            "planner-2.1",
-            "planner-2.2",
-            "planner-2.3",
-            "planner-2.4",
-            "planner-2.5",
-        ],
-        onConditionalAgentTriggered: (agent) => {
-            if (agent === "planner-2.5" && !planner25Task) {
-                spawnedVisualPlanner = true;
-                planner25Task = ensureWorktree(planner25Def.branch, repoDir, planBranch).then(() =>
-                    taskRunner({
-                        name: planner25Def.name,
-                        branch: planner25Def.branch,
-                        promptFile: planner25Def.promptFile,
-                        model: STAGE_MODELS[planner25Def.name],
-                        manifestPaths: planner25Def.manifest,
-                        baseRef: planBranch,
-                        runId,
-                        seed,
-                        planBranch,
-                        env: blackboard.agentEnv(planner25Def.name),
-                        onAttemptStart: () => blackboard.markAgentActive(planner25Def.name),
-                        onStageSettled: (outcome, err) => {
-                            const wt25 = worktreeDir(planner25Def.branch, repoDir);
-                            syncRelativeFilesBetweenWorktrees(wt25, implementerWorktree, planner25Def.syncFiles);
-                            syncRelativeFilesBetweenWorktrees(wt25, plan2Worktree, planner25Def.syncFiles);
-                            if (outcome === "settled") {
-                                blackboard.markAgentSettled(planner25Def.name);
-                            } else {
-                                blackboard.markAgentTerminated(planner25Def.name, errorText(err));
-                            }
-                        },
-                    }),
-                );
-            }
-        },
-    });
-    await blackboard.start();
+        let planner25Task: Promise<{ commits: unknown[] }> | null = null;
 
-    try {
-        const plannerTasks = corePlanners.map((pl) =>
-            taskRunner({
-                name: pl.name,
-                branch: pl.branch,
-                promptFile: pl.promptFile,
-                model: STAGE_MODELS[pl.name],
-                manifestPaths: pl.manifest,
+        const blackboard = new BlackboardServer(runId, {
+            repoDir,
+            sessionName: "stage2-planning",
+            activeAgents: [
+                "plan-2",
+                "planner-2.1",
+                "planner-2.2",
+                "planner-2.3",
+                "planner-2.4",
+                "implementer",
+            ],
+            conditionalAgents: ["planner-2.5"],
+            workerAgents: [
+                "plan-2",
+                "planner-2.1",
+                "planner-2.2",
+                "planner-2.3",
+                "planner-2.4",
+                "planner-2.5",
+            ],
+            onConditionalAgentTriggered: (agent) => {
+                if (agent === "planner-2.5" && !planner25Task) {
+                    spawnedVisualPlanner = true;
+                    planner25Task = ensureWorktree(planner25Def.branch, repoDir, planBranch).then(() =>
+                        taskRunner({
+                            name: planner25Def.name,
+                            branch: planner25Def.branch,
+                            promptFile: planner25Def.promptFile,
+                            model: STAGE_MODELS[planner25Def.name],
+                            manifestPaths: planner25Def.manifest,
+                            baseRef: planBranch,
+                            runId,
+                            seed,
+                            planBranch,
+                            env: blackboard.agentEnv(planner25Def.name),
+                            onAttemptStart: () => blackboard.markAgentActive(planner25Def.name),
+                            onStageSettled: (outcome, err) => {
+                                const wt25 = worktreeDir(planner25Def.branch, repoDir);
+                                syncRelativeFilesBetweenWorktrees(wt25, implementerWorktree, planner25Def.syncFiles);
+                                syncRelativeFilesBetweenWorktrees(wt25, plan2Worktree, planner25Def.syncFiles);
+                                if (outcome === "settled") {
+                                    blackboard.markAgentSettled(planner25Def.name);
+                                } else {
+                                    blackboard.markAgentTerminated(planner25Def.name, errorText(err));
+                                }
+                            },
+                        }),
+                    );
+                }
+            },
+        });
+        await blackboard.start();
+
+        try {
+            const plannerTasks = corePlanners.map((pl) =>
+                taskRunner({
+                    name: pl.name,
+                    branch: pl.branch,
+                    promptFile: pl.promptFile,
+                    model: STAGE_MODELS[pl.name],
+                    manifestPaths: pl.manifest,
+                    baseRef: planBranch,
+                    runId,
+                    seed,
+                    planBranch,
+                    env: blackboard.agentEnv(pl.name),
+                    onAttemptStart: () => blackboard.markAgentActive(pl.name),
+                    onStageSettled: (outcome, err) => {
+                        const plWt = worktreeDir(pl.branch, repoDir);
+                        syncRelativeFilesBetweenWorktrees(plWt, implementerWorktree, pl.syncFiles);
+                        syncRelativeFilesBetweenWorktrees(plWt, plan2Worktree, pl.syncFiles);
+                        if (outcome === "settled") {
+                            blackboard.markAgentSettled(pl.name);
+                        } else {
+                            blackboard.markAgentTerminated(pl.name, errorText(err));
+                        }
+                    },
+                }),
+            );
+
+            const plan2Task = taskRunner({
+                name: "plan-2",
+                branch: plan2Branch,
+                promptFile: "./.sandcastle/plan-2.md",
+                model: STAGE_MODELS["plan-2"],
+                manifestPaths: `handoff/${runId}/wayfinder-read-and-plan.txt`,
                 baseRef: planBranch,
                 runId,
                 seed,
                 planBranch,
-                env: blackboard.agentEnv(pl.name),
-                onAttemptStart: () => blackboard.markAgentActive(pl.name),
+                env: blackboard.agentEnv("plan-2"),
+                onAttemptStart: () => blackboard.markAgentActive("plan-2"),
                 onStageSettled: (outcome, err) => {
-                    const plWt = worktreeDir(pl.branch, repoDir);
-                    syncRelativeFilesBetweenWorktrees(plWt, implementerWorktree, pl.syncFiles);
-                    syncRelativeFilesBetweenWorktrees(plWt, plan2Worktree, pl.syncFiles);
+                    syncRelativeFilesBetweenWorktrees(plan2Worktree, implementerWorktree, [
+                        `handoff/${runId}/wayfinder-read-and-plan.txt`,
+                    ]);
                     if (outcome === "settled") {
-                        blackboard.markAgentSettled(pl.name);
+                        blackboard.markAgentSettled("plan-2");
                     } else {
-                        blackboard.markAgentTerminated(pl.name, errorText(err));
+                        blackboard.markAgentTerminated("plan-2", errorText(err));
                     }
                 },
-            }),
-        );
+            });
 
-        const plan2Task = taskRunner({
-            name: "plan-2",
-            branch: plan2Branch,
-            promptFile: "./.sandcastle/plan-2.md",
-            model: STAGE_MODELS["plan-2"],
-            manifestPaths: `handoff/${runId}/wayfinder-read-and-plan.txt`,
-            baseRef: planBranch,
-            runId,
-            seed,
-            planBranch,
-            env: blackboard.agentEnv("plan-2"),
-            onAttemptStart: () => blackboard.markAgentActive("plan-2"),
-            onStageSettled: (outcome, err) => {
-                syncRelativeFilesBetweenWorktrees(plan2Worktree, implementerWorktree, [
-                    `handoff/${runId}/wayfinder-read-and-plan.txt`,
-                ]);
-                if (outcome === "settled") {
-                    blackboard.markAgentSettled("plan-2");
-                } else {
-                    blackboard.markAgentTerminated("plan-2", errorText(err));
-                }
-            },
-        });
+            const implementerListenerTask = taskRunner({
+                name: "implementer",
+                branch: implementerLeadBranch,
+                promptFile: "./.sandcastle/implementer.md",
+                model: STAGE_MODELS.implementer,
+                manifestPaths: `handoff/${runId}/implementer.txt`,
+                baseRef: planBranch,
+                runId,
+                seed,
+                planBranch,
+                env: blackboard.agentEnv("implementer"),
+                onAttemptStart: () => blackboard.markAgentActive("implementer"),
+                onStageSettled: (outcome, err) => {
+                    if (outcome === "settled") {
+                        blackboard.markAgentSettled("implementer");
+                    } else {
+                        blackboard.markAgentTerminated("implementer", errorText(err));
+                    }
+                },
+            });
 
-        const implementerListenerTask = taskRunner({
-            name: "implementer",
-            branch: implementerLeadBranch,
-            promptFile: "./.sandcastle/implementer.md",
-            model: STAGE_MODELS.implementer,
-            manifestPaths: `handoff/${runId}/implementation-blueprint-ready.txt`,
-            baseRef: planBranch,
-            runId,
-            seed,
-            planBranch,
-            env: blackboard.agentEnv("implementer"),
-            onAttemptStart: () => blackboard.markAgentActive("implementer"),
-            onStageSettled: (outcome, err) => {
-                if (outcome === "settled") {
-                    blackboard.markAgentSettled("implementer");
-                } else {
-                    blackboard.markAgentTerminated("implementer", errorText(err));
-                }
-            },
-        });
-
-        await Promise.all([...plannerTasks, plan2Task]);
-        if (planner25Task) {
-            await planner25Task;
+            await Promise.all([...plannerTasks, plan2Task]);
+            if (planner25Task) {
+                await planner25Task;
+            }
+            await implementerListenerTask;
+        } finally {
+            await blackboard.close();
         }
-        await implementerListenerTask;
-    } finally {
-        await blackboard.close();
     }
 
     const branchesToMerge = [
@@ -2525,6 +2541,13 @@ export async function runPlanningSession(options: {
             deleteBranch: true,
             verifiedTargetRef: planBranch,
         });
+    }
+
+    try {
+        assertStageManifest("planner-2.5", planBranch, `handoff/${runId}/planner-2.5.txt`, repoDir);
+        spawnedVisualPlanner = true;
+    } catch {
+        // planner-2.5 did not run
     }
 
     return { spawnedVisualPlanner };
@@ -2638,7 +2661,7 @@ export async function runImplementationSession(options: {
             branch: testerLeadBranch,
             promptFile: "./.sandcastle/tester.md",
             model: STAGE_MODELS.tester,
-            manifestPaths: `handoff/${runId}/verification-blueprint-ready.txt`,
+            manifestPaths: `handoff/${runId}/tester.txt`,
             baseRef: planBranch,
             runId,
             seed,
@@ -2880,7 +2903,7 @@ export async function runMultiStagePipeline(options: {
                     branch: "main",
                     promptFile: "./.sandcastle/merger.md",
                     model: STAGE_MODELS.merger,
-                    manifestPaths: `handoff/${runId}/merged.txt`,
+                    manifestPaths: `wayfinder/${runId}/refined-specification.md`,
                     baseRef: "main",
                     runId,
                     seed,
