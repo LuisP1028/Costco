@@ -166,6 +166,7 @@ const TRANSIENT_CACHE_NAMES = new Set([
     ".coverage",
     "scratch",
     ".scratch",
+    "logs",
 ]);
 
 export interface BlackboardEntry {
@@ -1644,6 +1645,7 @@ export function cleanTransientWorktreeArtifacts(dir: string): void {
 
 export function commitLeftovers(dir: string, branch: string, stageName = "stage"): boolean {
     if (!existsSync(dir)) return false;
+    ignoreMissing(["git", "checkout", "--", "logs"], dir);
     cleanTransientWorktreeArtifacts(dir);
     const status = execFileSync("git", ["status", "--porcelain"], {
         cwd: dir,
@@ -1779,14 +1781,16 @@ export function ensureWorktree(
 }
 
 export function mergeInto(branch: string, fromBranch: string, repoDir: string = process.cwd()): void {
+    if (!branchExists(fromBranch, repoDir)) return;
     const sourceWorktree = worktreeDir(fromBranch, repoDir);
     if (existsSync(sourceWorktree)) {
         commitLeftovers(sourceWorktree, fromBranch, "pre-merge-source");
     }
     const existing = worktreeDir(branch, repoDir);
     if (existsSync(existing)) {
+        ignoreMissing(["git", "merge", "--abort"], existing);
         commitLeftovers(existing, branch, "pre-merge-target");
-        execFileSync("git", ["merge", "--no-ff", "--no-edit", fromBranch], {
+        execFileSync("git", ["merge", "--no-ff", "--no-edit", "-X", "ours", fromBranch], {
             cwd: existing,
             stdio: "inherit",
         });
@@ -1797,7 +1801,7 @@ export function mergeInto(branch: string, fromBranch: string, repoDir: string = 
     ignoreMissing(["rm", "-rf", dir], repoDir);
     execFileSync("git", ["worktree", "add", dir, branch], { cwd: repoDir, stdio: "inherit" });
     try {
-        execFileSync("git", ["merge", "--no-ff", "--no-edit", fromBranch], {
+        execFileSync("git", ["merge", "--no-ff", "--no-edit", "-X", "ours", fromBranch], {
             cwd: dir,
             stdio: "inherit",
         });
@@ -1936,11 +1940,13 @@ export function mintRunId(): string {
 export interface CliPipelineOptions {
     seedsInput: string | string[];
     kickstartMode: KickstartMode;
+    runId?: string;
 }
 
 export function parseCliOptions(argv: readonly string[] = process.argv.slice(2)): CliPipelineOptions {
     const collectedSeeds: string[] = [];
     let kickstartMode: KickstartMode = "blackboard";
+    let runId: string | undefined;
 
     for (let i = 0; i < argv.length; i++) {
         const arg = argv[i];
@@ -1956,6 +1962,12 @@ export function parseCliOptions(argv: readonly string[] = process.argv.slice(2))
                 throw new Error(`Invalid --kickstart value '${val}'. Expected 'blackboard' or 'handoff'.`);
             }
             kickstartMode = val;
+        } else if (arg === "--run-id") {
+            const next = argv[++i];
+            if (!next) throw new Error(`Missing value for ${arg}`);
+            runId = next.trim();
+        } else if (arg.startsWith("--run-id=")) {
+            runId = arg.slice("--run-id=".length).trim();
         } else if (arg === "--seed" || arg === "-s" || arg === "--authored") {
             const next = argv[++i];
             if (!next) throw new Error(`Missing value for ${arg}`);
@@ -1966,7 +1978,7 @@ export function parseCliOptions(argv: readonly string[] = process.argv.slice(2))
             collectedSeeds.push(arg.trim());
         } else {
             throw new Error(
-                `Unknown CLI flag '${arg}'. Usage: npx tsx .sandcastle/multi-stage-blackboard-pipeline.mts [seed.md] [--kickstart=blackboard|handoff]`,
+                `Unknown CLI flag '${arg}'. Usage: npx tsx .sandcastle/multi-stage-blackboard-pipeline.mts [seed.md] [--kickstart=blackboard|handoff] [--run-id=<id>]`,
             );
         }
     }
@@ -1975,6 +1987,7 @@ export function parseCliOptions(argv: readonly string[] = process.argv.slice(2))
     return {
         seedsInput: nonEmpty.length === 0 ? "handoff/authored.txt" : nonEmpty.length === 1 ? nonEmpty[0] : nonEmpty,
         kickstartMode,
+        ...(runId ? { runId } : {}),
     };
 }
 
@@ -2110,140 +2123,153 @@ export async function runDiscoverySession(options: {
         syncFiles: [`wayfinder/${runId}/library-functions.md`, `handoff/${runId}/function-mapper.txt`],
     };
 
-    await ensureWorktree(planBranch, repoDir, "HEAD");
-    for (const sc of scannerDefs) {
-        await ensureWorktree(sc.branch, repoDir, "HEAD");
+    let stage1AlreadyComplete = false;
+    if (branchExists(planBranch, repoDir)) {
+        try {
+            assertStageManifest("plan-1", planBranch, `handoff/${runId}/refined-spec-ready.txt`, repoDir);
+            stage1AlreadyComplete = true;
+            console.log(`[pipeline] Stage 1 manifest already verified on ${planBranch}; skipping Stage 1 agent re-runs and joining branches.`);
+        } catch {
+            stage1AlreadyComplete = false;
+        }
     }
-    await ensureWorktree(functionMapperDef.branch, repoDir, "HEAD");
 
-    let kickstartResolve!: () => void;
-    let kickstartTriggered = false;
-    const kickstartPromise = new Promise<void>((resolveKickstart) => {
-        kickstartResolve = () => {
-            if (!kickstartTriggered) {
-                kickstartTriggered = true;
-                resolveKickstart();
-            }
-        };
-    });
+    if (!stage1AlreadyComplete) {
+        await ensureWorktree(planBranch, repoDir, "HEAD");
+        for (const sc of scannerDefs) {
+            await ensureWorktree(sc.branch, repoDir, "HEAD");
+        }
+        await ensureWorktree(functionMapperDef.branch, repoDir, "HEAD");
 
-    const blackboard = new BlackboardServer(runId, {
-        repoDir,
-        sessionName: "stage1-discovery",
-        activeAgents: [
-            "plan-1",
-            "codebase-mapper",
-            "api-schema-mapper",
-            "mcp-provisioner",
-            "library-installer",
-            "function-mapper",
-        ],
-        workerAgents: [
-            "codebase-mapper",
-            "api-schema-mapper",
-            "mcp-provisioner",
-            "library-installer",
-            "function-mapper",
-        ],
-        onEntryPublished: (entry) => {
-            if (kickstartMode === "blackboard" && entry.sender === "library-installer" && entry.type === "finding") {
-                kickstartResolve();
-            }
-        },
-    });
-    await blackboard.start();
+        let kickstartResolve!: () => void;
+        let kickstartTriggered = false;
+        const kickstartPromise = new Promise<void>((resolveKickstart) => {
+            kickstartResolve = () => {
+                if (!kickstartTriggered) {
+                    kickstartTriggered = true;
+                    resolveKickstart();
+                }
+            };
+        });
 
-    const plan1Worktree = worktreeDir(planBranch, repoDir);
-    const libInstallerWorktree = worktreeDir(`agent/library-installer-${runId}`, repoDir);
-    const fnMapperWorktree = worktreeDir(functionMapperDef.branch, repoDir);
-
-    try {
-        const scannerTasks = scannerDefs.map((sc) =>
-            taskRunner({
-                name: sc.name,
-                branch: sc.branch,
-                promptFile: sc.promptFile,
-                model: STAGE_MODELS[sc.name],
-                manifestPaths: sc.manifest,
-                baseRef: "HEAD",
-                runId,
-                seed,
-                planBranch,
-                env: blackboard.agentEnv(sc.name),
-                onAttemptStart: () => blackboard.markAgentActive(sc.name),
-                onStageSettled: (outcome, err) => {
-                    const scWorktree = worktreeDir(sc.branch, repoDir);
-                    syncRelativeFilesBetweenWorktrees(scWorktree, plan1Worktree, sc.syncFiles);
-                    if (sc.name === "library-installer") {
-                        syncRelativeFilesBetweenWorktrees(scWorktree, fnMapperWorktree, sc.syncFiles);
-                        kickstartResolve();
-                    }
-                    if (outcome === "settled") {
-                        blackboard.markAgentSettled(sc.name);
-                    } else {
-                        blackboard.markAgentTerminated(sc.name, errorText(err));
-                    }
-                },
-            }),
-        );
-
-        const functionMapperTask = (async () => {
-            await kickstartPromise;
-            syncRelativeFilesBetweenWorktrees(libInstallerWorktree, fnMapperWorktree, [
-                `wayfinder/${runId}/installed-libraries.md`,
-                `handoff/${runId}/libs-installed.txt`,
-            ]);
-            return taskRunner({
-                name: functionMapperDef.name,
-                branch: functionMapperDef.branch,
-                promptFile: functionMapperDef.promptFile,
-                model: STAGE_MODELS[functionMapperDef.name],
-                manifestPaths: functionMapperDef.manifest,
-                baseRef: "HEAD",
-                runId,
-                seed,
-                planBranch,
-                env: blackboard.agentEnv(functionMapperDef.name),
-                onAttemptStart: () => blackboard.markAgentActive(functionMapperDef.name),
-                onStageSettled: (outcome, err) => {
-                    syncRelativeFilesBetweenWorktrees(
-                        fnMapperWorktree,
-                        plan1Worktree,
-                        functionMapperDef.syncFiles,
-                    );
-                    if (outcome === "settled") {
-                        blackboard.markAgentSettled(functionMapperDef.name);
-                    } else {
-                        blackboard.markAgentTerminated(functionMapperDef.name, errorText(err));
-                    }
-                },
-            });
-        })();
-
-        const plan1Task = taskRunner({
-            name: "plan-1",
-            branch: planBranch,
-            promptFile: "./.sandcastle/plan-1.md",
-            model: STAGE_MODELS["plan-1"],
-            manifestPaths: `handoff/${runId}/refined-spec-ready.txt`,
-            baseRef: "HEAD",
-            runId,
-            seed,
-            planBranch,
-            env: blackboard.agentEnv("plan-1"),
-            onAttemptStart: () => blackboard.markAgentActive("plan-1"),
-            onStageSettled: (outcome, err) => {
-                if (outcome === "settled") {
-                    blackboard.markAgentSettled("plan-1");
-                } else {
-                    blackboard.markAgentTerminated("plan-1", errorText(err));
+        const blackboard = new BlackboardServer(runId, {
+            repoDir,
+            sessionName: "stage1-discovery",
+            activeAgents: [
+                "plan-1",
+                "codebase-mapper",
+                "api-schema-mapper",
+                "mcp-provisioner",
+                "library-installer",
+                "function-mapper",
+            ],
+            workerAgents: [
+                "codebase-mapper",
+                "api-schema-mapper",
+                "mcp-provisioner",
+                "library-installer",
+                "function-mapper",
+            ],
+            onEntryPublished: (entry) => {
+                if (kickstartMode === "blackboard" && entry.sender === "library-installer" && entry.type === "finding") {
+                    kickstartResolve();
                 }
             },
         });
+        await blackboard.start();
 
-        await Promise.all([...scannerTasks, functionMapperTask, plan1Task]);
-    } finally {
-        await blackboard.close();
+        const plan1Worktree = worktreeDir(planBranch, repoDir);
+        const libInstallerWorktree = worktreeDir(`agent/library-installer-${runId}`, repoDir);
+        const fnMapperWorktree = worktreeDir(functionMapperDef.branch, repoDir);
+
+        try {
+            const scannerTasks = scannerDefs.map((sc) =>
+                taskRunner({
+                    name: sc.name,
+                    branch: sc.branch,
+                    promptFile: sc.promptFile,
+                    model: STAGE_MODELS[sc.name],
+                    manifestPaths: sc.manifest,
+                    baseRef: "HEAD",
+                    runId,
+                    seed,
+                    planBranch,
+                    env: blackboard.agentEnv(sc.name),
+                    onAttemptStart: () => blackboard.markAgentActive(sc.name),
+                    onStageSettled: (outcome, err) => {
+                        const scWorktree = worktreeDir(sc.branch, repoDir);
+                        syncRelativeFilesBetweenWorktrees(scWorktree, plan1Worktree, sc.syncFiles);
+                        if (sc.name === "library-installer") {
+                            syncRelativeFilesBetweenWorktrees(scWorktree, fnMapperWorktree, sc.syncFiles);
+                            kickstartResolve();
+                        }
+                        if (outcome === "settled") {
+                            blackboard.markAgentSettled(sc.name);
+                        } else {
+                            blackboard.markAgentTerminated(sc.name, errorText(err));
+                        }
+                    },
+                }),
+            );
+
+            const functionMapperTask = (async () => {
+                await kickstartPromise;
+                syncRelativeFilesBetweenWorktrees(libInstallerWorktree, fnMapperWorktree, [
+                    `wayfinder/${runId}/installed-libraries.md`,
+                    `handoff/${runId}/libs-installed.txt`,
+                ]);
+                return taskRunner({
+                    name: functionMapperDef.name,
+                    branch: functionMapperDef.branch,
+                    promptFile: functionMapperDef.promptFile,
+                    model: STAGE_MODELS[functionMapperDef.name],
+                    manifestPaths: functionMapperDef.manifest,
+                    baseRef: "HEAD",
+                    runId,
+                    seed,
+                    planBranch,
+                    env: blackboard.agentEnv(functionMapperDef.name),
+                    onAttemptStart: () => blackboard.markAgentActive(functionMapperDef.name),
+                    onStageSettled: (outcome, err) => {
+                        syncRelativeFilesBetweenWorktrees(
+                            fnMapperWorktree,
+                            plan1Worktree,
+                            functionMapperDef.syncFiles,
+                        );
+                        if (outcome === "settled") {
+                            blackboard.markAgentSettled(functionMapperDef.name);
+                        } else {
+                            blackboard.markAgentTerminated(functionMapperDef.name, errorText(err));
+                        }
+                    },
+                });
+            })();
+
+            const plan1Task = taskRunner({
+                name: "plan-1",
+                branch: planBranch,
+                promptFile: "./.sandcastle/plan-1.md",
+                model: STAGE_MODELS["plan-1"],
+                manifestPaths: `handoff/${runId}/refined-spec-ready.txt`,
+                baseRef: "HEAD",
+                runId,
+                seed,
+                planBranch,
+                env: blackboard.agentEnv("plan-1"),
+                onAttemptStart: () => blackboard.markAgentActive("plan-1"),
+                onStageSettled: (outcome, err) => {
+                    if (outcome === "settled") {
+                        blackboard.markAgentSettled("plan-1");
+                    } else {
+                        blackboard.markAgentTerminated("plan-1", errorText(err));
+                    }
+                },
+            });
+
+            await Promise.all([...scannerTasks, functionMapperTask, plan1Task]);
+        } finally {
+            await blackboard.close();
+        }
     }
 
     for (const sc of [...scannerDefs, functionMapperDef]) {
@@ -2747,6 +2773,7 @@ export async function runTestingSession(options: {
 export async function runMultiStagePipeline(options: {
     seedsInput?: string | readonly string[];
     kickstartMode?: KickstartMode;
+    runId?: string;
     repoDir?: string;
     taskRunner?: AgentTaskRunner;
     skipMerger?: boolean;
@@ -2782,7 +2809,7 @@ export async function runMultiStagePipeline(options: {
     }
 
     for (const seed of seeds) {
-        const runId = mintRunId();
+        const runId = options.runId ?? mintRunId();
         const planBranch = `agent/plan-${runId}`;
         console.log(`[pipeline] Starting 4-stage Blackboard pipeline for ${seed} (runId=${runId}, kickstart=${kickstartMode})`);
 
@@ -2866,6 +2893,7 @@ if (isMainEntry()) {
         runMultiStagePipeline({
             seedsInput: cliOpts.seedsInput,
             kickstartMode: cliOpts.kickstartMode,
+            runId: cliOpts.runId,
         }).catch((error) => {
             console.error(errorText(error));
             process.exit(1);
