@@ -1,0 +1,17 @@
+wayfinder/20261103T204534-693-1b8y/codebase-map.md
+index.html
+src/costco_revenue_model.mjs
+data/costco_revenue_breakdown.json
+package.json
+package-lock.json
+README.md
+LANGUAGE.md
+research/costco_revenue_architecture.md
+wayfinder/map.md
+wayfinder/tickets/ticket-001.md
+wayfinder/tickets/ticket-002.md
+wayfinder/tickets/ticket-003.md
+wayfinder/tickets/ticket-004.md
+wayfinder/tickets/ticket-005.md
+wayfinder/tickets/ticket-006.md
+functional_specification_003.md
