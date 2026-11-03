@@ -14,7 +14,8 @@
 - `planner-2.2` (`seq=#5`, `seq=#9`, `seq=#15` — Zero-Network Storage Engine Physics, Canonical Note 11 & Item 2 Reconciliation Contract, Single-Threaded Serializability & `GATE-WEB-01..04`)
 - `planner-2.3` (`seq=#10`, `seq=#12`, `seq=#20` — Runtime & Language Baselines, Straightforward Technical English Style Guide, SVG Keyboard Focus Restoration, TOC Scroll-Spy Parent Sync & MCP Playbooks 1–6)
 - `planner-2.4` (`seq=#8`, `seq=#11`, `seq=#13`, `seq=#14`, `seq=#19` — Cross-Domain Hot-Path Optimizations, JS-Comment-Safe ` // ` Divider Audit, `<style>` Slice Extraction, Singleton `Intl.NumberFormat`, and Trigonometric Bounding-Box Proof for `viewBox="-55 -28 510 456"`)
-- `planner-2.5` (`seq=#17`, `seq=#18` — Institutional Daylight Financial Aesthetic, Empirical `getBBox()` Polar Viewport Proof, 3-Year Overlay Legend Bar, Structured Drill-Down Card Wells & Crimson Simulator Breach State)
+- `planner-2.5` (`seq=#17`, `seq=#18`, `seq=#22` — Institutional Daylight Financial Aesthetic, Empirical `getBBox()` Polar Viewport Proof, 3-Year Overlay Legend Bar, Structured Drill-Down Card Wells & Crimson Simulator Breach State)
+- `plan-2` (`seq=#2`..`seq=#7`, `seq=#24` — Lead Architecture Coordinator Verification & Stage 2 Sign-Off)
 
 **Status:** Authoritative Implementation & Deconfliction Blueprint (`wayfinder/20261103T204534-693-1b8y/implementation-blueprint.md`). **DO NOT CODE YET** until Blackboard ownership claims are posted and deconflicted.
 
