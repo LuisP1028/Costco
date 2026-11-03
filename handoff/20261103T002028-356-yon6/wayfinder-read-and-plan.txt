@@ -1,0 +1,8 @@
+functional_specification_002.md
+wayfinder/20261103T002028-356-yon6/tickets/ticket-001.md
+wayfinder/20261103T002028-356-yon6/tickets/ticket-002.md
+wayfinder/20261103T002028-356-yon6/tickets/ticket-003.md
+wayfinder/20261103T002028-356-yon6/tickets/ticket-004.md
+wayfinder/20261103T002028-356-yon6/map.md
+wayfinder/20261103T002028-356-yon6/master_component_to_edit_matrix.md
+assets/20261103T002028-356-yon6/plan-corporate-polar-and-5step-contract.json

@@ -1,0 +1,294 @@
+{
+  "contract_id": "costco-corporate-polar-and-5step-contract-20261103T002028-356-yon6",
+  "specification": "functional_specification_002.md",
+  "company": {
+    "name": "Costco Wholesale Corporation",
+    "ticker": "COST",
+    "exchange": "NASDAQ",
+    "cik": "0000909832",
+    "accession_number": "0000909832-24-000049",
+    "fiscal_year": 2024,
+    "fiscal_year_end": "2024-09-01",
+    "fiscal_weeks": 52
+  },
+  "corporate_design_tokens": {
+    "surfaces": {
+      "canvas_bg": "#F8FAFC",
+      "card_bg": "#FFFFFF",
+      "well_bg": "#F1F5F9",
+      "hairline_border": "#E2E8F0"
+    },
+    "typography": {
+      "ink_primary": "#0F172A",
+      "ink_secondary": "#334155",
+      "ink_muted": "#64748B",
+      "sans_stack": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+      "mono_stack": "\"JetBrains Mono\", \"SFMono-Regular\", Menlo, monospace",
+      "numeric_variant": "tabular-nums"
+    },
+    "brand_accents": {
+      "costco_crimson": "#E31837",
+      "costco_executive_navy": "#005DAA",
+      "category_emerald": "#059669",
+      "category_amber": "#D97706",
+      "category_teal": "#0D9488",
+      "category_indigo": "#4F46E5"
+    }
+  },
+  "prohibited_dreamcore_markers": [
+    "dreamcore",
+    "seraphic",
+    "vhs-scanlines",
+    "film-grain-overlay",
+    "meadow_portal.jpg",
+    "poolroom_sanctuary.jpg",
+    "sky_staircase.jpg",
+    "tape hum",
+    "stuck-clock",
+    "dream-sky-canvas"
+  ],
+  "required_dom_ids": [
+    "table-of-contents",
+    "section-executive-summary",
+    "section-polar-graphs",
+    "polar-chart-categories",
+    "polar-chart-geography",
+    "polar-chart-flywheel",
+    "section-five-steps",
+    "step-1",
+    "step-2",
+    "step-3",
+    "step-4",
+    "step-5",
+    "section-gaap-model",
+    "section-wayfinder-audit"
+  ],
+  "polar_graph_1_merchandise_categories": {
+    "container_id": "polar-chart-categories",
+    "basis": "SEC Form 10-K Note 11 Disaggregated Net Sales ($249,625M FY2024)",
+    "fiscal_years": {
+      "2024": 249625,
+      "2023": 237710,
+      "2022": 222730
+    },
+    "sectors": [
+      {
+        "category_id": "foods_and_sundries",
+        "name": "Foods and Sundries",
+        "color": "#005DAA",
+        "fy2024_usd_m": 101463,
+        "fy2023_usd_m": 96175,
+        "fy2022_usd_m": 85629,
+        "fy2024_share_pct": 40.65,
+        "yoy_growth_fy24_pct": 5.5,
+        "coxcomb_angle_deg": 90.0,
+        "share_weighted_angle_deg": 146.33,
+        "radius_ratio_linear": 1.0,
+        "radius_ratio_sqrt_area": 1.0
+      },
+      {
+        "category_id": "non_foods",
+        "name": "Non-Foods",
+        "color": "#4F46E5",
+        "fy2024_usd_m": 63973,
+        "fy2023_usd_m": 60865,
+        "fy2022_usd_m": 61100,
+        "fy2024_share_pct": 25.63,
+        "yoy_growth_fy24_pct": 5.11,
+        "coxcomb_angle_deg": 90.0,
+        "share_weighted_angle_deg": 92.26,
+        "radius_ratio_linear": 0.6305,
+        "radius_ratio_sqrt_area": 0.794
+      },
+      {
+        "category_id": "warehouse_ancillary_and_other",
+        "name": "Warehouse Ancillary and Other Businesses",
+        "color": "#E31837",
+        "fy2024_usd_m": 49969,
+        "fy2023_usd_m": 48693,
+        "fy2022_usd_m": 46474,
+        "fy2024_share_pct": 20.02,
+        "yoy_growth_fy24_pct": 2.62,
+        "coxcomb_angle_deg": 90.0,
+        "share_weighted_angle_deg": 72.06,
+        "radius_ratio_linear": 0.4925,
+        "radius_ratio_sqrt_area": 0.7018
+      },
+      {
+        "category_id": "fresh_foods",
+        "name": "Fresh Foods",
+        "color": "#059669",
+        "fy2024_usd_m": 34220,
+        "fy2023_usd_m": 31977,
+        "fy2022_usd_m": 29527,
+        "fy2024_share_pct": 13.71,
+        "yoy_growth_fy24_pct": 7.01,
+        "coxcomb_angle_deg": 90.0,
+        "share_weighted_angle_deg": 49.35,
+        "radius_ratio_linear": 0.3373,
+        "radius_ratio_sqrt_area": 0.5807
+      }
+    ]
+  },
+  "polar_graph_2_geographic_segments": {
+    "container_id": "polar-chart-geography",
+    "basis": "SEC Form 10-K Note 11 & Item 2 ($254,453M Consolidated Revenue / 890 Warehouses)",
+    "segments": [
+      {
+        "segment_id": "united_states",
+        "name": "United States",
+        "color": "#005DAA",
+        "total_revenue_usd_m": 184143,
+        "share_pct": 72.37,
+        "operating_income_usd_m": 6217,
+        "operating_margin_pct": 3.38,
+        "warehouse_count": 614,
+        "revenue_per_warehouse_usd_m": 299.91,
+        "floor_space_sq_ft_m": 91.1
+      },
+      {
+        "segment_id": "other_international",
+        "name": "Other International",
+        "color": "#0D9488",
+        "total_revenue_usd_m": 35436,
+        "share_pct": 13.93,
+        "operating_income_usd_m": 1420,
+        "operating_margin_pct": 4.01,
+        "warehouse_count": 168,
+        "revenue_per_warehouse_usd_m": 210.93,
+        "floor_space_sq_ft_m": 24.3
+      },
+      {
+        "segment_id": "canada",
+        "name": "Canada",
+        "color": "#E31837",
+        "total_revenue_usd_m": 34874,
+        "share_pct": 13.71,
+        "operating_income_usd_m": 1648,
+        "operating_margin_pct": 4.73,
+        "warehouse_count": 108,
+        "revenue_per_warehouse_usd_m": 322.91,
+        "floor_space_sq_ft_m": 15.5
+      }
+    ],
+    "consolidated_totals": {
+      "total_revenue_usd_m": 254453,
+      "operating_income_usd_m": 9285,
+      "operating_margin_pct": 3.65,
+      "warehouse_count": 890,
+      "average_revenue_per_warehouse_usd_m": 285.9
+    }
+  },
+  "polar_graph_3_flywheel_asymmetry_and_ancillary": {
+    "container_id": "polar-chart-flywheel",
+    "revenue_vs_operating_income": {
+      "net_sales_revenue_usd_m": 249625,
+      "net_sales_revenue_share_pct": 98.1,
+      "membership_fees_revenue_usd_m": 4828,
+      "membership_fees_revenue_share_pct": 1.9,
+      "merchandise_operating_contribution_usd_m": 4457,
+      "merchandise_operating_contribution_share_pct": 48.0,
+      "membership_fees_operating_income_usd_m": 4828,
+      "membership_fees_operating_income_share_pct": 52.0,
+      "total_operating_income_usd_m": 9285
+    },
+    "ancillary_and_omnichannel_sub_drivers": [
+      {
+        "id": "gasoline_stations",
+        "label": "Gasoline (719 Member-Only Stations)",
+        "estimated_usd_b": 30.0,
+        "share_of_net_sales_note": "~12% of Net Sales (+1% FY24 gallon volume)",
+        "color": "#E31837"
+      },
+      {
+        "id": "pharmacy_optical_foodcourt_tire",
+        "label": "Pharmacy, Optical, Food Court, Hearing & Tire",
+        "estimated_usd_b": 20.0,
+        "share_of_net_sales_note": "Remaining ~$20.0B of $49,969M Ancillary (+3% Pharmacy growth leader)",
+        "color": "#059669"
+      },
+      {
+        "id": "ecommerce_storefronts",
+        "label": "E-Commerce (9,000-10,000 Online SKUs)",
+        "estimated_usd_b": 17.5,
+        "share_of_net_sales_note": "~7% of Net Sales (+16% FY24 comparable growth)",
+        "color": "#005DAA"
+      },
+      {
+        "id": "other_digital_and_travel",
+        "label": "Other Digitally Originated, Logistics, Next & Travel",
+        "estimated_usd_b": 5.0,
+        "share_of_net_sales_note": "Brings total Digitally Originated sales to ~9% (~$22.5B)",
+        "color": "#D97706"
+      }
+    ]
+  },
+  "five_step_revenue_walkthrough": [
+    {
+      "step_number": 1,
+      "dom_id": "step-1",
+      "title": "Gatekeeper Subscription — Paid Membership Tiers & 92.9% Renewal Lock-In",
+      "headline_metric": "$4,828M {Membership Fees}",
+      "wayfinder_ticket": "ticket-001.md & ticket-003.md",
+      "verified_figures": [
+        "76.2M paid members (63.7M Gold Star + 12.5M Business), 60.6M household cards = 136.8M total cardholders",
+        "35.4M paid Executive members (46.5% of paid base) generating 73.3% of worldwide {Net Sales}",
+        "92.9% U.S./Canada and 90.5% worldwide renewal rates",
+        "$2,501M Deferred membership fees liability amortized ratably over 12 months under ASC 606",
+        "$2,804M Executive 2% reward recognized as direct contra-revenue reduction against {Net Sales}",
+        "Sept 1, 2024 U.S./Canada fee increase ($60->$65 base, $120->$130 Executive, $1,000->$1,250 cap, +$370M 2-yr lift)"
+      ]
+    },
+    {
+      "step_number": 2,
+      "dom_id": "step-2",
+      "title": "Concentrated Purchasing Scale — <4,000 Warehouse SKUs & Kirkland Signature",
+      "headline_metric": "$249,625M {Net Sales}",
+      "wayfinder_ticket": "ticket-002.md",
+      "verified_figures": [
+        "<4,000 active warehouse SKUs across 890 clubs (130.9M sq ft), channeling >$62M annual volume per average SKU",
+        "Note 11 category disaggregation: $101,463M Foods & Sundries (40.65%), $63,973M Non-Foods (25.63%), $49,969M Warehouse Ancillary (20.02%), $34,220M Fresh Foods (13.71%)",
+        "~30%+ Kirkland Signature private-label penetration (+36 bps core merchandise margin expansion in FY2024)",
+        "31.9M sq ft cross-docked depot network delivering direct-to-floor pallets"
+      ]
+    },
+    {
+      "step_number": 3,
+      "dom_id": "step-3",
+      "title": "High-Frequency Trip Magnets — 719 Gas Stations, Ancillary Services & Omnichannel Logistics",
+      "headline_metric": "$49,969M Ancillary + ~7% E-Commerce",
+      "wayfinder_ticket": "ticket-004.md",
+      "verified_figures": [
+        "719 member-only gas stations generating ~12% of consolidated {Net Sales} (~$30B, +1% gallon volume in FY2024)",
+        "Pharmacy (+3% YoY ancillary dollar growth leader), Optical, Hearing Aids, Tire Installation, and $1.50 Hot Dog & Soda Food Court",
+        "E-Commerce (~7% of net sales / ~$17.5B, +16% comparable growth across 9,000-10,000 online SKUs) and Digitally Originated Sales (~9% / ~$22.5B)",
+        "Costco Logistics big-and-bulky fulfillment, Costco Next, Costco Travel, and Citibank co-branded Visa royalties & February reward certificates"
+      ]
+    },
+    {
+      "step_number": 4,
+      "dom_id": "step-4",
+      "title": "Disciplined Pricing & Negative Working Capital — The 10.92% {Gross Margin Ceiling} & 104.15% Supplier Float",
+      "headline_metric": "10.92% Gross Margin Ceiling | 104.15% AP/Inventory",
+      "wayfinder_ticket": "ticket-005.md",
+      "verified_figures": [
+        "{Net Sales} ($249,625M) - Merchandise costs ($222,358M) = $27,267M Merchandise Gross Margin (10.92% {Gross Margin Ceiling})",
+        "Lean 9.14% SG&A ($22,810M, inclusive of warehouse preopening costs per Note 1)",
+        "12.60x average inventory turnover (~28.97 DIO vs. ~31.88 DPO)",
+        "$19,421M Accounts payable / $18,647M Merchandise inventories = 104.15% supplier inventory coverage (+$774M excess cash float)"
+      ]
+    },
+    {
+      "step_number": 5,
+      "dom_id": "step-5",
+      "title": "The {Operating Income Flywheel} — Converting $4,828M of Fees into 52.00% of Consolidated Operating Profit",
+      "headline_metric": "$9,285M Operating Income -> $7,367M Net Income",
+      "wayfinder_ticket": "ticket-005.md & ticket-006.md",
+      "verified_figures": [
+        "$4,457M Merchandise Operating Contribution (48.00% of OpInc, 1.79% of Net Sales) + $4,828M {Membership Fees} (52.00% of OpInc) = $9,285M Consolidated Operating Income (3.65% operating margin)",
+        "-$169M Interest Expense + $624M Interest Income & Other, Net = $9,740M Income Before Taxes",
+        "-$2,373M Income Tax Provision (24.36% effective tax rate) = $7,367M Consolidated Net Income ($16.56 diluted EPS)"
+      ]
+    }
+  ]
+}
