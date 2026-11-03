@@ -1,0 +1,12 @@
+functional_specification_003.md
+wayfinder/20261103T204534-693-1b8y/refined-specification.md
+wayfinder/20261103T204534-693-1b8y/architecture-and-dag.md
+wayfinder/20261103T204534-693-1b8y/storage-architecture.md
+wayfinder/20261103T204534-693-1b8y/stack-usage-guide.md
+wayfinder/20261103T204534-693-1b8y/suggested-optimizations.md
+wayfinder/20261103T204534-693-1b8y/visual-taste-direction.md
+wayfinder/20261103T204534-693-1b8y/codebase-map.md
+wayfinder/20261103T204534-693-1b8y/api-schemas.md
+wayfinder/20261103T204534-693-1b8y/mcp-tools.md
+wayfinder/20261103T204534-693-1b8y/installed-libraries.md
+wayfinder/20261103T204534-693-1b8y/library-functions.md
