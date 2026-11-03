@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/diesel/Desktop/Costco/.sandcastle/worktrees/agent-plan-20261103T204534-693-1b8y/logs/.11c5c3cea7d006a6d3001bb9f81ece08cbcfa27e-audit.json",
+    "files": [
+        {
+            "date": 1793738752321,
+            "name": "/Users/diesel/Desktop/Costco/.sandcastle/worktrees/agent-plan-20261103T204534-693-1b8y/logs/mcp-puppeteer-2026-11-03.log",
+            "hash": "f31bb13ee9ee13bcefba18401d4c329c2ddc65c3fa55078c62416f8aa0942687"
+        }
+    ],
+    "hashType": "sha256"
+}
