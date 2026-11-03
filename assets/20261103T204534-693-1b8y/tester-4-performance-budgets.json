@@ -1,0 +1,183 @@
+{
+  "runId": "20261103T204534-693-1b8y",
+  "agent": "tester-4",
+  "domain": "T4: Cross-Domain Performance, Algorithmic Complexity, Operational Budgets & verifyCorporateWebReport Gates (GATE-WEB-01..04 & OPT-01..05)",
+  "status": "VERIFIED",
+  "remediationsRequired": 0,
+  "acceptanceCriteriaCovered": [
+    "AC-01",
+    "AC-02",
+    "AC-03",
+    "AC-04",
+    "AC-05"
+  ],
+  "cliOperationalBudgetBenchmark": {
+    "command": "node src/costco_revenue_model.mjs --verify",
+    "consecutiveRuns": 10,
+    "budgetElapsedMs": 250.0,
+    "budgetRssMb": 128.0,
+    "budgetExternalNetworkRequests": 0,
+    "measured": {
+      "allRunsExitCodeZero": true,
+      "allRunsStatusVerified": true,
+      "minElapsedMs": 7.5299,
+      "maxElapsedMs": 16.2695,
+      "meanElapsedMs": 9.9303,
+      "maxRssMb": 46.8594,
+      "externalNetworkRequests": 0,
+      "safetyMarginSpeedupFactor": 25.18,
+      "rssHeadroomPct": 63.39
+    },
+    "inMemoryAuditBenchmark100Runs": {
+      "iterations": 100,
+      "p50Ms": 4.082,
+      "p95Ms": 4.3961,
+      "p99Ms": 5.0341
+    }
+  },
+  "clientSideInteractiveFrameBenchmark": {
+    "browserRuntime": "Headless Chromium (Playwright 1.58.0)",
+    "frameBudgetMs": 16.0,
+    "iterationsPerTransition": 50,
+    "consoleErrors": 0,
+    "consoleWarnings": 0,
+    "externalResourcesCount": 0,
+    "zeroHorizontalOverflow": true,
+    "transitions": {
+      "polarCategoriesTransition": {
+        "iterations": 50,
+        "minMs": 0.4,
+        "p50Ms": 0.6,
+        "p95Ms": 1.4,
+        "p99Ms": 3.4,
+        "maxMs": 3.4,
+        "meanMs": 0.724,
+        "within16msBudget": true
+      },
+      "polarGeographyTransition": {
+        "iterations": 50,
+        "minMs": 0.1,
+        "p50Ms": 0.2,
+        "p95Ms": 0.6,
+        "p99Ms": 0.8,
+        "maxMs": 0.8,
+        "meanMs": 0.244,
+        "within16msBudget": true
+      },
+      "polarFlywheelTransition": {
+        "iterations": 50,
+        "minMs": 0.1,
+        "p50Ms": 0.2,
+        "p95Ms": 0.3,
+        "p99Ms": 0.5,
+        "maxMs": 0.5,
+        "meanMs": 0.166,
+        "within16msBudget": true
+      },
+      "fiveStepWalkthroughTransition": {
+        "iterations": 50,
+        "minMs": 0.2,
+        "p50Ms": 0.3,
+        "p95Ms": 1.0,
+        "p99Ms": 11.1,
+        "maxMs": 11.1,
+        "meanMs": 0.6,
+        "within16msBudget": true
+      },
+      "simulatorSliderInputUpdate": {
+        "iterations": 50,
+        "minMs": 0.0,
+        "p50Ms": 0.0,
+        "p95Ms": 0.1,
+        "p99Ms": 0.2,
+        "maxMs": 0.2,
+        "meanMs": 0.03,
+        "within16msBudget": true
+      },
+      "tocActiveStateSync": {
+        "iterations": 50,
+        "minMs": 0.0,
+        "p50Ms": 0.2,
+        "p95Ms": 0.4,
+        "p99Ms": 0.5,
+        "maxMs": 0.5,
+        "meanMs": 0.202,
+        "within16msBudget": true
+      }
+    }
+  },
+  "crossDomainOptimizationsVerified": {
+    "OPT-01": {
+      "target": "src/costco_revenue_model.mjs",
+      "description": "Pre-compiled module-scope regexes & constants, single-pass observedHrefTargets Set lookup, O(1) <style> block isolation (-83.8% CSS selector search space), and comment-safe PROHIBITED_PSEUDOCODE_DIVIDER_REGEX",
+      "verified": true
+    },
+    "OPT-02": {
+      "target": "index.html (L2341-2344, L3030-3071)",
+      "description": "Singleton Intl.NumberFormat('en-US') USD_FORMATTER in formatUsdM(num), keeping simulator slider drag frame latency at 0.030 ms mean / 0.200 ms p99",
+      "verified": true
+    },
+    "OPT-03": {
+      "target": "index.html (<style> L465, L552-559 & SVG viewBox)",
+      "description": "Calibrated polar SVG geometry (viewBox='-55 -28 510 456', maxR=110..120, rInner=36..38), aspect-ratio: 510 / 456, and contain: layout style on .polar-panel and .report-section (CLS = 0)",
+      "verified": true
+    },
+    "OPT-04": {
+      "target": "index.html (bindPolarSectorEvents L2363-2380, L2534-2543, L2675-2684, L2827-2837)",
+      "description": "Keyboard-only focus({ preventScroll: true }) restoration on Enter/Space and dual-ring data-fly-ring='outer'|'inner' disambiguation",
+      "verified": true
+    },
+    "OPT-05": {
+      "target": "index.html (indexTocAnchors, syncTocActiveState, initScrollSpy L3097-3206)",
+      "description": "Pre-indexed O(1) tocEntryById lookup table with pre-resolved parentLink, activeTocTargetId idempotency guard, and IntersectionObserver scroll-spy",
+      "verified": true
+    }
+  },
+  "gateWebMutationSuite": {
+    "totalMutationsTested": 47,
+    "passed": 47,
+    "failed": 0,
+    "gates": {
+      "GATE-WEB-01_prohibitedSpecTokens": {
+        "tested": [
+          "{Net Sales}",
+          "{Membership Fees}",
+          "{Gross Margin Ceiling}",
+          "{Operating Income Flywheel}"
+        ],
+        "passed": 4
+      },
+      "GATE-WEB-02_prohibitedPseudocodeDividersAndCommentSafety": {
+        "tested": [
+          "Section 01 // Institutional",
+          "ACTIVE POLAR SECTOR DRILLDOWN // NOTE 11",
+          "Step 03 // Telemetry",
+          "ticket-004.md // Ancillary",
+          "RESOLVED WAYFINDER TICKET // ticket-001",
+          "Visible Heading // Divider Outside Script",
+          "Valid indented JS // comment inside <script> (0 false positives)"
+        ],
+        "passed": 7
+      },
+      "GATE-WEB-03_requiredPolarCssSelectorsAndEmeraldToken": {
+        "tested": [
+          ".polar-grid-ring (isolated to <style>)",
+          ".polar-axis-spoke (isolated to <style>)",
+          ".polar-sector-label (isolated to <style>)",
+          ".polar-center-title (isolated to <style>)",
+          ".polar-center-sub (isolated to <style>)",
+          ".drilldown-meta-grid (isolated to <style>)",
+          ".drilldown-meta-item (isolated to <style>)",
+          ".sim-output-banner.is-breach (isolated to <style>)",
+          "var(--emerald-audit) rejection"
+        ],
+        "passed": 9
+      },
+      "GATE-WEB-04_reconciledNote11AndItem2Figures": {
+        "missingFigureMutationsTested": 11,
+        "legacyUnverifiedFigureMutationsTested": 16,
+        "passed": 27
+      }
+    }
+  }
+}
