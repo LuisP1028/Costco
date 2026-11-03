@@ -1,0 +1,193 @@
+{
+  "primary_source_metadata": {
+    "company_name": "Costco Wholesale Corporation",
+    "ticker": "COST",
+    "cik": "0000909832",
+    "form": "10-K",
+    "accession_number": "0000909832-24-000049",
+    "filing_date": "2024-10-09",
+    "period_end_date": "2024-09-01",
+    "edgar_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983224000049/cost-20240901.htm",
+    "local_filing_asset": "assets/20261103T002028-356-yon6/plan-scan-1-cost-20240901.htm"
+  },
+  "consolidated_income_statements": {
+    "units": "USD in millions",
+    "fy2024": {
+      "fiscal_weeks": 52,
+      "period_end": "2024-09-01",
+      "net_sales": 249625,
+      "membership_fees": 4828,
+      "total_revenue": 254453,
+      "merchandise_costs": 222358,
+      "selling_general_and_administrative": 22810,
+      "operating_income": 9285,
+      "interest_expense": -169,
+      "interest_income_and_other_net": 624,
+      "income_before_income_taxes": 9740,
+      "provision_for_income_taxes": 2373,
+      "net_income_including_noncontrolling": 7367,
+      "net_income_attributable_to_costco": 7367
+    },
+    "fy2023": {
+      "fiscal_weeks": 53,
+      "period_end": "2023-09-03",
+      "net_sales": 237710,
+      "membership_fees": 4580,
+      "total_revenue": 242290,
+      "merchandise_costs": 212586,
+      "selling_general_and_administrative": 21590,
+      "operating_income": 8114,
+      "interest_expense": -160,
+      "interest_income_and_other_net": 533,
+      "income_before_income_taxes": 8487,
+      "provision_for_income_taxes": 2195,
+      "net_income_attributable_to_costco": 6292
+    },
+    "fy2022": {
+      "fiscal_weeks": 52,
+      "period_end": "2022-08-28",
+      "net_sales": 222730,
+      "membership_fees": 4224,
+      "total_revenue": 226954,
+      "merchandise_costs": 199382,
+      "selling_general_and_administrative": 19779,
+      "operating_income": 7793,
+      "interest_expense": -158,
+      "interest_income_and_other_net": 205,
+      "income_before_income_taxes": 7840,
+      "provision_for_income_taxes": 1925,
+      "net_income_attributable_to_costco": 5844
+    }
+  },
+  "disaggregated_merchandise_categories": {
+    "source": "Item 8, Note 11 (Segment Reporting - Disaggregated Revenue)",
+    "categories": [
+      {
+        "category_id": "foods_and_sundries",
+        "name": "Foods and Sundries",
+        "fy2024_net_sales_usd_m": 101463,
+        "fy2024_share_pct": 40.65,
+        "fy2023_net_sales_usd_m": 96175,
+        "fy2022_net_sales_usd_m": 85629,
+        "sub_departments": "Dry grocery, sundries, cooler, freezer, deli, liquor, candy, tobacco",
+        "role_in_flywheel": "High-frequency staple repeat-visit anchor driving predictable pallet velocity and household pantry consolidation"
+      },
+      {
+        "category_id": "non_foods",
+        "name": "Non-Foods",
+        "fy2024_net_sales_usd_m": 63973,
+        "fy2024_share_pct": 25.63,
+        "fy2023_net_sales_usd_m": 60865,
+        "fy2022_net_sales_usd_m": 61100,
+        "sub_departments": "Major appliances, small electronics, health & beauty aids, hardware, tires, apparel, furniture, housewares, jewelry",
+        "role_in_flywheel": "Treasure-hunt discretionary basket builder showcasing extreme brand-name and Kirkland Signature price gaps"
+      },
+      {
+        "category_id": "warehouse_ancillary_and_other",
+        "name": "Warehouse Ancillary and Other Businesses",
+        "fy2024_net_sales_usd_m": 49969,
+        "fy2024_share_pct": 20.02,
+        "fy2023_net_sales_usd_m": 48693,
+        "fy2022_net_sales_usd_m": 46474,
+        "sub_departments": "719 Gasoline stations (~12% of net sales / ~$30.0B), pharmacy, optical, food court, hearing aids, tire installation, Costco Travel",
+        "role_in_flywheel": "High-frequency member trip and renewal magnet led by 719 gas stations, pharmacy, optical, food court, and Costco Travel"
+      },
+      {
+        "category_id": "fresh_foods",
+        "name": "Fresh Foods",
+        "fy2024_net_sales_usd_m": 34220,
+        "fy2024_share_pct": 13.71,
+        "fy2023_net_sales_usd_m": 31977,
+        "fy2022_net_sales_usd_m": 29527,
+        "sub_departments": "Meat, produce, service deli, bakery",
+        "role_in_flywheel": "Perishable weekly trip driver and rapid inventory-turn engine minimizing spoilage while anchoring perceived member value"
+      }
+    ],
+    "fy2024_total_net_sales_usd_m": 249625,
+    "fy2024_share_sum_pct": 100.01
+  },
+  "geographic_segments_fy2024": {
+    "source": "Item 8, Note 11 (Segment Reporting)",
+    "segments": [
+      {
+        "segment_id": "united_states",
+        "name": "United States",
+        "revenue_usd_m": 184143,
+        "revenue_share_pct": 72.37,
+        "operating_income_usd_m": 6217,
+        "operating_margin_pct": 3.376,
+        "warehouse_count": 614,
+        "square_footage_m": 91.1,
+        "employees": 219000
+      },
+      {
+        "segment_id": "other_international",
+        "name": "Other International",
+        "revenue_usd_m": 35436,
+        "revenue_share_pct": 13.93,
+        "operating_income_usd_m": 1420,
+        "operating_margin_pct": 4.007,
+        "warehouse_count": 168,
+        "square_footage_m": 24.3,
+        "employees": 61000,
+        "territories": "Mexico (40), Japan (35), U.K. (29), Korea (19), Australia (15), Taiwan (14), China (7), Spain (4), France (2), Iceland (1), New Zealand (1), Sweden (1)"
+      },
+      {
+        "segment_id": "canada",
+        "name": "Canada",
+        "revenue_usd_m": 34874,
+        "revenue_share_pct": 13.71,
+        "operating_income_usd_m": 1648,
+        "operating_margin_pct": 4.726,
+        "warehouse_count": 108,
+        "square_footage_m": 15.5,
+        "employees": 53000
+      }
+    ],
+    "total_revenue_usd_m": 254453,
+    "total_warehouses": 890,
+    "average_revenue_per_warehouse_usd_m": 285.9
+  },
+  "membership_metrics_fy2024": {
+    "source": "Item 1 (pp. 4-5) & Item 7 (p. 25)",
+    "gold_star_paid_members_m": 63.7,
+    "business_paid_members_m": 12.5,
+    "paid_household_members_m": 76.2,
+    "household_cards_m": 60.6,
+    "cardholders_total_m": 136.8,
+    "executive_paid_members_m": 35.4,
+    "executive_share_of_paid_members_pct": 46.4567,
+    "executive_share_of_worldwide_sales_pct": 73.3,
+    "renewal_rate_us_canada_pct": 92.9,
+    "renewal_rate_worldwide_pct": 90.5,
+    "fee_increase_effective_date": "2024-09-01",
+    "fee_increase_details": {
+      "gold_star_annual_fee_usd": 65,
+      "gold_star_prior_fee_usd": 60,
+      "executive_annual_fee_usd": 130,
+      "executive_prior_fee_usd": 120,
+      "executive_annual_reward_cap_usd": 1250,
+      "executive_prior_reward_cap_usd": 1000,
+      "estimated_two_year_revenue_lift_usd_m": 370
+    },
+    "deferred_membership_fees_liability_usd_m": 2501,
+    "executive_2pct_reward_contra_revenue_usd_m": 2804,
+    "accrued_member_rewards_liability_usd_m": 2435
+  },
+  "working_capital_and_ratios_fy2024": {
+    "source": "Item 8, Balance Sheets (p. 37)",
+    "merchandise_inventories_usd_m": 18647,
+    "accounts_payable_usd_m": 19421,
+    "accounts_payable_to_inventory_ratio_pct": 104.1508,
+    "supplier_financed_excess_float_usd_m": 774,
+    "merchandise_gross_margin_usd_m": 27267,
+    "merchandise_gross_margin_pct": 10.9232,
+    "sga_usd_m": 22810,
+    "sga_pct_of_net_sales": 9.1377,
+    "merchandise_operating_contribution_usd_m": 4457,
+    "merchandise_operating_contribution_share_pct": 48.0022,
+    "membership_fees_usd_m": 4828,
+    "membership_fees_share_of_operating_income_pct": 51.9978,
+    "operating_income_usd_m": 9285
+  }
+}
