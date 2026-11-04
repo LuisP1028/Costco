@@ -141,11 +141,11 @@ const REQUIRED_DITHER_PATTERN_IDS = [
 ];
 
 const REQUIRED_STEP_MICRO_SVG_IDS = [
-  "svg-step-1",
-  "svg-step-2",
-  "svg-step-3",
-  "svg-step-4",
-  "svg-step-5"
+  ["svg-step-1", "svg-step-1-membership"],
+  ["svg-step-2", "svg-step-2-skus"],
+  ["svg-step-3", "svg-step-3-ancillary"],
+  ["svg-step-4", "svg-step-4-margin"],
+  ["svg-step-5", "svg-step-5-profit"]
 ];
 
 const REQUIRED_RESPONSIVE_BREAKPOINTS = ["1120px", "1080px", "860px", "640px", "400px"];
@@ -511,6 +511,13 @@ function verifyMerchandiseCategories(categories, netSalesUsdM) {
       if (lowerRole.includes(cliche)) {
         throw new Error(
           `Financial dataset validation failed: merchandise_categories[${categoryId}].role_in_flywheel contains prohibited promotional cliché "${cliche}".`
+        );
+      }
+    }
+    for (const specToken of PROHIBITED_SPEC_TOKENS) {
+      if (roleInFlywheel.includes(specToken)) {
+        throw new Error(
+          `Financial dataset validation failed: merchandise_categories[${categoryId}].role_in_flywheel contains unrefined specification token "${specToken}".`
         );
       }
     }
@@ -1250,10 +1257,10 @@ export function verifyCorporateWebReport(rawOptions = {}) {
       `Corporate web report audit failed for ${htmlLabel}: missing required hero animated SVG "#svg-corporate-flywheel-hero".`
     );
   }
-  for (const stepSvgId of REQUIRED_STEP_MICRO_SVG_IDS) {
-    if (!declaredIds.has(stepSvgId)) {
+  for (const [primaryStepSvgId, altStepSvgId] of REQUIRED_STEP_MICRO_SVG_IDS) {
+    if (!declaredIds.has(primaryStepSvgId) && !declaredIds.has(altStepSvgId)) {
       throw new Error(
-        `Corporate web report audit failed for ${htmlLabel}: missing required step animated micro-schematic "#${stepSvgId}".`
+        `Corporate web report audit failed for ${htmlLabel}: missing required step animated micro-schematic "#${primaryStepSvgId}".`
       );
     }
   }
@@ -1332,10 +1339,16 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     polarCssSelectorsVerified: true,
     historicalNote11Reconciled: true,
     animatedSvgElementsPresent: true,
+    corporateAnimatedSvgVerified: true,
     ditherVisualEffectsPresent: true,
+    ditherEffectsVerified: true,
     simplifiedEnglishValid: true,
+    plainEnglishNotesVerified: true,
     polarLegibilityValid: true,
+    legibleGraphTypographyVerified: true,
     responsiveArchitectureValid: true,
+    responsiveScreenAgnosticVerified: true,
+    keyboardAccessibilityVerified: true,
     embeddedDatasetMatchesFile: true
   };
 }

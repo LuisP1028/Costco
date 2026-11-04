@@ -1743,46 +1743,6 @@
     </defs>
   </svg>
 
-  <!-- Shared Global SVG Pattern Registry for Halftone & Ordered Bayer Dithering (AC-02 / M2) -->
-  <svg id="svg-global-dither-defs" aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;">
-    <defs>
-      <!-- 8x8 Ordered Bayer Matrix Pattern — Costco Executive Navy (#005DAA) -->
-      <pattern id="dither-bayer-navy" width="8" height="8" patternUnits="userSpaceOnUse">
-        <rect width="8" height="8" fill="#F1F5F9" />
-        <rect x="0" y="0" width="1" height="1" fill="#005DAA" fill-opacity="0.16" />
-        <rect x="4" y="0" width="1" height="1" fill="#005DAA" fill-opacity="0.12" />
-        <rect x="2" y="2" width="1" height="1" fill="#005DAA" fill-opacity="0.16" />
-        <rect x="6" y="2" width="1" height="1" fill="#005DAA" fill-opacity="0.12" />
-        <rect x="0" y="4" width="1" height="1" fill="#005DAA" fill-opacity="0.12" />
-        <rect x="4" y="4" width="1" height="1" fill="#005DAA" fill-opacity="0.16" />
-        <rect x="2" y="6" width="1" height="1" fill="#005DAA" fill-opacity="0.12" />
-        <rect x="6" y="6" width="1" height="1" fill="#005DAA" fill-opacity="0.16" />
-      </pattern>
-      <!-- 8x8 Ordered Bayer Matrix Pattern — Costco Crimson (#E31837) -->
-      <pattern id="dither-bayer-crimson" width="8" height="8" patternUnits="userSpaceOnUse">
-        <rect width="8" height="8" fill="#FFF1F2" />
-        <rect x="0" y="0" width="1" height="1" fill="#E31837" fill-opacity="0.16" />
-        <rect x="4" y="0" width="1" height="1" fill="#E31837" fill-opacity="0.12" />
-        <rect x="2" y="2" width="1" height="1" fill="#E31837" fill-opacity="0.16" />
-        <rect x="6" y="2" width="1" height="1" fill="#E31837" fill-opacity="0.12" />
-        <rect x="0" y="4" width="1" height="1" fill="#E31837" fill-opacity="0.12" />
-        <rect x="4" y="4" width="1" height="1" fill="#E31837" fill-opacity="0.16" />
-        <rect x="2" y="6" width="1" height="1" fill="#E31837" fill-opacity="0.12" />
-        <rect x="6" y="6" width="1" height="1" fill="#E31837" fill-opacity="0.16" />
-      </pattern>
-      <!-- 6x6 Halftone Stipple Matrix — Slate Ink (#0F172A) -->
-      <pattern id="dither-halftone-slate" width="6" height="6" patternUnits="userSpaceOnUse">
-        <circle cx="1.5" cy="1.5" r="0.85" fill="#0F172A" fill-opacity="0.14" />
-        <circle cx="4.5" cy="4.5" r="0.65" fill="#005DAA" fill-opacity="0.12" />
-      </pattern>
-      <!-- 4x4 Polar Engraving Stipple — Institutional Engraving Ring -->
-      <pattern id="dither-polar-engraving" width="4" height="4" patternUnits="userSpaceOnUse">
-        <rect x="0" y="0" width="1" height="1" fill="#0F172A" fill-opacity="0.15" />
-        <rect x="2" y="2" width="1" height="1" fill="#005DAA" fill-opacity="0.15" />
-      </pattern>
-    </defs>
-  </svg>
-
   <!-- Institutional Top Header Bar -->
   <header class="corporate-header" role="banner">
     <div class="header-top-strip">
@@ -3367,9 +3327,12 @@
           'aria-label="' + cat.name + ": " + formatUsdM(sales) + " (" + share.toFixed(2) + '%)" />';
 
         var midDeg = (startDeg + endDeg) / 2;
+        var leaderInner = polarPoint(cx, cy, maxR + 2, midDeg);
+        var leaderOuter = polarPoint(cx, cy, maxR + 12, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 22, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
+          '<line x1="' + leaderInner.x.toFixed(1) + '" y1="' + leaderInner.y.toFixed(1) + '" x2="' + leaderOuter.x.toFixed(1) + '" y2="' + leaderOuter.y.toFixed(1) + '" stroke="' + cat.color + '" stroke-opacity="0.45" stroke-width="1" />' +
           '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y - 5).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-sector-label">' +
           cat.shortName + "</text>" +
           '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 11).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
@@ -3407,20 +3370,48 @@
           " · Mode: " + modeLabel;
       }
 
-      /* Update Drilldown Card */
-      var sel = CATEGORY_DATA[catState.selectedIndex];
-      var selSales = sel.salesByYear[activeYear];
-      var selShare = sel.shareByYear[activeYear];
-      drilldown.innerHTML =
-        '<div class="drilldown-eyebrow">Selected Category Detail · Note 11 Merchandise Disaggregation</div>' +
-        '<div class="drilldown-title">' + sel.name + " — " + formatUsdM(selSales) + " (" + selShare.toFixed(2) + "% of FY" + activeYear + " Net Sales)</div>" +
-        '<p class="drilldown-copy">' + sel.role + '</p>' +
-        '<p class="drilldown-copy" style="margin-top:6px;"><strong>Sub-Departments:</strong> ' + sel.departments + "</p>" +
-        '<div class="drilldown-meta-grid">' +
-        '<div class="drilldown-meta-item"><span>FY2022 Net Sales</span><strong>' + formatUsdM(sel.salesByYear[2022]) + " (" + sel.shareByYear[2022].toFixed(2) + "%)</strong></div>" +
-        '<div class="drilldown-meta-item"><span>FY2023 Net Sales</span><strong>' + formatUsdM(sel.salesByYear[2023]) + " (" + sel.shareByYear[2023].toFixed(2) + "%)</strong></div>" +
-        '<div class="drilldown-meta-item"><span>FY2024 Net Sales (' + sel.yoy24 + ')</span><strong>' + formatUsdM(sel.salesByYear[2024]) + " (" + sel.shareByYear[2024].toFixed(2) + "%)</strong></div>" +
-        "</div>";
+      function renderCategoryDrilldown() {
+        var sel = CATEGORY_DATA[catState.selectedIndex];
+        var selSales = sel.salesByYear[activeYear];
+        var selShare = sel.shareByYear[activeYear];
+        drilldown.innerHTML =
+          '<div class="drilldown-eyebrow">Selected Category Detail · Note 11 Merchandise Disaggregation</div>' +
+          '<div class="drilldown-title">' + sel.name + " — " + formatUsdM(selSales) + " (" + selShare.toFixed(2) + "% of FY" + activeYear + " Net Sales)</div>" +
+          '<p class="drilldown-copy">' + sel.role + '</p>' +
+          '<p class="drilldown-copy" style="margin-top:6px;"><strong>Sub-Departments:</strong> ' + sel.departments + "</p>" +
+          '<div class="drilldown-meta-grid">' +
+          '<div class="drilldown-meta-item"><span>FY2022 Net Sales</span><strong>' + formatUsdM(sel.salesByYear[2022]) + " (" + sel.shareByYear[2022].toFixed(2) + "%)</strong></div>" +
+          '<div class="drilldown-meta-item"><span>FY2023 Net Sales</span><strong>' + formatUsdM(sel.salesByYear[2023]) + " (" + sel.shareByYear[2023].toFixed(2) + "%)</strong></div>" +
+          '<div class="drilldown-meta-item"><span>FY2024 Net Sales (' + sel.yoy24 + ')</span><strong>' + formatUsdM(sel.salesByYear[2024]) + " (" + sel.shareByYear[2024].toFixed(2) + "%)</strong></div>" +
+          "</div>";
+      }
+
+      function syncCategorySelectionInPlace(idx, isKeyboard, focusTarget) {
+        catState.selectedIndex = idx;
+        var sectorNodes = svg.querySelectorAll("[data-cat-sector]");
+        for (var s = 0; s < sectorNodes.length; s++) {
+          var sActive = Number(sectorNodes[s].getAttribute("data-cat-sector")) === idx;
+          sectorNodes[s].classList.toggle("is-selected", sActive);
+          sectorNodes[s].setAttribute("fill-opacity", sActive ? "0.94" : "0.78");
+        }
+        var rowNodes = tbody.querySelectorAll("[data-cat-row]");
+        for (var r = 0; r < rowNodes.length; r++) {
+          var rActive = Number(rowNodes[r].getAttribute("data-cat-row")) === idx;
+          rowNodes[r].classList.toggle("is-highlighted", rActive);
+          rowNodes[r].setAttribute("aria-selected", rActive ? "true" : "false");
+        }
+        renderCategoryDrilldown();
+        if (isKeyboard) {
+          var targetEl = focusTarget === "row"
+            ? tbody.querySelector('[data-cat-row="' + idx + '"]')
+            : svg.querySelector('[data-cat-sector="' + idx + '"]');
+          if (targetEl && typeof targetEl.focus === "function") {
+            targetEl.focus({ preventScroll: true });
+          }
+        }
+      }
+
+      renderCategoryDrilldown();
 
       /* Update Table Body */
       var rowsHtml = "";
@@ -3448,26 +3439,12 @@
         "</tr>";
       tbody.innerHTML = rowsHtml;
 
-      /* Bind sector pointer & keyboard events + table row clicks/keyboard */
+      /* Bind sector pointer & keyboard events + table row clicks/keyboard via O(1) in-place sync */
       bindPolarSectorEvents(svg, "data-cat-sector", function (idx, isKeyboard) {
-        catState.selectedIndex = idx;
-        renderPolarCategories();
-        if (isKeyboard) {
-          var targetPath = svg.querySelector('[data-cat-sector="' + idx + '"]');
-          if (targetPath && typeof targetPath.focus === "function") {
-            targetPath.focus({ preventScroll: true });
-          }
-        }
+        syncCategorySelectionInPlace(idx, isKeyboard, "sector");
       });
       bindInteractiveTableRows(tbody, "data-cat-row", CATEGORY_DATA.length, function (idx, isKeyboard) {
-        catState.selectedIndex = idx;
-        renderPolarCategories();
-        if (isKeyboard) {
-          var targetRow = tbody.querySelector('[data-cat-row="' + idx + '"]');
-          if (targetRow && typeof targetRow.focus === "function") {
-            targetRow.focus({ preventScroll: true });
-          }
-        }
+        syncCategorySelectionInPlace(idx, isKeyboard, "row");
       });
     }
 
@@ -3530,9 +3507,12 @@
           'aria-label="' + seg.name + ": " + ariaValLabel + '" />';
 
         var midDeg = (startDeg + endDeg) / 2;
+        var leaderInner = polarPoint(cx, cy, maxR + 2, midDeg);
+        var leaderOuter = polarPoint(cx, cy, maxR + 11, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 20, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
+          '<line x1="' + leaderInner.x.toFixed(1) + '" y1="' + leaderInner.y.toFixed(1) + '" x2="' + leaderOuter.x.toFixed(1) + '" y2="' + leaderOuter.y.toFixed(1) + '" stroke="' + seg.color + '" stroke-opacity="0.45" stroke-width="1" />' +
           '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y - 5).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-sector-label">' +
           seg.shortName + "</text>" +
           '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 11).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
@@ -3558,16 +3538,45 @@
             : "Metric: Warehouse Footprint (890 Total) · 703 Owned Land & Building, 187 Leased (incl. 134 Land Leases w/ Owned Building = 837 Owned Buildings)";
       }
 
-      var sel = GEOGRAPHY_DATA[geoState.selectedIndex];
-      drilldown.innerHTML =
-        '<div class="drilldown-eyebrow">Selected Segment Detail · Note 11 &amp; Item 2 Geographic Operations</div>' +
-        '<div class="drilldown-title">' + sel.name + " — " + formatUsdM(sel.revenueM) + " Revenue (" + sel.revSharePct.toFixed(2) + "%) · " + formatUsdM(sel.opIncM) + " Operating Income</div>" +
-        '<p class="drilldown-copy">' + sel.role + "</p>" +
-        '<div class="drilldown-meta-grid">' +
-        '<div class="drilldown-meta-item"><span>Revenue / Club (' + sel.warehouses + " Clubs · " + sel.floorSpaceSqFtM + "M sq ft)</span><strong>$" + sel.revPerClubM.toFixed(2) + "M / Club</strong></div>" +
-        '<div class="drilldown-meta-item"><span>Operating Income &amp; Margin (' + USD_FORMATTER.format(sel.employees) + " Employees)</span><strong>" + formatUsdM(sel.opIncM) + " (" + sel.opMarginPct.toFixed(2) + "%)</strong></div>" +
-        '<div class="drilldown-meta-item"><span>Property Ownership (Item 2)</span><strong>' + sel.ownedWarehouses + " Owned · " + sel.leasedWarehouses + " Leased</strong></div>" +
-        "</div>";
+      function renderGeographyDrilldown() {
+        var sel = GEOGRAPHY_DATA[geoState.selectedIndex];
+        drilldown.innerHTML =
+          '<div class="drilldown-eyebrow">Selected Segment Detail · Note 11 &amp; Item 2 Geographic Operations</div>' +
+          '<div class="drilldown-title">' + sel.name + " — " + formatUsdM(sel.revenueM) + " Revenue (" + sel.revSharePct.toFixed(2) + "%) · " + formatUsdM(sel.opIncM) + " Operating Income</div>" +
+          '<p class="drilldown-copy">' + sel.role + "</p>" +
+          '<div class="drilldown-meta-grid">' +
+          '<div class="drilldown-meta-item"><span>Revenue / Club (' + sel.warehouses + " Clubs · " + sel.floorSpaceSqFtM + "M sq ft)</span><strong>$" + sel.revPerClubM.toFixed(2) + "M / Club</strong></div>" +
+          '<div class="drilldown-meta-item"><span>Operating Income &amp; Margin (' + USD_FORMATTER.format(sel.employees) + " Employees)</span><strong>" + formatUsdM(sel.opIncM) + " (" + sel.opMarginPct.toFixed(2) + "%)</strong></div>" +
+          '<div class="drilldown-meta-item"><span>Property Ownership (Item 2)</span><strong>' + sel.ownedWarehouses + " Owned · " + sel.leasedWarehouses + " Leased</strong></div>" +
+          "</div>";
+      }
+
+      function syncGeographySelectionInPlace(idx, isKeyboard, focusTarget) {
+        geoState.selectedIndex = idx;
+        var sectorNodes = svg.querySelectorAll("[data-geo-sector]");
+        for (var s = 0; s < sectorNodes.length; s++) {
+          var sActive = Number(sectorNodes[s].getAttribute("data-geo-sector")) === idx;
+          sectorNodes[s].classList.toggle("is-selected", sActive);
+          sectorNodes[s].setAttribute("fill-opacity", sActive ? "0.94" : "0.78");
+        }
+        var rowNodes = tbody.querySelectorAll("[data-geo-row]");
+        for (var r = 0; r < rowNodes.length; r++) {
+          var rActive = Number(rowNodes[r].getAttribute("data-geo-row")) === idx;
+          rowNodes[r].classList.toggle("is-highlighted", rActive);
+          rowNodes[r].setAttribute("aria-selected", rActive ? "true" : "false");
+        }
+        renderGeographyDrilldown();
+        if (isKeyboard) {
+          var targetEl = focusTarget === "row"
+            ? tbody.querySelector('[data-geo-row="' + idx + '"]')
+            : svg.querySelector('[data-geo-sector="' + idx + '"]');
+          if (targetEl && typeof targetEl.focus === "function") {
+            targetEl.focus({ preventScroll: true });
+          }
+        }
+      }
+
+      renderGeographyDrilldown();
 
       var rowsHtml = "";
       for (var k = 0; k < GEOGRAPHY_DATA.length; k++) {
@@ -3595,24 +3604,10 @@
       tbody.innerHTML = rowsHtml;
 
       bindPolarSectorEvents(svg, "data-geo-sector", function (idx, isKeyboard) {
-        geoState.selectedIndex = idx;
-        renderPolarGeography();
-        if (isKeyboard) {
-          var targetPath = svg.querySelector('[data-geo-sector="' + idx + '"]');
-          if (targetPath && typeof targetPath.focus === "function") {
-            targetPath.focus({ preventScroll: true });
-          }
-        }
+        syncGeographySelectionInPlace(idx, isKeyboard, "sector");
       });
       bindInteractiveTableRows(tbody, "data-geo-row", GEOGRAPHY_DATA.length, function (idx, isKeyboard) {
-        geoState.selectedIndex = idx;
-        renderPolarGeography();
-        if (isKeyboard) {
-          var targetRow = tbody.querySelector('[data-geo-row="' + idx + '"]');
-          if (targetRow && typeof targetRow.focus === "function") {
-            targetRow.focus({ preventScroll: true });
-          }
-        }
+        syncGeographySelectionInPlace(idx, isKeyboard, "row");
       });
     }
 
@@ -3776,7 +3771,7 @@
       isMotionPaused = Boolean(paused);
       document.documentElement.classList.toggle("is-motion-paused", isMotionPaused);
       var btn = document.getElementById("motion-toggle-btn");
-      var label = document.getElementById("motion-toggle-label");
+      var label = document.getElementById("motion-toggle-label") || document.querySelector("[data-motion-label]");
       if (btn) {
         btn.setAttribute("aria-pressed", isMotionPaused ? "true" : "false");
       }
