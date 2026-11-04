@@ -16,13 +16,16 @@
       --border-strong: #CBD5E1;
       --ink-primary: #0F172A;
       --ink-secondary: #334155;
-      --ink-muted: #64748B;
+      --ink-muted: #475569;
+      --ink-muted-accessible: #475569;
       --costco-crimson: #E31837;
+      --costco-crimson-dark: #B91C1C;
       --costco-crimson-soft: rgba(227, 24, 55, 0.08);
       --costco-navy: #005DAA;
       --costco-navy-dark: #00427A;
       --costco-navy-soft: rgba(0, 93, 170, 0.08);
       --cat-emerald: #059669;
+      --cat-emerald-dark: #047857;
       --cat-amber: #D97706;
       --cat-teal: #0D9488;
       --cat-indigo: #4F46E5;
@@ -35,6 +38,11 @@
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 12px;
+      --fs-h1: clamp(1.45rem, 2.4vw + 0.6rem, 2.15rem);
+      --fs-h2: clamp(1.18rem, 1.6vw + 0.5rem, 1.65rem);
+      --fs-h3: clamp(0.98rem, 1vw + 0.45rem, 1.2rem);
+      --fs-kpi: clamp(1.35rem, 2vw + 0.5rem, 1.95rem);
+      --fs-body: clamp(0.9rem, 0.35vw + 0.82rem, 1.0rem);
     }
 
     * {
@@ -193,12 +201,12 @@
 
     /* Main Two-Column Corporate Layout (Sticky TOC + Report Body) */
     .corporate-shell {
-      max-width: 1440px;
+      max-width: min(1680px, 100%);
       margin: 0 auto;
-      padding: 24px;
+      padding: clamp(12px, 2vw, 28px);
       display: grid;
       grid-template-columns: 290px minmax(0, 1fr);
-      gap: 28px;
+      gap: clamp(16px, 2.2vw, 28px);
       align-items: start;
     }
 
@@ -338,6 +346,7 @@
       flex-direction: column;
       gap: 32px;
       min-width: 0;
+      max-width: 100%;
     }
 
     .report-section {
@@ -345,9 +354,11 @@
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-md);
-      padding: 28px;
+      padding: clamp(16px, 2.5vw, 28px);
       contain: layout style;
       scroll-margin-top: 96px;
+      min-width: 0;
+      max-width: 100%;
     }
 
     .section-eyebrow {
@@ -359,29 +370,83 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--costco-crimson);
+      color: var(--costco-crimson-dark);
       margin-bottom: 6px;
     }
 
     .section-title {
-      font-size: 24px;
+      font-size: var(--fs-h1);
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--ink-primary);
       margin-bottom: 8px;
+      overflow-wrap: break-word;
     }
 
     .section-lead {
-      font-size: 15px;
+      font-size: var(--fs-body);
       color: var(--ink-secondary);
       max-width: 920px;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
+      line-height: 1.62;
+    }
+
+    /* Ordered Bayer & Halftone Dither Accent Plates (AC-02) */
+    .dither-accent-band {
+      height: 8px;
+      width: 100%;
+      border-radius: 4px;
+      background-color: #F1F5F9;
+      background-image:
+        radial-gradient(rgba(0, 93, 170, 0.22) 1.1px, transparent 1.1px),
+        radial-gradient(rgba(227, 24, 55, 0.18) 0.95px, transparent 0.95px);
+      background-size: 6px 6px;
+      background-position: 0 0, 3px 3px;
+      border: 1px solid var(--border-strong);
+      margin-bottom: 14px;
+    }
+
+    .dither-header-plate {
+      background-image: radial-gradient(rgba(15, 23, 42, 0.07) 1px, transparent 0);
+      background-size: 6px 6px;
+    }
+
+    .dither-badge-accent {
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+    }
+
+    /* Plain-English Explanatory Notes & Chart Reading Guides (AC-03) */
+    .plain-english-note,
+    .chart-reading-note {
+      background: #F8FAFC;
+      border: 1px solid var(--border-strong);
+      border-left: 4px solid var(--costco-navy);
+      border-radius: var(--radius-sm);
+      padding: 13px 16px;
+      margin: 14px 0 18px 0;
+      color: var(--ink-primary);
+      font-size: 13.5px;
+      line-height: 1.58;
+      box-shadow: var(--shadow-sm);
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .chart-reading-note {
+      border-left-color: var(--cat-emerald);
+      margin: 0 0 16px 0;
+    }
+
+    .plain-english-note strong,
+    .chart-reading-note strong {
+      color: var(--ink-primary);
+      font-weight: 700;
     }
 
     /* Executive KPI Scorecard Grid */
     .kpi-scorecard-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
       margin-bottom: 22px;
     }
@@ -392,6 +457,8 @@
       border-top: 3px solid var(--costco-navy);
       border-radius: var(--radius-md);
       padding: 16px 18px;
+      min-width: 0;
+      max-width: 100%;
     }
 
     .kpi-card.crimson-accent {
@@ -413,7 +480,7 @@
 
     .kpi-value {
       font-family: var(--font-mono);
-      font-size: 26px;
+      font-size: var(--fs-kpi);
       font-weight: 800;
       color: var(--ink-primary);
       display: block;
@@ -424,7 +491,7 @@
       font-family: var(--font-mono);
       font-size: 11.5px;
       font-weight: 600;
-      color: var(--costco-navy);
+      color: var(--costco-navy-dark);
       display: block;
     }
 
@@ -479,7 +546,7 @@
     }
 
     .polar-panel-title {
-      font-size: 18px;
+      font-size: var(--fs-h3);
       font-weight: 700;
       color: var(--ink-primary);
     }
@@ -495,15 +562,18 @@
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
+      max-width: 100%;
     }
 
     .ctrl-group {
       display: inline-flex;
+      flex-wrap: wrap;
       background: var(--bg-well);
       padding: 3px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-subtle);
       gap: 2px;
+      max-width: 100%;
     }
 
     .corp-btn {
@@ -534,9 +604,9 @@
 
     .polar-grid-layout {
       display: grid;
-      grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
+      grid-template-columns: minmax(300px, 440px) minmax(0, 1fr);
       gap: 22px;
-      align-items: center;
+      align-items: start;
     }
 
     .polar-svg-stage {
@@ -549,13 +619,15 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      min-width: 0;
+      max-width: 100%;
     }
 
     .polar-svg {
       width: 100%;
-      max-width: 440px;
+      max-width: 460px;
       height: auto;
-      aspect-ratio: 510 / 456;
+      aspect-ratio: 560 / 488;
       display: block;
       overflow: visible;
     }
@@ -572,7 +644,7 @@
       filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.22));
     }
 
-    /* Polar SVG Grid Rings, Spokes, Hub Typography & Callout Labels */
+    /* Polar SVG Grid Rings, Spokes, Hub Typography & Callout Labels (AC-04) */
     .polar-grid-ring {
       fill: none;
       stroke: var(--border-strong);
@@ -588,7 +660,7 @@
     .polar-center-title {
       text-anchor: middle;
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 800;
       fill: var(--ink-primary);
     }
@@ -596,23 +668,31 @@
     .polar-center-sub {
       text-anchor: middle;
       font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 600;
+      font-size: 10.5px;
+      font-weight: 700;
       fill: var(--ink-muted);
     }
 
     .polar-sector-label {
       font-family: var(--font-sans);
-      font-size: 11px;
+      font-size: 12.5px;
       font-weight: 700;
       fill: var(--ink-primary);
+      paint-order: stroke fill;
+      stroke: #FFFFFF;
+      stroke-width: 3.5px;
+      stroke-linejoin: round;
     }
 
     .polar-axis-label {
       font-family: var(--font-mono);
-      font-size: 9.5px;
+      font-size: 11px;
       font-weight: 600;
       fill: var(--ink-secondary);
+      paint-order: stroke fill;
+      stroke: #FFFFFF;
+      stroke-width: 3.5px;
+      stroke-linejoin: round;
     }
 
     .polar-sector-path:focus-visible {
@@ -621,6 +701,33 @@
       stroke-width: 2.5px;
       opacity: 1;
       filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.25));
+    }
+
+    .polar-html-legend {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 6px 12px;
+      font-size: 11.5px;
+      color: var(--ink-secondary);
+    }
+
+    .polar-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      line-height: 1.35;
+      min-width: 0;
+    }
+
+    .polar-legend-item strong {
+      color: var(--ink-primary);
+      font-weight: 700;
     }
 
     .polar-overlay-legend {
@@ -728,9 +835,12 @@
     }
 
     /* Standard Corporate Financial Tables */
-    .corp-table-wrap {
+    .corp-table-wrap,
+    .table-scroll-wrapper {
       width: 100%;
+      max-width: 100%;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .corp-table {
@@ -763,6 +873,11 @@
       background: var(--bg-canvas);
     }
 
+    .corp-table tr[tabindex="0"]:focus-visible {
+      outline: 2px solid var(--costco-navy);
+      outline-offset: -2px;
+    }
+
     .corp-table tr.is-highlighted td {
       background: var(--costco-navy-soft);
       font-weight: 700;
@@ -776,12 +891,20 @@
     }
 
     .polar-details-column .corp-table {
-      font-size: 11.5px;
+      font-size: 12.5px;
     }
 
     .polar-details-column .corp-table th,
     .polar-details-column .corp-table td {
-      padding: 7px 6px;
+      padding: 8px 10px;
+      line-height: 1.4;
+    }
+
+    .table-reading-footnote {
+      font-size: 11.5px;
+      color: var(--ink-muted);
+      margin-top: 6px;
+      line-height: 1.45;
     }
 
     .swatch-dot {
@@ -1112,6 +1235,191 @@
       margin-top: 12px;
     }
 
+    /* Corporate Animated SVG & Motion Control Rules (AC-01) */
+    @keyframes corpFlowDash {
+      to {
+        stroke-dashoffset: -48;
+      }
+    }
+
+    @keyframes corpNodePulse {
+      0%, 100% {
+        opacity: 0.35;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.85;
+        transform: scale(1.025);
+      }
+    }
+
+    .corp-anim-flow-path,
+    path.svg-animated-flow {
+      fill: none;
+      stroke-width: 2px;
+      stroke-dasharray: 8 6;
+      animation: corpFlowDash 2.4s linear infinite;
+    }
+
+    .polar-compass-ring,
+    .polar-radar-sweep {
+      fill: none;
+      stroke: var(--costco-navy);
+      stroke-width: 1.25px;
+      stroke-opacity: 0.28;
+      stroke-dasharray: 10 8;
+      animation: corpFlowDash 6s linear infinite;
+    }
+
+    .svg-animated-node-halo,
+    .corp-node-pulse-ring {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: corpNodePulse 3.2s ease-in-out infinite;
+    }
+
+    .flywheel-hero-stage,
+    .flywheel-hero-wrap {
+      margin-top: 18px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      contain: layout style;
+    }
+
+    .flywheel-hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .flywheel-hero-title {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--ink-primary);
+      letter-spacing: 0.03em;
+    }
+
+    .flywheel-hero-badge {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--costco-navy);
+      background: var(--costco-navy-soft);
+      padding: 3px 8px;
+      border-radius: 99px;
+    }
+
+    .flywheel-node-group.is-step-linked .flywheel-node-box {
+      stroke-width: 2.75px;
+      filter: drop-shadow(0 2px 6px rgba(0, 93, 170, 0.16));
+    }
+
+    .flywheel-hero-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .step-micro-svg {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      display: block;
+      margin: 0 0 10px 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+
+    .motion-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-well);
+      color: var(--ink-primary);
+      cursor: pointer;
+    }
+
+    .motion-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cat-emerald);
+      display: inline-block;
+    }
+
+    html.is-motion-paused .motion-status-dot,
+    html.animations-paused .motion-status-dot {
+      background: var(--costco-crimson);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .corp-anim-flow-path,
+      .svg-animated-flow,
+      .svg-animated-node-halo,
+      .polar-compass-ring,
+      .polar-radar-sweep,
+      .polar-sector-path {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    html.is-motion-paused .corp-anim-flow-path,
+    html.is-motion-paused .svg-animated-flow,
+    html.is-motion-paused .svg-animated-node-halo,
+    html.is-motion-paused .polar-compass-ring,
+    html.is-motion-paused .polar-radar-sweep,
+    html.animations-paused .corp-anim-flow-path,
+    html.animations-paused .svg-animated-flow,
+    html.animations-paused .svg-animated-node-halo,
+    html.animations-paused .polar-compass-ring,
+    html.animations-paused .polar-radar-sweep {
+      animation-play-state: paused !important;
+      animation: none !important;
+      transition: none !important;
+    }
+
+    /* Screen-Size-Agnostic Responsive Breakpoint Architecture (AC-05: 320px to 2560px+) */
+    @media (min-width: 1920px) {
+      .corporate-shell,
+      .header-main-bar {
+        max-width: 1680px;
+      }
+    }
+
+    @media (max-width: 1280px) {
+      .corporate-shell {
+        grid-template-columns: 260px minmax(0, 1fr);
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 1120px) {
+      .polar-grid-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .polar-svg-stage {
+        max-width: 520px;
+        margin: 0 auto;
+        width: 100%;
+      }
+    }
+
     @media (max-width: 1080px) {
       .corporate-shell {
         grid-template-columns: minmax(0, 1fr);
@@ -1119,13 +1427,30 @@
       .toc-sidebar {
         position: static;
         max-height: none;
+        padding: 14px 16px;
       }
-      .polar-grid-layout,
+      .toc-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 6px 12px;
+      }
+      .toc-sublist {
+        display: none;
+      }
       .step-body-grid {
         grid-template-columns: minmax(0, 1fr);
       }
       .stepper-pills {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .kpi-scorecard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .stepper-pills {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -1137,22 +1462,98 @@
       .header-main-bar {
         padding: 8px 14px;
       }
+      .brand-subtitle {
+        border-left: none;
+        padding-left: 0;
+        width: 100%;
+      }
       .corporate-shell {
         padding: 12px;
       }
       .report-section {
-        padding: 18px 14px;
+        padding: 16px 14px;
       }
       .polar-panel {
         padding: 14px 12px;
       }
-      .stepper-pills {
-        grid-template-columns: 1fr;
+      .kpi-scorecard-grid,
+      .stepper-pills,
+      .toc-list {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .corp-btn,
+      .step-pill-btn,
+      .motion-toggle-btn {
+        min-height: 36px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .corporate-shell {
+        padding: 8px;
+      }
+      .report-section,
+      .polar-panel,
+      .step-card {
+        padding: 12px 10px;
+      }
+      .executive-equation-banner,
+      .step-formula-pill {
+        font-size: 11px;
+        padding: 10px;
+        word-break: break-word;
+      }
+      .ctrl-group {
+        width: 100%;
+      }
+      .ctrl-group .corp-btn {
+        flex: 1 1 auto;
+        text-align: center;
       }
     }
 </style>
 </head>
 <body>
+  <!-- Shared Global SVG Pattern Atlas for High-Density Halftone & 4x4 Ordered Bayer Dithering (Zero Network Calls) -->
+  <svg id="svg-global-dither-defs" aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;">
+    <defs>
+      <!-- 4x4 Ordered Bayer Dither Pattern: Corporate Navy (#005DAA) at Institutional Opacity -->
+      <pattern id="dither-bayer-navy" width="8" height="8" patternUnits="userSpaceOnUse">
+        <rect x="0" y="0" width="2" height="2" fill="#005DAA" fill-opacity="0.14" />
+        <rect x="4" y="0" width="1" height="1" fill="#005DAA" fill-opacity="0.08" />
+        <rect x="2" y="2" width="1.5" height="1.5" fill="#005DAA" fill-opacity="0.11" />
+        <rect x="6" y="2" width="1" height="1" fill="#005DAA" fill-opacity="0.06" />
+        <rect x="4" y="4" width="2" height="2" fill="#005DAA" fill-opacity="0.14" />
+        <rect x="0" y="4" width="1" height="1" fill="#005DAA" fill-opacity="0.08" />
+        <rect x="6" y="6" width="1.5" height="1.5" fill="#005DAA" fill-opacity="0.11" />
+        <rect x="2" y="6" width="1" height="1" fill="#005DAA" fill-opacity="0.06" />
+      </pattern>
+
+      <!-- 4x4 Ordered Bayer Dither Pattern: Costco Crimson (#E31837) for Membership & Profit Accents -->
+      <pattern id="dither-bayer-crimson" width="8" height="8" patternUnits="userSpaceOnUse">
+        <rect x="0" y="0" width="2" height="2" fill="#E31837" fill-opacity="0.14" />
+        <rect x="4" y="0" width="1" height="1" fill="#E31837" fill-opacity="0.08" />
+        <rect x="2" y="2" width="1.5" height="1.5" fill="#E31837" fill-opacity="0.11" />
+        <rect x="6" y="2" width="1" height="1" fill="#E31837" fill-opacity="0.06" />
+        <rect x="4" y="4" width="2" height="2" fill="#E31837" fill-opacity="0.14" />
+        <rect x="0" y="4" width="1" height="1" fill="#E31837" fill-opacity="0.08" />
+        <rect x="6" y="6" width="1.5" height="1.5" fill="#E31837" fill-opacity="0.11" />
+        <rect x="2" y="6" width="1" height="1" fill="#E31837" fill-opacity="0.06" />
+      </pattern>
+
+      <!-- High-Density Halftone Micro-Dot Matrix: Slate (#0F172A) for Engraved Section Dividers -->
+      <pattern id="dither-halftone-slate" width="6" height="6" patternUnits="userSpaceOnUse">
+        <circle cx="1.5" cy="1.5" r="0.85" fill="#0F172A" fill-opacity="0.12" />
+        <circle cx="4.5" cy="4.5" r="0.65" fill="#005DAA" fill-opacity="0.10" />
+      </pattern>
+
+      <!-- Polar Ring Engraving Pattern for SVG Chart Halos -->
+      <pattern id="dither-polar-engraving" width="4" height="4" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r="0.6" fill="#005DAA" fill-opacity="0.16" />
+        <circle cx="3" cy="3" r="0.45" fill="#475569" fill-opacity="0.12" />
+      </pattern>
+    </defs>
+  </svg>
 
   <!-- Institutional Top Header Bar -->
   <header class="corporate-header" role="banner">
@@ -1183,6 +1584,17 @@
         <a href="#section-five-steps" class="nav-chip">5-Step Revenue Model</a>
         <a href="#section-gaap-model" class="nav-chip">GAAP Waterfall &amp; Simulator</a>
         <a href="#section-wayfinder-audit" class="nav-chip">Wayfinder &amp; 10-K Audit</a>
+        <button
+          type="button"
+          id="motion-toggle-btn"
+          class="motion-toggle-btn"
+          data-motion-toggle
+          aria-pressed="false"
+          aria-label="Pause corporate SVG animations"
+        >
+          <span class="motion-status-dot" aria-hidden="true"></span>
+          <span data-motion-label>Pause Animations</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -1287,6 +1699,7 @@
     <main class="report-main" role="main">
       <!-- SECTION 01: Executive Summary & FY2024 GAAP Scorecard -->
       <section class="report-section" id="section-executive-summary" aria-labelledby="heading-exec-summary">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 01 · Executive Summary</div>
         <h1 class="section-title" id="heading-exec-summary">
           Costco Wholesale Corporation (COST): Consolidated Revenue &amp; Operating Profit Architecture
@@ -1338,7 +1751,7 @@
           </div>
 
           <div class="kpi-card emerald-accent">
-            <span class="kpi-label">Negative Working-Capital Float</span>
+            <span class="kpi-label">Supplier-Financed Inventory (AP Ratio)</span>
             <span class="kpi-value">104.15%</span>
             <span class="kpi-delta">$19,421M AP / $18,647M Inventory (+$774M Float)</span>
             <span class="kpi-subnote">12.60x Inventory Turnover · $9,285M OpInc &rarr; $7,367M Net Income</span>
@@ -1347,18 +1760,113 @@
 
         <div class="executive-equation-banner">
           <div>
-            <strong>GAAP CONSERVATION IDENTITY:</strong>
-            R_total ($254,453M) = Net Sales ($249,625M) + Membership Fees ($4,828M)
+            <strong>TOTAL REVENUE ($254,453M):</strong>
+            Total Revenue ($254,453M) = Net Sales ($249,625M | 98.10%) + Membership Fees ($4,828M | 1.90%)
           </div>
           <div>
-            <strong>OPERATING PROFIT FLYWHEEL:</strong>
-            OpInc ($9,285M) = Merch Contrib ($4,457M | 48.00%) + Membership Fees ($4,828M | 52.00%)
+            <strong>OPERATING PROFIT BREAKDOWN:</strong>
+            Operating Income ($9,285M) = Net Merchandise Profit ($4,457M, or 48.00%) + Membership Fees ($4,828M, or 52.00%)
           </div>
+        </div>
+
+        <aside class="plain-english-note" aria-label="Plain-English Summary of Costco's Business Model">
+          <div class="note-eyebrow">In Plain English · How the Two Revenue Streams Work Together</div>
+          <p class="note-body">
+            Costco collects money in two ways: <strong>Net Sales ($249,625M, or 98.10% of total revenue)</strong> from goods and services sold at 890 warehouses and online, and <strong>Membership Fees ($4,828M, or 1.90% of total revenue)</strong> paid once a year by <strong>76.2 million members</strong>. Because Costco caps its merchandise gross margin at <strong>10.92% ($27,267M)</strong>, warehouse sales pay for <strong>100% of operating overhead ($22,810M SG&amp;A)</strong> and still leave <strong>$4,457M in net merchandise profit (48.00% of operating income)</strong>. That allows all <strong>$4,828M of annual membership fees to account for 52.00% of Costco's $9,285M operating income</strong>, resulting in <strong>$7,367M in bottom-line net income</strong>.
+          </p>
+        </aside>
+
+        <!-- Corporate Animated SVG Hero Schematic: 4-Node Revenue-to-Profit Flywheel -->
+        <div class="flywheel-hero-stage" role="region" aria-label="Animated Corporate Revenue-to-Profit Flywheel Schematic">
+          <div class="flywheel-hero-header">
+            <span class="flywheel-hero-title">CORPORATE REVENUE-TO-PROFIT FLYWHEEL SCHEMATIC (FY2024 FORM 10-K CONSERVATION FLOW)</span>
+            <span class="flywheel-hero-badge">4-NODE CLOSED-LOOP OPERATING MODEL · CLICK STEPPER OR PAUSE ANIMATIONS ANYTIME</span>
+          </div>
+          <svg
+            id="svg-corporate-flywheel-hero"
+            class="flywheel-hero-svg svg-animated-flow"
+            viewBox="0 0 960 210"
+            role="img"
+            aria-label="Animated four-node corporate schematic showing how 76.2 million paid members and $4,828M in membership fees drive $249,625M in net sales, a 10.92% gross margin ceiling, 104.15% supplier-financed inventory, and $9,285M in operating income"
+          >
+            <rect x="2" y="2" width="956" height="206" rx="8" fill="url(#dither-bayer-navy)" stroke="#CBD5E1" stroke-width="1" />
+
+            <!-- Animated Forward Flow Connectors Between the 4 Nodes -->
+            <path d="M 222 86 L 258 86" class="corp-anim-flow-path" stroke="#005DAA" />
+            <polygon points="258,86 250,81 250,91" fill="#005DAA" />
+
+            <path d="M 466 86 L 502 86" class="corp-anim-flow-path" stroke="#005DAA" />
+            <polygon points="502,86 494,81 494,91" fill="#005DAA" />
+
+            <path d="M 710 86 L 746 86" class="corp-anim-flow-path crimson-flow" stroke="#E31837" />
+            <polygon points="746,86 738,81 738,91" fill="#E31837" />
+
+            <!-- Closed-Loop Renewal Feedback Path from Node 4 Back to Node 1 -->
+            <path d="M 848 152 L 848 188 L 118 188 L 118 152" class="corp-anim-flow-path emerald-flow" stroke="#047857" />
+            <polygon points="118,152 113,160 123,160" fill="#047857" />
+            <rect x="215" y="176" width="530" height="22" rx="11" fill="#FFFFFF" stroke="#059669" stroke-width="1.2" />
+            <text x="480" y="191" text-anchor="middle" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#047857">
+              CLOSED-LOOP RENEWAL FEEDBACK: LOW PRICES DRIVE 92.9% U.S./CANADA RENEWAL &amp; REPEAT VISITS
+            </text>
+
+            <!-- Node 1: Paid Membership Base -->
+            <g class="flywheel-node-group is-step-linked" data-hero-node="1" data-flywheel-node="1">
+              <rect class="flywheel-node-box" x="14" y="20" width="212" height="132" rx="7" fill="#FFFFFF" stroke="#E31837" stroke-width="2" />
+              <rect x="14" y="20" width="212" height="24" rx="7" fill="url(#dither-bayer-crimson)" />
+              <circle cx="28" cy="32" r="4.5" fill="#E31837" class="corp-node-pulse-ring" />
+              <text x="40" y="36" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#B91C1C">NODE 01 · MEMBERSHIP ACCESS</text>
+              <text x="24" y="62" font-family="var(--font-sans)" font-size="13.5" font-weight="800" fill="#0F172A">76.2M Paid Members</text>
+              <text x="24" y="82" font-family="var(--font-mono)" font-size="12" font-weight="700" fill="#B91C1C">$4,828M Fees (1.90% Rev)</text>
+              <text x="24" y="102" font-family="var(--font-sans)" font-size="10.5" fill="#334155">136.8M Cardholders · 92.9% Renewal</text>
+              <text x="24" y="120" font-family="var(--font-sans)" font-size="10.5" fill="#334155">35.4M Executive = 73.3% of Sales</text>
+              <text x="24" y="138" font-family="var(--font-mono)" font-size="9.5" fill="#475569">$2,501M Deferred Liability (ASC 606)</text>
+            </g>
+
+            <!-- Node 2: High-Volume Purchasing Scale -->
+            <g class="flywheel-node-group" data-hero-node="2" data-flywheel-node="2">
+              <rect class="flywheel-node-box" x="256" y="20" width="212" height="132" rx="7" fill="#FFFFFF" stroke="#005DAA" stroke-width="2" />
+              <rect x="256" y="20" width="212" height="24" rx="7" fill="url(#dither-bayer-navy)" />
+              <circle cx="270" cy="32" r="4.5" fill="#005DAA" class="corp-node-pulse-ring" />
+              <text x="282" y="36" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#005DAA">NODE 02 · BUYING CONCENTRATION</text>
+              <text x="266" y="62" font-family="var(--font-sans)" font-size="13.5" font-weight="800" fill="#0F172A">&lt;4,000 Active SKUs</text>
+              <text x="266" y="82" font-family="var(--font-mono)" font-size="12" font-weight="700" fill="#005DAA">$249,625M Sales (98.10%)</text>
+              <text x="266" y="102" font-family="var(--font-sans)" font-size="10.5" fill="#334155">&gt;$62M Volume per Warehouse SKU</text>
+              <text x="266" y="120" font-family="var(--font-sans)" font-size="10.5" fill="#334155">719 Gas Stations · ~7% E-Commerce</text>
+              <text x="266" y="138" font-family="var(--font-mono)" font-size="9.5" fill="#475569">890 Clubs · Kirkland ~30%+ (+36 bps)</text>
+            </g>
+
+            <!-- Node 3: 10.92% Gross Margin Cap & Working Capital -->
+            <g class="flywheel-node-group" data-hero-node="3" data-flywheel-node="3">
+              <rect class="flywheel-node-box" x="498" y="20" width="212" height="132" rx="7" fill="#FFFFFF" stroke="#059669" stroke-width="2" />
+              <rect x="498" y="20" width="212" height="24" rx="7" fill="url(#dither-halftone-slate)" />
+              <circle cx="512" cy="32" r="4.5" fill="#059669" class="corp-node-pulse-ring" />
+              <text x="524" y="36" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#047857">NODE 03 · MARGIN CAP &amp; FLOAT</text>
+              <text x="508" y="62" font-family="var(--font-sans)" font-size="13.5" font-weight="800" fill="#0F172A">10.92% Gross Margin Cap</text>
+              <text x="508" y="82" font-family="var(--font-mono)" font-size="12" font-weight="700" fill="#047857">104.15% AP / Inventory</text>
+              <text x="508" y="102" font-family="var(--font-sans)" font-size="10.5" fill="#334155">$27,267M GM vs $22,810M SG&amp;A</text>
+              <text x="508" y="120" font-family="var(--font-sans)" font-size="10.5" fill="#334155">+$4,457M Net Merch Profit (48.00%)</text>
+              <text x="508" y="138" font-family="var(--font-mono)" font-size="9.5" fill="#475569">12.60x Turn · +$774M Supplier Float</text>
+            </g>
+
+            <!-- Node 4: Operating Profit Conversion -->
+            <g class="flywheel-node-group" data-hero-node="4" data-flywheel-node="4">
+              <rect class="flywheel-node-box" x="740" y="20" width="206" height="132" rx="7" fill="#FFFFFF" stroke="#E31837" stroke-width="2" />
+              <rect x="740" y="20" width="206" height="24" rx="7" fill="url(#dither-bayer-crimson)" />
+              <circle cx="754" cy="32" r="4.5" fill="#E31837" class="corp-node-pulse-ring" />
+              <text x="766" y="36" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#B91C1C">NODE 04 · OPERATING PROFIT</text>
+              <text x="750" y="62" font-family="var(--font-sans)" font-size="13.5" font-weight="800" fill="#0F172A">$9,285M Operating Inc</text>
+              <text x="750" y="82" font-family="var(--font-mono)" font-size="12" font-weight="700" fill="#B91C1C">52.00% Fee Share ($4,828M)</text>
+              <text x="750" y="102" font-family="var(--font-sans)" font-size="10.5" fill="#334155">48.00% Merch Contrib ($4,457M)</text>
+              <text x="750" y="120" font-family="var(--font-sans)" font-size="10.5" fill="#334155">+$455M Net Interest Income</text>
+              <text x="750" y="138" font-family="var(--font-mono)" font-size="9.5" fill="#475569">$7,367M Net Income ($16.56 EPS)</text>
+            </g>
+          </svg>
         </div>
       </section>
 
       <!-- SECTION 02: Interactive Polar Revenue Disaggregation Suite -->
       <section class="report-section" id="section-polar-graphs" aria-labelledby="heading-polar-suite">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 02 · Interactive Polar Revenue Charts</div>
         <h2 class="section-title" id="heading-polar-suite">
           Where Costco Generates Revenue: Interactive Polar Graph Suite
@@ -1366,9 +1874,16 @@
         <p class="section-lead">
           Each polar chart below disaggregates Costco's revenue and operating profit using primary-source figures from Note 11 and Item 2 of
           the FY2024 SEC Form 10-K. Use the controls to compare fiscal years (FY2022–FY2024), switch radial scaling modes
-          (<code>Area &radic;r</code> where sector area is proportional to dollar volume, <code>Linear Radius r</code> where radial length is proportional to dollar volume, or <code>Share Angle &theta;_i</code>
-          where sector angle matches revenue share), and select any sector (by click or <code>Enter</code>/<code>Space</code> key) to inspect category or segment data.
+          (<strong>By Area (Square-Root Scale)</strong> where sector area is proportional to dollar volume, <strong>By Radius (Linear Scale)</strong> where radial length is proportional to dollar volume, or <strong>By Revenue Share (Angle)</strong>
+          where sector angle matches revenue share), and select any sector or table row (by click or <code>Enter</code>/<code>Space</code> key) to inspect category or segment data.
         </p>
+
+        <aside class="plain-english-note" aria-label="Plain-English Guide to Reading the Polar Revenue Charts">
+          <div class="note-eyebrow">In Plain English · How to Read the Three Polar Charts</div>
+          <p class="note-body">
+            Unlike standard bar charts, circular polar charts let you compare both <strong>dollar size</strong> (how far a slice extends outward from the center hub) and <strong>share of the whole business</strong> (how wide the slice wraps around the circle). In <strong>Chart 2.1</strong>, <strong>Foods and Sundries ($101,463M, 40.65%)</strong> and <strong>Non-Foods ($63,973M, 25.63%)</strong> provide two-thirds of merchandise sales, while <strong>Warehouse Ancillary ($49,969M, 20.02%)</strong> and <strong>Fresh Foods ($34,220M, 13.71%)</strong> drive weekly repeat visits. In <strong>Chart 2.3</strong>, compare the outer ring (where Membership Fees are just <strong>1.90% of total revenue</strong>) against the inner ring (where those same fees become <strong>52.00% of operating income</strong>).
+          </p>
+        </aside>
 
         <div class="polar-suite-stack">
           <!-- POLAR GRAPH 1: Merchandise Categories (#polar-chart-categories) -->
@@ -1379,7 +1894,7 @@
                   2.1 Net Sales Disaggregation by Merchandise Category ($249,625M Note 11 Polar Rose)
                 </h3>
                 <p class="polar-panel-subtitle">
-                  Four core warehouse &amp; ancillary merchandise categories across FY2022–FY2024 (100.01% sum of rounded Note 11 shares; click or press Enter/Space on any sector to inspect)
+                  Four core warehouse &amp; ancillary merchandise categories across FY2022–FY2024 (100.01% sum of rounded Note 11 shares; click or press Enter/Space on any sector or table row to inspect)
                 </p>
               </div>
 
@@ -1392,11 +1907,15 @@
                 </div>
 
                 <div class="ctrl-group" role="group" aria-label="Category Polar Geometry Mode">
-                  <button type="button" class="corp-btn" data-cat-mode="sqrt" aria-pressed="true">Area &radic;r (Coxcomb)</button>
-                  <button type="button" class="corp-btn" data-cat-mode="linear" aria-pressed="false">Linear Radius r</button>
-                  <button type="button" class="corp-btn" data-cat-mode="angle" aria-pressed="false">Share Angle &theta;_i</button>
+                  <button type="button" class="corp-btn" data-cat-mode="sqrt" aria-pressed="true">By Area (Square-Root Scale)</button>
+                  <button type="button" class="corp-btn" data-cat-mode="linear" aria-pressed="false">By Radius (Linear Scale)</button>
+                  <button type="button" class="corp-btn" data-cat-mode="angle" aria-pressed="false">By Revenue Share (Angle)</button>
                 </div>
               </div>
+            </div>
+
+            <div class="chart-reading-note">
+              <strong>How to Read Chart 2.1:</strong> Each wedge represents one of Costco's four Note 11 merchandise categories. Switch between <em>By Area (Square-Root Scale)</em> (where visual wedge area matches dollar volume), <em>By Radius (Linear Scale)</em> (where wedge length matches dollar volume), and <em>By Revenue Share (Angle)</em> (where the circular angle matches each category's share of $249,625M Net Sales). Click or press <code>Enter</code>/<code>Space</code> on any wedge or table row to inspect its 3-year performance.
             </div>
 
             <div class="polar-grid-layout">
@@ -1404,12 +1923,18 @@
                 <svg
                   id="svg-polar-categories"
                   class="polar-svg"
-                  viewBox="-55 -28 510 456"
+                  viewBox="-80 -44 560 488"
                   role="img"
                   aria-label="Interactive polar rose chart of Costco Net Sales by merchandise category"
                 ></svg>
                 <div id="polar-cat-caption" style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-top: 8px; text-align: center;">
-                  FY2024 Note 11 Net Sales: $249,625M · Mode: Area-Proportional &radic;r (90&deg; Coxcomb Sectors)
+                  FY2024 Note 11 Net Sales: $249,625M · Mode: By Area (Square-Root Scale)
+                </div>
+                <div class="polar-html-legend" role="list" aria-label="Merchandise Category Color Legend">
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#005DAA;"></span>Foods &amp; Sundries ($101,463M · 40.65%)</span>
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#0F172A;"></span>Non-Foods ($63,973M · 25.63%)</span>
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#E31837;"></span>Ancillary &amp; Gas ($49,969M · 20.02%)</span>
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#059669;"></span>Fresh Foods ($34,220M · 13.71%)</span>
                 </div>
               </div>
 
@@ -1456,17 +1981,26 @@
               </div>
             </div>
 
+            <div class="chart-reading-note">
+              <strong>How to Read Chart 2.2:</strong> Compare Costco's three geographic reporting segments across 890 clubs worldwide. While the <strong>United States (614 clubs)</strong> generates <strong>72.37% of revenue ($184,143M)</strong>, <strong>Canada (108 clubs)</strong> achieves the highest productivity per warehouse (<strong>$322.91M revenue/club</strong> and <strong>4.73% operating margin</strong>), and <strong>Other International (168 clubs across 12 countries)</strong> delivers a <strong>4.01% operating margin</strong>.
+            </div>
+
             <div class="polar-grid-layout">
               <div class="polar-svg-stage">
                 <svg
                   id="svg-polar-geography"
                   class="polar-svg"
-                  viewBox="-55 -28 510 456"
+                  viewBox="-80 -44 560 488"
                   role="img"
                   aria-label="Interactive polar chart of Costco geographic segments"
                 ></svg>
                 <div id="polar-geo-caption" style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-top: 8px; text-align: center;">
                   Metric: Consolidated Total Revenue ($M) · 890 Warehouses Worldwide ($285.9M/Club Avg)
+                </div>
+                <div class="polar-html-legend" role="list" aria-label="Geographic Segment Color Legend">
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#005DAA;"></span>United States ($184,143M · 614 Clubs)</span>
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#059669;"></span>Other International ($35,436M · 168 Clubs)</span>
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#E31837;"></span>Canada ($34,874M · 108 Clubs)</span>
                 </div>
               </div>
 
@@ -1512,17 +2046,27 @@
               </div>
             </div>
 
+            <div class="chart-reading-note">
+              <strong>How to Read Chart 2.3:</strong> In <em>Dual-Ring</em> mode, the <strong>Outer Ring</strong> shows top-line revenue share (<strong>98.10% Net Sales</strong> in blue vs. <strong>1.90% Membership Fees</strong> in red), while the <strong>Inner Ring</strong> shows operating profit share (<strong>48.00% Net Merchandise Profit</strong> vs. <strong>52.00% Membership Fees</strong>). Switch to <em>Ancillary &amp; Omnichannel Rose</em> to inspect how 719 gas stations (~$30B), pharmacy/optical/food court (~$20B), and e-commerce (~$17.5B) drive repeat member visits.
+            </div>
+
             <div class="polar-grid-layout">
               <div class="polar-svg-stage">
                 <svg
                   id="svg-polar-flywheel"
                   class="polar-svg"
-                  viewBox="-55 -28 510 456"
+                  viewBox="-80 -44 560 488"
                   role="img"
                   aria-label="Interactive polar chart comparing top-line revenue share to operating income contribution and ancillary drivers"
                 ></svg>
                 <div id="polar-fly-caption" style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-top: 8px; text-align: center;">
                   Outer Ring: Revenue (98.10% Net Sales / 1.90% Fees) · Inner Ring: Operating Income (48.00% Merch / 52.00% Fees)
+                </div>
+                <div class="polar-html-legend" role="list" aria-label="Flywheel and Ancillary Color Legend">
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#005DAA;"></span>Net Sales (98.10% Rev → 48.00% OpInc)</span>
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#E31837;"></span>Membership Fees (1.90% Rev → 52.00% OpInc)</span>
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#D97706;"></span>719 Gas Stations (~$30B)</span>
+                  <span class="polar-legend-item" role="listitem"><span class="swatch-dot" style="background:#059669;"></span>Pharmacy &amp; In-Club (~$20B)</span>
                 </div>
               </div>
 
@@ -1591,6 +2135,7 @@
 
       <!-- SECTION 03: How Costco Generates Revenue in 5 Steps -->
       <section class="report-section" id="section-five-steps" aria-labelledby="heading-five-steps">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 03 · Five-Step Revenue Model</div>
         <h2 class="section-title" id="heading-five-steps">
           How Costco Generates Revenue in 5 Steps
@@ -1601,6 +2146,13 @@
           concentrated purchasing across fewer than 4,000 SKUs, frequent repeat visits from gas stations and ancillary services, a 10.92% gross margin cap, and
           supplier-financed inventory combine to generate $9,285M in operating income and $7,367M in net income.
         </p>
+
+        <aside class="plain-english-note" aria-label="Plain-English Guide to the Five-Step Revenue Model and Supplier Financing">
+          <div class="note-eyebrow">In Plain English · How Supplier Financing &amp; Executive Rewards Work</div>
+          <p class="note-body">
+            Because Costco stocks <strong>fewer than 4,000 items</strong> in pallet quantities, inventory turns over <strong>12.60 times per year</strong>—meaning the average item sits on the floor for only <strong>about 29 days</strong> before a member buys it, whereas Costco pays its suppliers in <strong>about 32 days</strong>. As a result, trade suppliers finance <strong>104.15% of Costco's floor inventory ($19,421M in Accounts Payable vs. $18,647M in Merchandise Inventories)</strong>, creating <strong>+$774M in supplier-financed cash float</strong>. Meanwhile, the <strong>2% annual reward ($2,804M in FY2024)</strong> earned by <strong>35.4 million Executive members (who generate 73.3% of worldwide sales)</strong> is subtracted directly from reported Net Sales rather than counted as an operating expense.
+          </p>
+        </aside>
 
         <!-- Interactive Stepper Controller -->
         <div class="stepper-controller-bar" role="region" aria-label="Interactive 5-Step Controller">
@@ -1673,6 +2225,23 @@
               </div>
 
               <div class="step-metrics-box">
+                <svg id="svg-step-1" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 1 animated schematic: Upfront cash fees flow into $2,501M deferred liability and recognize ratably into $4,828M earned membership fees">
+                  <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-bayer-crimson)" />
+                  <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#E31837" stroke-width="1.5" />
+                  <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#B91C1C">76.2M MEMBERS</text>
+                  <text x="55" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#0F172A">$65 / $130 Yr</text>
+                  <text x="55" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">92.9% US/CA</text>
+                  <path d="M 100 48 L 118 48" class="corp-anim-flow-path crimson-flow" stroke="#E31837" />
+                  <rect x="118" y="16" width="84" height="64" rx="5" fill="#FFFFFF" stroke="#005DAA" stroke-width="1.5" />
+                  <text x="160" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#005DAA">ASC 606 POOL</text>
+                  <text x="160" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#0F172A">$2,501M Def.</text>
+                  <text x="160" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">1/12th Monthly</text>
+                  <path d="M 202 48 L 220 48" class="corp-anim-flow-path crimson-flow" stroke="#E31837" />
+                  <rect x="220" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#E31837" stroke-width="1.5" />
+                  <text x="265" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#B91C1C">EARNED FEES</text>
+                  <text x="265" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11.5" font-weight="800" fill="#B91C1C">$4,828M</text>
+                  <text x="265" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">52.00% OpInc</text>
+                </svg>
                 <h4>Step 1 Key Figures (FY2024 Form 10-K)</h4>
                 <div class="step-kv-row"><span>FY2024 Earned Membership Fees</span><strong>$4,828M (+5.41% YoY)</strong></div>
                 <div class="step-kv-row"><span>Deferred Membership Fees Liability</span><strong>$2,501M (FY23: $2,337M)</strong></div>
@@ -1716,6 +2285,23 @@
               </div>
 
               <div class="step-metrics-box">
+                <svg id="svg-step-2" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 2 animated schematic: Fewer than 4,000 active SKUs concentrate more than $62M per SKU into $249,625M Net Sales">
+                  <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-bayer-navy)" />
+                  <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#005DAA" stroke-width="1.5" />
+                  <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#005DAA">DISCIPLINED ASSORT.</text>
+                  <text x="55" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#0F172A">&lt;4,000 SKUs</text>
+                  <text x="55" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">&gt;$62M / SKU</text>
+                  <path d="M 100 48 L 118 48" class="corp-anim-flow-path" stroke="#005DAA" />
+                  <rect x="118" y="16" width="84" height="64" rx="5" fill="#FFFFFF" stroke="#059669" stroke-width="1.5" />
+                  <text x="160" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#047857">KIRKLAND SIG.</text>
+                  <text x="160" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#0F172A">~30%+ Share</text>
+                  <text x="160" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">+36 bps Margin</text>
+                  <path d="M 202 48 L 220 48" class="corp-anim-flow-path" stroke="#005DAA" />
+                  <rect x="220" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#005DAA" stroke-width="1.5" />
+                  <text x="265" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#005DAA">NET SALES</text>
+                  <text x="265" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11.5" font-weight="800" fill="#005DAA">$249,625M</text>
+                  <text x="265" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">98.10% of Rev</text>
+                </svg>
                 <h4>Step 2 Key Figures (FY2024 Form 10-K)</h4>
                 <div class="step-kv-row"><span>FY2024 Consolidated Net Sales</span><strong>$249,625M (98.10% of Rev)</strong></div>
                 <div class="step-kv-row"><span>Foods &amp; Sundries / Fresh Foods</span><strong>$101,463M (40.65%) / $34,220M (13.71%)</strong></div>
@@ -1758,6 +2344,23 @@
               </div>
 
               <div class="step-metrics-box">
+                <svg id="svg-step-3" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 3 animated schematic: 719 gas stations, pharmacy, and e-commerce drive $49,969M in ancillary sales and repeat visits">
+                  <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-halftone-slate)" />
+                  <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#D97706" stroke-width="1.5" />
+                  <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#B45309">719 GAS STATIONS</text>
+                  <text x="55" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#0F172A">~$30.0B Fuel</text>
+                  <text x="55" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">~12% Net Sales</text>
+                  <path d="M 100 48 L 118 48" class="corp-anim-flow-path" stroke="#005DAA" />
+                  <rect x="118" y="16" width="84" height="64" rx="5" fill="#FFFFFF" stroke="#059669" stroke-width="1.5" />
+                  <text x="160" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#047857">PHARMACY/CLUB</text>
+                  <text x="160" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#0F172A">+$1,276M YoY</text>
+                  <text x="160" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">+16% E-Comm</text>
+                  <path d="M 202 48 L 220 48" class="corp-anim-flow-path" stroke="#005DAA" />
+                  <rect x="220" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#E31837" stroke-width="1.5" />
+                  <text x="265" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#B91C1C">ANCILLARY REV</text>
+                  <text x="265" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11.5" font-weight="800" fill="#B91C1C">$49,969M</text>
+                  <text x="265" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">20.02% Share</text>
+                </svg>
                 <h4>Step 3 Key Figures (FY2024 Form 10-K)</h4>
                 <div class="step-kv-row"><span>Warehouse Ancillary &amp; Other Sales</span><strong>$49,969M (20.02% of Net Sales)</strong></div>
                 <div class="step-kv-row"><span>Gasoline Stations &amp; Sales Share</span><strong>719 Stations · ~12% of Sales (~$30B)</strong></div>
@@ -1800,6 +2403,23 @@
               </div>
 
               <div class="step-metrics-box">
+                <svg id="svg-step-4" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 4 animated schematic: 10.92% gross margin ($27,267M) minus 9.14% SG&A ($22,810M) yields +$4,457M profit with 104.15% AP-to-inventory coverage">
+                  <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-bayer-navy)" />
+                  <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#059669" stroke-width="1.5" />
+                  <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#047857">GROSS MARGIN</text>
+                  <text x="55" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#0F172A">10.92% Cap</text>
+                  <text x="55" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">$27,267M GM</text>
+                  <path d="M 100 48 L 118 48" class="corp-anim-flow-path emerald-flow" stroke="#047857" />
+                  <rect x="118" y="16" width="84" height="64" rx="5" fill="#FFFFFF" stroke="#005DAA" stroke-width="1.5" />
+                  <text x="160" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#005DAA">LOW SG&amp;A</text>
+                  <text x="160" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#0F172A">9.14% Sales</text>
+                  <text x="160" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">-$22,810M</text>
+                  <path d="M 202 48 L 220 48" class="corp-anim-flow-path emerald-flow" stroke="#047857" />
+                  <rect x="220" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#059669" stroke-width="1.5" />
+                  <text x="265" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#047857">AP COVERAGE</text>
+                  <text x="265" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11.5" font-weight="800" fill="#047857">104.15%</text>
+                  <text x="265" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">+$774M Float</text>
+                </svg>
                 <h4>Step 4 Key Figures (FY2024 Form 10-K)</h4>
                 <div class="step-kv-row"><span>FY2024 Merchandise Costs</span><strong>$222,358M (89.08% of Sales)</strong></div>
                 <div class="step-kv-row"><span>Merchandise Gross Margin ($ / %)</span><strong>$27,267M / 10.92% (10.9232%)</strong></div>
@@ -1843,6 +2463,23 @@
               </div>
 
               <div class="step-metrics-box">
+                <svg id="svg-step-5" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 5 animated schematic: $4,457M net merchandise profit plus $4,828M membership fees equal $9,285M operating income and $7,367M net income">
+                  <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-bayer-crimson)" />
+                  <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#005DAA" stroke-width="1.5" />
+                  <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#005DAA">MERCH PROFIT</text>
+                  <text x="55" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#0F172A">$4,457M</text>
+                  <text x="55" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">48.00% OpInc</text>
+                  <path d="M 100 48 L 118 48" class="corp-anim-flow-path crimson-flow" stroke="#E31837" />
+                  <rect x="118" y="16" width="84" height="64" rx="5" fill="#FFFFFF" stroke="#E31837" stroke-width="1.5" />
+                  <text x="160" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#B91C1C">MEMBER FEES</text>
+                  <text x="160" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11" font-weight="800" fill="#B91C1C">$4,828M</text>
+                  <text x="160" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#475569">52.00% OpInc</text>
+                  <path d="M 202 48 L 220 48" class="corp-anim-flow-path crimson-flow" stroke="#E31837" />
+                  <rect x="220" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#059669" stroke-width="1.5" />
+                  <text x="265" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#047857">OPERATING INC</text>
+                  <text x="265" y="53" text-anchor="middle" font-family="var(--font-sans)" font-size="11.5" font-weight="800" fill="#0F172A">$9,285M</text>
+                  <text x="265" y="69" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#047857">$7,367M Net</text>
+                </svg>
                 <h4>Step 5 Key Figures (FY2024 Form 10-K)</h4>
                 <div class="step-kv-row"><span>Net Merchandise Operating Contrib</span><strong>$4,457M (48.00% of OpInc)</strong></div>
                 <div class="step-kv-row"><span>Membership Fees Operating Share</span><strong>$4,828M (52.00% of OpInc)</strong></div>
@@ -1861,6 +2498,7 @@
 
       <!-- SECTION 04: Multi-Year GAAP Waterfall & Flywheel Sensitivity Simulator -->
       <section class="report-section" id="section-gaap-model" aria-labelledby="heading-gaap-model">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 04 · Multi-Year GAAP Income Statement &amp; Sensitivity Simulator</div>
         <h2 class="section-title" id="heading-gaap-model">
           Multi-Year GAAP Consolidated Waterfall (FY2022–FY2024) &amp; Flywheel Sensitivity Simulator
@@ -1870,6 +2508,13 @@
           Operating Income Flywheel using the interactive sliders below. Observe how raising merchandise gross margin above the 11.50%
           Gross Margin Ceiling triggers a pricing-discipline governance alert.
         </p>
+
+        <aside class="plain-english-note" aria-label="Plain-English Guide to the GAAP Income Statement Waterfall">
+          <div class="note-eyebrow">In Plain English · How Top-Line Revenue Becomes Bottom-Line Net Income</div>
+          <p class="note-body">
+            Start at Row 1 with <strong>$249,625M in Net Sales</strong> and subtract <strong>$222,358M in Merchandise Costs</strong> (what Costco paid manufacturers and suppliers) to get <strong>$27,267M in Merchandise Gross Margin (10.92%)</strong>. Next, subtract <strong>$22,810M in warehouse and headquarters operating costs (SG&amp;A, 9.14%)</strong> to leave <strong>$4,457M in Net Merchandise Profit</strong>. Add <strong>$4,828M in annual Membership Fees</strong> to reach <strong>$9,285M in Operating Income</strong>, add <strong>+$455M in net interest income</strong>, and subtract <strong>$2,373M in income taxes</strong> to arrive at <strong>$7,367M in Net Income ($16.56 diluted earnings per share)</strong>.
+          </p>
+        </aside>
 
         <div class="polar-panel-header" style="margin-bottom: 14px;">
           <div style="font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--ink-primary);">
@@ -1956,6 +2601,7 @@
 
       <!-- SECTION 05: Primary-Source SEC Form 10-K & Wayfinder Decision Audit -->
       <section class="report-section" id="section-wayfinder-audit" aria-labelledby="heading-wayfinder-audit">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 05 · Primary-Source SEC Form 10-K Citations &amp; Wayfinder Audit</div>
         <h2 class="section-title" id="heading-wayfinder-audit">
           Primary-Source SEC Form 10-K Citations &amp; Resolved Wayfinder Decision Tickets (ticket-001 .. ticket-006)
@@ -1966,6 +2612,13 @@
           September 1, 2024</em> (<code>CIK: 0000909832</code>, Accession <code>0000909832-24-000049</code>) and the six
           resolved Wayfinder research tickets below.
         </p>
+
+        <aside class="plain-english-note" aria-label="Plain-English Summary of Primary-Source Verification">
+          <div class="note-eyebrow">In Plain English · How These Figures Are Verified Offline</div>
+          <p class="note-body">
+            Every dollar figure, warehouse count, and accounting rule in this report is verified directly against Costco's official <strong>FY2024 SEC Form 10-K filing (CIK: 0000909832, Accession 0000909832-24-000049)</strong> without making any external internet requests. Running <code>npm run verify</code> executes <code>src/costco_revenue_model.mjs</code> locally in under 50 milliseconds, checking that all revenue categories, geographic segments, balance-sheet ratios, and six research tickets match the audited financial statements.
+          </p>
+        </aside>
 
         <div class="ticket-tabs-bar" role="tablist" aria-label="Wayfinder Decision Tickets">
           <button type="button" class="corp-btn" data-ticket-tab="0" aria-pressed="true">ticket-001.md · Revenue Recognition (ASC 606)</button>
@@ -1991,7 +2644,7 @@
               <tr>
                 <td><code>wayfinder/map.md</code> &amp; <code>wayfinder/tickets/ticket-001.md..ticket-006.md</code></td>
                 <td>Canonical Wayfinder decision map &amp; 6 resolved research tickets using descriptive human-readable titles</td>
-                <td><code>wayfinderAudit.valid === true</code> (6 resolved tickets verified)</td>
+                <td>Verified: 6 resolved research tickets and canonical decision map</td>
               </tr>
               <tr>
                 <td><code>research/costco_revenue_architecture.md</code></td>
@@ -2280,7 +2933,7 @@
         id: "ticket-001.md",
         title: "Costco Wholesale Two-Pillar Revenue & GAAP Accounting Architecture (FY2024 Form 10-K)",
         citation: "SEC Form 10-K (FY2024), Item 8 (p. 35, 37) & Note 1 (p. 46–47) · ASC 606",
-        summary: "Establishes the consolidated revenue identity R_total ($254,453M) = Net Sales ($249,625M | 98.10%) + Membership Fees ($4,828M | 1.90%). Verifies point-of-sale recognition for merchandise net of returns and $2,804M Executive 2% reward contra-revenue ($2,435M Accrued member rewards liability), and ratable 12-month ASC 606 recognition for membership fees against $2,501M Deferred membership fees liability."
+        summary: "Establishes the consolidated revenue identity Total Revenue ($254,453M) = Net Sales ($249,625M | 98.10%) + Membership Fees ($4,828M | 1.90%). Verifies point-of-sale recognition for merchandise net of returns and $2,804M Executive 2% reward contra-revenue ($2,435M Accrued member rewards liability), and ratable 12-month ASC 606 recognition for membership fees against $2,501M Deferred membership fees liability."
       },
       {
         id: "ticket-002.md",
@@ -2361,10 +3014,13 @@
       return "$" + USD_FORMATTER.format(Number(num)) + "M";
     }
 
-    function renderPolarGrid(cx, cy, maxR, ringLabels, spokeAngles) {
+    function renderPolarGrid(cx, cy, maxR, ringLabels, spokeAngles, rBaseOverride) {
       var html = "";
-      var rBase = 36;
+      var rBase = typeof rBaseOverride === "number" ? rBaseOverride : 42;
       var rings = [0.25, 0.5, 0.75, 1.0];
+      /* Subtle engraved dithered outer halo + animated radar compass ring */
+      html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (maxR + 8).toFixed(1) + '" class="polar-compass-ring polar-radar-sweep corp-anim-flow-path" />';
+      html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (maxR + 4).toFixed(1) + '" fill="none" stroke="url(#dither-polar-engraving)" stroke-width="4" />';
       for (var i = 0; i < rings.length; i++) {
         var r = rBase + (maxR - rBase) * rings[i];
         html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r.toFixed(1) + '" class="polar-grid-ring" />';
@@ -2374,20 +3030,26 @@
         html += '<line x1="' + cx + '" y1="' + cy + '" x2="' + pt.x.toFixed(1) + '" y2="' + pt.y.toFixed(1) + '" class="polar-axis-spoke" />';
       }
       if (ringLabels) {
-        html += renderPolarRingLabels(cx, cy, maxR, ringLabels);
+        html += renderPolarRingLabels(cx, cy, maxR, ringLabels, rBase, 0);
       }
       return html;
     }
 
-    function renderPolarRingLabels(cx, cy, maxR, ringLabels) {
+    function renderPolarRingLabels(cx, cy, maxR, ringLabels, rBaseOverride, labelAngleDeg) {
       if (!ringLabels) return "";
       var html = "";
-      var rBase = 36;
+      var rBase = typeof rBaseOverride === "number" ? rBaseOverride : 42;
+      var deg = typeof labelAngleDeg === "number" ? labelAngleDeg : 0;
       var rings = [0.25, 0.5, 0.75, 1.0];
       for (var i = 0; i < rings.length; i++) {
         if (ringLabels[i]) {
           var r = rBase + (maxR - rBase) * rings[i];
-          html += '<text x="' + (cx + 4) + '" y="' + (cy - r + 10).toFixed(1) + '" class="polar-axis-label" style="paint-order:stroke fill;stroke:#FFFFFF;stroke-width:2.5px;stroke-linejoin:round;pointer-events:none;">' + ringLabels[i] + "</text>";
+          if (deg === 0) {
+            html += '<text x="' + (cx + 4) + '" y="' + (cy - r + 10).toFixed(1) + '" class="polar-axis-label" style="paint-order:stroke fill;stroke:#FFFFFF;stroke-width:3.5px;stroke-linejoin:round;pointer-events:none;">' + ringLabels[i] + "</text>";
+          } else {
+            var pt = polarPoint(cx, cy, r - 6, deg);
+            html += '<text x="' + pt.x.toFixed(1) + '" y="' + (pt.y + 4).toFixed(1) + '" text-anchor="start" class="polar-axis-label" style="paint-order:stroke fill;stroke:#FFFFFF;stroke-width:3.5px;stroke-linejoin:round;pointer-events:none;">' + ringLabels[i] + "</text>";
+          }
         }
       }
       return html;
@@ -2412,6 +3074,32 @@
       }
     }
 
+    function bindInteractiveTableRows(tbodyElement, attrName, totalItems, getSelectedIdx, onSelectRow) {
+      if (!tbodyElement) return;
+      var tableRows = tbodyElement.querySelectorAll("[" + attrName + "]");
+      for (var rIdx = 0; rIdx < tableRows.length; rIdx++) {
+        tableRows[rIdx].addEventListener("click", function () {
+          var idx = Number(this.getAttribute(attrName));
+          onSelectRow(idx, false);
+        });
+        tableRows[rIdx].addEventListener("keydown", function (evt) {
+          var idx = Number(this.getAttribute(attrName));
+          if (evt.key === "Enter" || evt.key === " " || evt.key === "Spacebar") {
+            evt.preventDefault();
+            onSelectRow(idx, true);
+          } else if (evt.key === "ArrowDown" || evt.key === "ArrowRight") {
+            evt.preventDefault();
+            var nextIdx = (idx + 1) % totalItems;
+            onSelectRow(nextIdx, true);
+          } else if (evt.key === "ArrowUp" || evt.key === "ArrowLeft") {
+            evt.preventDefault();
+            var prevIdx = (idx - 1 + totalItems) % totalItems;
+            onSelectRow(prevIdx, true);
+          }
+        });
+      }
+    }
+
     /* =========================================================================
        1. POLAR GRAPH 1: Merchandise Categories (#polar-chart-categories)
        ========================================================================= */
@@ -2430,8 +3118,8 @@
 
       var cx = 200;
       var cy = 200;
-      var rInner = 36;
-      var maxR = 120;
+      var rInner = 42;
+      var maxR = 124;
       var maxSales = 101463;
       var activeYear = catState.year === "overlay" ? 2024 : Number(catState.year);
       var totalByYear = { 2022: 222730, 2023: 237710, 2024: 249625 };
@@ -2441,7 +3129,7 @@
         : ["$25B", "$50B", "$75B", "$101.5B"];
 
       var spokeAngles = [0, 90, 180, 270];
-      var svgMarkup = renderPolarGrid(cx, cy, maxR, null, spokeAngles);
+      var svgMarkup = renderPolarGrid(cx, cy, maxR, null, spokeAngles, rInner);
 
       var currentAngle = 0;
       for (var i = 0; i < CATEGORY_DATA.length; i++) {
@@ -2483,27 +3171,28 @@
           'aria-label="' + cat.name + ": " + formatUsdM(sales) + " (" + share.toFixed(2) + '%)" />';
 
         var midDeg = (startDeg + endDeg) / 2;
-        var labelPos = polarPoint(cx, cy, maxR + 15, midDeg);
+        var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
           '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y - 4).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-sector-label">' +
           cat.shortName + "</text>" +
-          '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 10).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
+          '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 11).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
           formatUsdM(sales) + " (" + share.toFixed(1) + "%)</text>";
       }
 
-      /* Foreground ring scale labels + Center hub */
-      svgMarkup += renderPolarRingLabels(cx, cy, maxR, ringLabels);
+      /* Foreground ring scale labels (offset to 25 deg in angle mode to prevent 12-o'clock collision) + Center hub */
+      var ringLabelAngle = catState.mode === "angle" ? 25 : 0;
+      svgMarkup += renderPolarRingLabels(cx, cy, maxR, ringLabels, rInner, ringLabelAngle);
       svgMarkup +=
         '<circle cx="' + cx + '" cy="' + cy + '" r="' + rInner + '" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />' +
         '<text x="' + cx + '" y="' + (cy - 3) + '" class="polar-center-title">FY' + String(activeYear).slice(2) + '</text>' +
-        '<text x="' + cx + '" y="' + (cy + 9) + '" class="polar-center-sub">$' + (totalByYear[activeYear] / 1000).toFixed(1) + "B</text>";
+        '<text x="' + cx + '" y="' + (cy + 10) + '" class="polar-center-sub">$' + (totalByYear[activeYear] / 1000).toFixed(1) + "B</text>";
 
       if (catState.year === "overlay") {
         svgMarkup +=
           '<g class="polar-overlay-svg-key">' +
-          '<rect x="-20" y="384" width="440" height="22" rx="4" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" />' +
-          '<text x="200" y="399" text-anchor="middle" class="polar-axis-label">Overlay Key: FY24 Filled · FY23 Dashed (5-2) · FY22 Dotted (2-2)</text>' +
+          '<rect x="-30" y="392" width="460" height="24" rx="4" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" />' +
+          '<text x="200" y="408" text-anchor="middle" class="polar-axis-label">Overlay Key: FY24 Filled · FY23 Dashed (5-2) · FY22 Dotted (2-2)</text>' +
           "</g>";
       }
 
@@ -2512,10 +3201,10 @@
       /* Update caption */
       if (caption) {
         var modeLabel = catState.mode === "sqrt"
-          ? "Area-Proportional √r (90° Coxcomb Sectors)"
+          ? "By Area (Square-Root Scale)"
           : catState.mode === "linear"
-          ? "Linear Radius r (90° Sectors)"
-          : "Share-Weighted Sector Angle θ_i";
+          ? "By Radius (Linear Scale)"
+          : "By Revenue Share (Angle)";
         caption.textContent =
           (catState.year === "overlay"
             ? "FY2022–FY2024 3-Year Polar Overlay (Filled: FY24 $249,625M · Dashed: FY23 $237,710M · Dotted: FY22 $222,730M)"
@@ -2544,7 +3233,7 @@
         var rowCat = CATEGORY_DATA[k];
         var rowActive = k === catState.selectedIndex;
         rowsHtml +=
-          '<tr class="' + (rowActive ? "is-highlighted" : "") + '" data-cat-row="' + k + '" style="cursor:pointer;">' +
+          '<tr class="' + (rowActive ? "is-highlighted" : "") + '" data-cat-row="' + k + '" tabindex="0" role="button" aria-selected="' + (rowActive ? "true" : "false") + '" style="cursor:pointer;">' +
           '<td><span class="swatch-dot" style="background:' + rowCat.color + ';"></span><strong>' + rowCat.name + "</strong></td>" +
           '<td class="num">' + formatUsdM(rowCat.salesByYear[2022]) + "</td>" +
           '<td class="num">' + formatUsdM(rowCat.salesByYear[2023]) + "</td>" +
@@ -2564,7 +3253,7 @@
         "</tr>";
       tbody.innerHTML = rowsHtml;
 
-      /* Bind sector pointer & keyboard events + table row clicks */
+      /* Bind sector pointer & keyboard events + table row clicks & keyboard support */
       bindPolarSectorEvents(svg, "data-cat-sector", function (idx, isKeyboard) {
         catState.selectedIndex = idx;
         renderPolarCategories();
@@ -2575,13 +3264,18 @@
           }
         }
       });
-      var tableRows = tbody.querySelectorAll("[data-cat-row]");
-      for (var rIdx = 0; rIdx < tableRows.length; rIdx++) {
-        tableRows[rIdx].addEventListener("click", function () {
-          catState.selectedIndex = Number(this.getAttribute("data-cat-row"));
-          renderPolarCategories();
-        });
-      }
+      bindInteractiveTableRows(tbody, "data-cat-row", CATEGORY_DATA.length, function () {
+        return catState.selectedIndex;
+      }, function (idx, isKeyboard) {
+        catState.selectedIndex = idx;
+        renderPolarCategories();
+        if (isKeyboard) {
+          var targetRow = tbody.querySelector('[data-cat-row="' + idx + '"]');
+          if (targetRow && typeof targetRow.focus === "function") {
+            targetRow.focus({ preventScroll: true });
+          }
+        }
+      });
     }
 
     /* =========================================================================
@@ -2601,8 +3295,8 @@
 
       var cx = 200;
       var cy = 200;
-      var rInner = 36;
-      var maxR = 118;
+      var rInner = 42;
+      var maxR = 122;
 
       var ringLabels = geoState.metric === "revenue"
         ? ["$45B", "$90B", "$135B", "$184.1B"]
@@ -2611,7 +3305,7 @@
         : ["150", "300", "450", "614 Clubs"];
 
       var spokeAngles = [0, 120, 240];
-      var svgMarkup = renderPolarGrid(cx, cy, maxR, null, spokeAngles);
+      var svgMarkup = renderPolarGrid(cx, cy, maxR, null, spokeAngles, rInner);
 
       var maxVal = geoState.metric === "revenue" ? 184143 : geoState.metric === "opinc" ? 6217 : 614;
 
@@ -2643,22 +3337,22 @@
           'aria-label="' + seg.name + ": " + ariaValLabel + '" />';
 
         var midDeg = (startDeg + endDeg) / 2;
-        var labelPos = polarPoint(cx, cy, maxR + 14, midDeg);
+        var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
           '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y - 4).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-sector-label">' +
           seg.shortName + "</text>" +
-          '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 10).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
+          '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 11).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
           valLabel + "</text>";
       }
 
       var centerTop = geoState.metric === "revenue" ? "$254.5B" : geoState.metric === "opinc" ? "$9,285M" : "890 Clubs";
-      var centerSub = geoState.metric === "revenue" ? "Total Rev" : geoState.metric === "opinc" ? "3.65% OpM" : "703/187";
-      svgMarkup += renderPolarRingLabels(cx, cy, maxR, ringLabels);
+      var centerSub = geoState.metric === "revenue" ? "Total Rev" : geoState.metric === "opinc" ? "3.65% Margin" : "703/187";
+      svgMarkup += renderPolarRingLabels(cx, cy, maxR, ringLabels, rInner, 0);
       svgMarkup +=
         '<circle cx="' + cx + '" cy="' + cy + '" r="' + rInner + '" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />' +
         '<text x="' + cx + '" y="' + (cy - 3) + '" class="polar-center-title">' + centerTop + '</text>' +
-        '<text x="' + cx + '" y="' + (cy + 9) + '" class="polar-center-sub">' + centerSub + "</text>";
+        '<text x="' + cx + '" y="' + (cy + 10) + '" class="polar-center-sub">' + centerSub + "</text>";
 
       svg.innerHTML = svgMarkup;
 
@@ -2687,7 +3381,7 @@
         var g = GEOGRAPHY_DATA[k];
         var rowActive = k === geoState.selectedIndex;
         rowsHtml +=
-          '<tr class="' + (rowActive ? "is-highlighted" : "") + '" data-geo-row="' + k + '" style="cursor:pointer;">' +
+          '<tr class="' + (rowActive ? "is-highlighted" : "") + '" data-geo-row="' + k + '" tabindex="0" role="button" aria-selected="' + (rowActive ? "true" : "false") + '" style="cursor:pointer;">' +
           '<td><span class="swatch-dot" style="background:' + g.color + ';"></span><strong>' + g.name + "</strong></td>" +
           '<td class="num">' + formatUsdM(g.revenueM) + "</td>" +
           '<td class="num">' + g.revSharePct.toFixed(2) + "%</td>" +
@@ -2717,13 +3411,18 @@
           }
         }
       });
-      var tableRows = tbody.querySelectorAll("[data-geo-row]");
-      for (var rIdx = 0; rIdx < tableRows.length; rIdx++) {
-        tableRows[rIdx].addEventListener("click", function () {
-          geoState.selectedIndex = Number(this.getAttribute("data-geo-row"));
-          renderPolarGeography();
-        });
-      }
+      bindInteractiveTableRows(tbody, "data-geo-row", GEOGRAPHY_DATA.length, function () {
+        return geoState.selectedIndex;
+      }, function (idx, isKeyboard) {
+        geoState.selectedIndex = idx;
+        renderPolarGeography();
+        if (isKeyboard) {
+          var targetRow = tbody.querySelector('[data-geo-row="' + idx + '"]');
+          if (targetRow && typeof targetRow.focus === "function") {
+            targetRow.focus({ preventScroll: true });
+          }
+        }
+      });
     }
 
     /* =========================================================================
@@ -2747,8 +3446,8 @@
       if (flyState.mode === "asymmetry") {
         /* Dual concentric polar rings:
            Outer Ring (r: 100..136) = Top-Line Revenue Share (98.10% Net Sales vs 1.90% Membership Fees)
-           Inner Ring (r: 48..90)   = Operating Profit Contribution (48.00% Merch vs 52.00% Membership Fees) */
-        svgMarkup += renderPolarGrid(cx, cy, 136, null, [0, 90, 180, 270]);
+           Inner Ring (r: 44..94)   = Operating Profit Contribution (48.00% Merch vs 52.00% Membership Fees) */
+        svgMarkup += renderPolarGrid(cx, cy, 136, null, [0, 90, 180, 270], 42);
 
         var feeRevDeg = (1.90 / 100) * 360;
         var feeRevVisualSpan = Math.max(feeRevDeg, 9.0);
@@ -2768,28 +3467,32 @@
 
         /* Inner Ring: Operating Income Share — Membership Fees (52.00% = 187.2 deg) vs Net Merch Contribution (48.00% = 172.8 deg) */
         svgMarkup +=
-          '<path d="' + describeAnnularSector(cx, cy, 44, 95, 0, feeOpDeg) + '" fill="#E31837" fill-opacity="' + (isFeeSelected ? "0.95" : "0.80") + '" ' +
+          '<path d="' + describeAnnularSector(cx, cy, 44, 94, 0, feeOpDeg) + '" fill="#E31837" fill-opacity="' + (isFeeSelected ? "0.95" : "0.80") + '" ' +
           'class="polar-sector-path' + (isFeeSelected ? " is-selected" : "") + '" data-fly-sector="1" data-fly-ring="inner" role="button" tabindex="0" ' +
           'aria-label="Inner Ring Operating Profit: Membership Fees $4,828M (52.00% of Operating Income)" />';
         svgMarkup +=
-          '<path d="' + describeAnnularSector(cx, cy, 44, 95, feeOpDeg, 360) + '" fill="#005DAA" fill-opacity="' + (!isFeeSelected ? "0.92" : "0.72") + '" ' +
+          '<path d="' + describeAnnularSector(cx, cy, 44, 94, feeOpDeg, 360) + '" fill="#005DAA" fill-opacity="' + (!isFeeSelected ? "0.92" : "0.72") + '" ' +
           'class="polar-sector-path' + (!isFeeSelected ? " is-selected" : "") + '" data-fly-sector="0" data-fly-ring="inner" role="button" tabindex="0" ' +
           'aria-label="Inner Ring Operating Profit: Net Merchandise Contribution $4,457M (48.00% of Operating Income)" />';
 
-        /* Labels */
-        svgMarkup += renderPolarRingLabels(cx, cy, 136, ["25%", "50%", "75%", "100%"]);
+        /* Labels: offset ring scale labels to 25 deg and route inner-ring callouts via horizontal leader lines into side margins */
+        svgMarkup += renderPolarRingLabels(cx, cy, 136, ["25%", "50%", "75%", "100%"], 42, 25);
         svgMarkup +=
-          '<text x="200" y="32" text-anchor="middle" class="polar-sector-label" style="fill:#E31837;">Outer Ring: Membership Fees 1.90% ($4,828M)</text>' +
-          '<text x="200" y="368" text-anchor="middle" class="polar-sector-label" style="fill:#005DAA;">Outer Ring: Net Sales 98.10% ($249,625M)</text>' +
-          '<text x="270" y="196" text-anchor="middle" class="polar-sector-label" style="fill:#FFFFFF;paint-order:stroke fill;stroke:#0F172A;stroke-width:2px;stroke-linejoin:round;pointer-events:none;">52.0%</text>' +
-          '<text x="270" y="208" text-anchor="middle" class="polar-axis-label" style="fill:#FFFFFF;paint-order:stroke fill;stroke:#0F172A;stroke-width:2px;stroke-linejoin:round;pointer-events:none;">Fees OpInc</text>' +
-          '<text x="130" y="196" text-anchor="middle" class="polar-sector-label" style="fill:#FFFFFF;paint-order:stroke fill;stroke:#0F172A;stroke-width:2px;stroke-linejoin:round;pointer-events:none;">48.0%</text>' +
-          '<text x="130" y="208" text-anchor="middle" class="polar-axis-label" style="fill:#FFFFFF;paint-order:stroke fill;stroke:#0F172A;stroke-width:2px;stroke-linejoin:round;pointer-events:none;">Merch OpInc</text>';
+          '<polyline points="130,200 54,200" fill="none" stroke="#005DAA" stroke-width="1.5" stroke-dasharray="2 2" />' +
+          '<circle cx="130" cy="200" r="3" fill="#FFFFFF" stroke="#005DAA" stroke-width="1.5" />' +
+          '<polyline points="270,200 346,200" fill="none" stroke="#B91C1C" stroke-width="1.5" stroke-dasharray="2 2" />' +
+          '<circle cx="270" cy="200" r="3" fill="#FFFFFF" stroke="#B91C1C" stroke-width="1.5" />' +
+          '<text x="200" y="28" text-anchor="middle" class="polar-sector-label" style="fill:#B91C1C;">Outer Ring: Membership Fees 1.90% ($4,828M)</text>' +
+          '<text x="200" y="374" text-anchor="middle" class="polar-sector-label" style="fill:#005DAA;">Outer Ring: Net Sales 98.10% ($249,625M)</text>' +
+          '<text x="352" y="196" text-anchor="start" class="polar-sector-label" style="fill:#B91C1C;">52.0% Fees</text>' +
+          '<text x="352" y="211" text-anchor="start" class="polar-axis-label">$4,828M OpInc</text>' +
+          '<text x="48" y="196" text-anchor="end" class="polar-sector-label" style="fill:#005DAA;">48.0% Merch</text>' +
+          '<text x="48" y="211" text-anchor="end" class="polar-axis-label">$4,457M OpInc</text>';
 
         svgMarkup +=
-          '<circle cx="' + cx + '" cy="' + cy + '" r="38" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />' +
+          '<circle cx="' + cx + '" cy="' + cy + '" r="42" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />' +
           '<text x="' + cx + '" y="' + (cy - 3) + '" class="polar-center-title">$9,285M</text>' +
-          '<text x="' + cx + '" y="' + (cy + 9) + '" class="polar-center-sub">FY24 OpInc</text>';
+          '<text x="' + cx + '" y="' + (cy + 10) + '" class="polar-center-sub">FY24 OpInc</text>';
 
         var selPillar = FLYWHEEL_ASYMMETRY_DATA[flyState.selectedIndex % 2];
         drilldown.innerHTML =
@@ -2808,10 +3511,10 @@
         }
       } else {
         /* Ancillary & Omnichannel Sub-Driver Polar Rose */
-        var rInner = 36;
-        var maxR = 110;
+        var rInner = 42;
+        var maxR = 118;
         var maxVolB = 30.0;
-        svgMarkup += renderPolarGrid(cx, cy, maxR, null, [0, 90, 180, 270]);
+        svgMarkup += renderPolarGrid(cx, cy, maxR, null, [0, 90, 180, 270], rInner);
 
         for (var i = 0; i < ANCILLARY_ROSE_DATA.length; i++) {
           var item = ANCILLARY_ROSE_DATA[i];
@@ -2827,20 +3530,20 @@
             'aria-label="' + item.name + ": ~$" + item.volumeB.toFixed(1) + 'B" />';
 
           var midDeg = (startDeg + endDeg) / 2;
-          var labelPos = polarPoint(cx, cy, maxR + 12, midDeg);
+          var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
           var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
           svgMarkup +=
             '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y - 4).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-sector-label">' +
             item.shortName + "</text>" +
-            '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 10).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
+            '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 11).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
             (item.svgBadge || item.metricBadge) + "</text>";
         }
 
-        svgMarkup += renderPolarRingLabels(cx, cy, maxR, ["$7.5B", "$15B", "$22.5B", "$30B"]);
+        svgMarkup += renderPolarRingLabels(cx, cy, maxR, ["$7.5B", "$15B", "$22.5B", "$30B"], rInner, 0);
         svgMarkup +=
           '<circle cx="' + cx + '" cy="' + cy + '" r="' + rInner + '" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />' +
           '<text x="' + cx + '" y="' + (cy - 3) + '" class="polar-center-title">$49.97B</text>' +
-          '<text x="' + cx + '" y="' + (cy + 9) + '" class="polar-center-sub">Ancillary</text>';
+          '<text x="' + cx + '" y="' + (cy + 10) + '" class="polar-center-sub">Ancillary</text>';
 
         var selAnc = ANCILLARY_ROSE_DATA[flyState.selectedIndex % ANCILLARY_ROSE_DATA.length];
         drilldown.innerHTML =
@@ -2875,9 +3578,61 @@
     }
 
     /* =========================================================================
-       4. INTERACTIVE 5-STEP WALKTHROUGH CONTROLLER
+       4. INTERACTIVE 5-STEP WALKTHROUGH CONTROLLER & ANIMATION SYNC
        ========================================================================= */
     var currentStep = 1;
+    var isMotionPaused = false;
+
+    function setMotionPaused(paused) {
+      isMotionPaused = Boolean(paused);
+      document.documentElement.classList.toggle("is-motion-paused", isMotionPaused);
+      var btn = document.getElementById("motion-toggle-btn");
+      if (btn) {
+        btn.setAttribute("aria-pressed", isMotionPaused ? "true" : "false");
+        btn.setAttribute("aria-label", isMotionPaused ? "Play corporate SVG animations" : "Pause corporate SVG animations");
+        var labelEl = btn.querySelector("[data-motion-label]");
+        if (labelEl) {
+          labelEl.textContent = isMotionPaused ? "Play Animations" : "Pause Animations";
+        }
+      }
+      var allSvgs = document.querySelectorAll("svg");
+      for (var i = 0; i < allSvgs.length; i++) {
+        if (isMotionPaused && typeof allSvgs[i].pauseAnimations === "function") {
+          allSvgs[i].pauseAnimations();
+        } else if (!isMotionPaused && typeof allSvgs[i].unpauseAnimations === "function") {
+          allSvgs[i].unpauseAnimations();
+        }
+      }
+    }
+
+    function initMotionControl() {
+      var btn = document.getElementById("motion-toggle-btn");
+      if (btn) {
+        btn.addEventListener("click", function () {
+          setMotionPaused(!isMotionPaused);
+        });
+      }
+      if (window.matchMedia) {
+        var mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+        if (mq.matches) {
+          setMotionPaused(true);
+        }
+        if (typeof mq.addEventListener === "function") {
+          mq.addEventListener("change", function (e) {
+            setMotionPaused(Boolean(e.matches));
+          });
+        }
+      }
+    }
+
+    function syncAnimatedFlywheelHighlight(stepNum) {
+      var mappedNode = stepNum === 1 ? 1 : (stepNum === 2 || stepNum === 3) ? 2 : stepNum === 4 ? 3 : 4;
+      var heroNodes = document.querySelectorAll("[data-hero-node]");
+      for (var i = 0; i < heroNodes.length; i++) {
+        var nId = Number(heroNodes[i].getAttribute("data-hero-node"));
+        heroNodes[i].classList.toggle("is-step-linked", nId === mappedNode);
+      }
+    }
 
     function setActiveStep(stepNum, shouldScroll) {
       currentStep = Math.max(1, Math.min(5, Number(stepNum) || 1));
@@ -2894,6 +3649,8 @@
         var cNum = Number(stepCards[j].getAttribute("data-step-card"));
         stepCards[j].classList.toggle("is-active-step", cNum === currentStep);
       }
+
+      syncAnimatedFlywheelHighlight(currentStep);
 
       var banner = document.getElementById("step-focus-banner");
       if (banner && STEP_SUMMARIES[currentStep]) {
@@ -3210,7 +3967,9 @@
         if (el) trackedElements.push(el);
       }
 
+      var scrollRafPending = false;
       function updateFromScrollPosition() {
+        scrollRafPending = false;
         var thresholdY = window.scrollY + 140;
         var currentId = trackedElements.length ? trackedElements[0].id : "section-executive-summary";
         for (var j = 0; j < trackedElements.length; j++) {
@@ -3221,6 +3980,17 @@
           }
         }
         syncTocActiveState(currentId);
+      }
+
+      function onScrollThrottled() {
+        if (!scrollRafPending) {
+          scrollRafPending = true;
+          if (typeof window.requestAnimationFrame === "function") {
+            window.requestAnimationFrame(updateFromScrollPosition);
+          } else {
+            updateFromScrollPosition();
+          }
+        }
       }
 
       if ("IntersectionObserver" in window) {
@@ -3239,13 +4009,46 @@
         }
       }
 
-      window.addEventListener("scroll", updateFromScrollPosition, { passive: true });
+      window.addEventListener("scroll", onScrollThrottled, { passive: true });
+    }
+
+    function bindTablistKeyboardNav(buttonsNodeList, onActivateIndex) {
+      if (!buttonsNodeList || !buttonsNodeList.length) return;
+      var total = buttonsNodeList.length;
+      for (var i = 0; i < total; i++) {
+        (function (idx) {
+          buttonsNodeList[idx].addEventListener("keydown", function (evt) {
+            var nextIdx = -1;
+            if (evt.key === "ArrowRight" || evt.key === "ArrowDown") {
+              evt.preventDefault();
+              nextIdx = (idx + 1) % total;
+            } else if (evt.key === "ArrowLeft" || evt.key === "ArrowUp") {
+              evt.preventDefault();
+              nextIdx = (idx - 1 + total) % total;
+            } else if (evt.key === "Home") {
+              evt.preventDefault();
+              nextIdx = 0;
+            } else if (evt.key === "End") {
+              evt.preventDefault();
+              nextIdx = total - 1;
+            }
+            if (nextIdx >= 0 && buttonsNodeList[nextIdx]) {
+              onActivateIndex(nextIdx);
+              if (typeof buttonsNodeList[nextIdx].focus === "function") {
+                buttonsNodeList[nextIdx].focus({ preventScroll: true });
+              }
+            }
+          });
+        })(i);
+      }
     }
 
     /* =========================================================================
        INITIALIZATION & EVENT WIRING
        ========================================================================= */
     function init() {
+      initMotionControl();
+
       /* Polar 1 Year buttons */
       var catYearBtns = document.querySelectorAll("[data-cat-year]");
       for (var i = 0; i < catYearBtns.length; i++) {
@@ -3295,13 +4098,16 @@
         });
       }
 
-      /* 5-Step Stepper buttons */
+      /* 5-Step Stepper buttons + roving arrow keyboard navigation */
       var stepBtns = document.querySelectorAll("[data-step-btn]");
       for (var s = 0; s < stepBtns.length; s++) {
         stepBtns[s].addEventListener("click", function () {
           setActiveStep(Number(this.getAttribute("data-step-btn")), true);
         });
       }
+      bindTablistKeyboardNav(stepBtns, function (idx) {
+        setActiveStep(idx + 1, false);
+      });
       var prevBtn = document.getElementById("step-prev-btn");
       var nextBtn = document.getElementById("step-next-btn");
       if (prevBtn) {
@@ -3364,7 +4170,7 @@
         });
       }
 
-      /* Wayfinder Ticket Tabs */
+      /* Wayfinder Ticket Tabs + roving arrow keyboard navigation */
       var ticketBtns = document.querySelectorAll("[data-ticket-tab]");
       for (var tk = 0; tk < ticketBtns.length; tk++) {
         ticketBtns[tk].addEventListener("click", function () {
@@ -3375,6 +4181,13 @@
           renderTicketInspector();
         });
       }
+      bindTablistKeyboardNav(ticketBtns, function (idx) {
+        activeTicketIdx = idx;
+        for (var w = 0; w < ticketBtns.length; w++) {
+          ticketBtns[w].setAttribute("aria-pressed", w === idx ? "true" : "false");
+        }
+        renderTicketInspector();
+      });
 
       /* Initial renders */
       renderPolarCategories();
@@ -3383,6 +4196,7 @@
       renderGaapWaterfall();
       updateSimulator();
       renderTicketInspector();
+      syncAnimatedFlywheelHighlight(currentStep);
       initScrollSpy();
     }
 

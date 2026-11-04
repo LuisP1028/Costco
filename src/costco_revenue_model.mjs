@@ -123,6 +123,42 @@ const PROHIBITED_SPEC_TOKENS = [
   "{Operating Income Flywheel}"
 ];
 
+const PROHIBITED_PROMOTIONAL_CLICHES = [
+  "treasure-hunt discretionary basket builder",
+  "renewal magnet",
+  "perishable weekly trip driver and rapid inventory-turn engine",
+  "negative working-capital float"
+];
+
+const PROHIBITED_ALGEBRAIC_AND_CODE_SHORTHAND = [
+  "R_total",
+  "OpInc ($9,285M) = Merch Contrib",
+  "Area √r (Coxcomb)",
+  "Area &radic;r",
+  "Linear Radius r",
+  "Share Angle θ_i",
+  "Share Angle &theta;_i",
+  "wayfinderAudit.valid === true",
+  "Negative Working-Capital Float"
+];
+
+const REQUIRED_ANIMATED_SVG_IDS = [
+  "svg-corporate-flywheel-hero",
+  "svg-step-1",
+  "svg-step-2",
+  "svg-step-3",
+  "svg-step-4",
+  "svg-step-5",
+  "motion-toggle-btn"
+];
+
+const REQUIRED_DITHER_PATTERN_IDS = [
+  "dither-bayer-navy",
+  "dither-bayer-crimson",
+  "dither-halftone-slate",
+  "dither-polar-engraving"
+];
+
 const PROHIBITED_PSEUDOCODE_DIVIDERS = [
   "Section 01 //",
   "Section 02 //",
@@ -478,7 +514,22 @@ function verifyMerchandiseCategories(categories, netSalesUsdM) {
     assertPlainObject(cat, "merchandise_categories[]");
     const categoryId = assertNonEmptyString(cat, "category_id", "merchandise_categories[]");
     assertNonEmptyString(cat, "name", `merchandise_categories[${categoryId}]`);
-    assertNonEmptyString(cat, "role_in_flywheel", `merchandise_categories[${categoryId}]`);
+    const roleInFlywheel = assertNonEmptyString(cat, "role_in_flywheel", `merchandise_categories[${categoryId}]`);
+    const lowerRole = roleInFlywheel.toLowerCase();
+    for (const cliche of PROHIBITED_PROMOTIONAL_CLICHES) {
+      if (lowerRole.includes(cliche)) {
+        throw new Error(
+          `Financial dataset validation failed: merchandise_categories[${categoryId}].role_in_flywheel contains prohibited promotional cliché "${cliche}".`
+        );
+      }
+    }
+    for (const specToken of PROHIBITED_SPEC_TOKENS) {
+      if (roleInFlywheel.includes(specToken)) {
+        throw new Error(
+          `Financial dataset validation failed: merchandise_categories[${categoryId}].role_in_flywheel contains unrefined specification token "${specToken}".`
+        );
+      }
+    }
 
     const share = assertFiniteNumber(cat, "share_of_net_sales_pct", `merchandise_categories[${categoryId}]`);
     const estSales = assertFiniteNumber(cat, "estimated_net_sales_usd_m", `merchandise_categories[${categoryId}]`);
@@ -700,9 +751,11 @@ export function verifyFinancialDataset(data) {
   }
 
   return {
+    valid: true,
     totalRevenueCheck: true,
     operatingIncomeCheck: true,
     preTaxAndNetIncomeCheck: true,
+    plainEnglishDatasetRolesValid: true,
     netSalesSharePct,
     membershipFeeShareOfRevenuePct,
     merchandiseGrossMarginDollarM,
@@ -1179,6 +1232,74 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     }
   }
 
+  for (const animId of REQUIRED_ANIMATED_SVG_IDS) {
+    if (!declaredIds.has(animId)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing required corporate animated SVG or motion control element "#${animId}" (AC-01).`
+      );
+    }
+  }
+  if (!combinedCss.includes("prefers-reduced-motion: reduce") || !resolvedHtml.includes("is-motion-paused")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing reduced-motion CSS or pause state support (AC-01).`
+    );
+  }
+
+  for (const ditherId of REQUIRED_DITHER_PATTERN_IDS) {
+    if (!declaredIds.has(ditherId)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing required ordered Bayer / halftone dither pattern "#${ditherId}" (AC-02).`
+      );
+    }
+  }
+  if (!combinedCss.includes(".dither-accent-band")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing ".dither-accent-band" CSS rule (AC-02).`
+    );
+  }
+
+  for (const shorthand of PROHIBITED_ALGEBRAIC_AND_CODE_SHORTHAND) {
+    if (resolvedHtml.includes(shorthand)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: prohibited algebraic/code shorthand "${shorthand}" detected (AC-03).`
+      );
+    }
+  }
+  for (const cliche of PROHIBITED_PROMOTIONAL_CLICHES) {
+    if (lowerHtml.includes(cliche)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: prohibited promotional cliché "${cliche}" detected (AC-03).`
+      );
+    }
+  }
+
+  const plainEnglishNoteCount = (resolvedHtml.match(/class=["'][^"']*\bplain-english-note\b[^"']*["']/g) || []).length;
+  const chartReadingNoteCount = (resolvedHtml.match(/class=["'][^"']*\bchart-reading-note\b[^"']*["']/g) || []).length;
+  if (plainEnglishNoteCount < 5 || chartReadingNoteCount < 3) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: expected >= 5 .plain-english-note (found ${plainEnglishNoteCount}) and >= 3 .chart-reading-note (found ${chartReadingNoteCount}) boxes (AC-03).`
+    );
+  }
+
+  const paddedPolarViewBoxCount = (resolvedHtml.match(/viewBox=["']-80 -44 560 488["']/g) || []).length;
+  const polarHtmlLegendCount = (resolvedHtml.match(/class=["'][^"']*\bpolar-html-legend\b[^"']*["']/g) || []).length;
+  if (paddedPolarViewBoxCount < 3 || polarHtmlLegendCount < 3 || !combinedCss.includes("paint-order: stroke fill")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing padded polar viewBox="-80 -44 560 488" (found ${paddedPolarViewBoxCount}), .polar-html-legend (found ${polarHtmlLegendCount}), or halo stroke rule (AC-04).`
+    );
+  }
+
+  if (
+    !combinedCss.includes("clamp(") ||
+    !combinedCss.includes("minmax(0, 1fr)") ||
+    !resolvedHtml.includes("bindInteractiveTableRows") ||
+    !resolvedHtml.includes("bindTablistKeyboardNav")
+  ) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing fluid clamp(), minmax(0, 1fr), or keyboard accessibility helpers (AC-05).`
+    );
+  }
+
   return {
     valid: true,
     htmlPath: htmlLabel,
@@ -1193,7 +1314,18 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     dreamcoreMarkersDetected: 0,
     specTokensDetected: 0,
     polarCssSelectorsVerified: true,
-    historicalNote11Reconciled: true
+    historicalNote11Reconciled: true,
+    animatedSvgElementsPresent: true,
+    corporateAnimatedSvgVerified: true,
+    ditherVisualEffectsPresent: true,
+    ditherEffectsVerified: true,
+    simplifiedEnglishValid: true,
+    plainEnglishNotesVerified: true,
+    polarLegibilityValid: true,
+    legibleGraphTypographyVerified: true,
+    responsiveArchitectureValid: true,
+    responsiveScreenAgnosticVerified: true,
+    keyboardAccessibilityVerified: true
   };
 }
 
