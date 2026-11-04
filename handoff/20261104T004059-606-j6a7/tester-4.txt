@@ -1,0 +1,5 @@
+tests/tester-4-polar-legibility-cli.test.mjs
+assets/20261104T004059-606-j6a7/tester-4-benchmark-telemetry.json
+src/costco_revenue_model.mjs
+index.html
+handoff/20261104T004059-606-j6a7/tester-4.txt

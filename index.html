@@ -2012,17 +2012,6 @@
         <a href="#section-five-steps" class="nav-chip">5-Step Revenue Model</a>
         <a href="#section-gaap-model" class="nav-chip">GAAP Waterfall &amp; Simulator</a>
         <a href="#section-wayfinder-audit" class="nav-chip">Wayfinder &amp; 10-K Audit</a>
-        <button
-          type="button"
-          id="btn-toggle-animation"
-          class="motion-toggle-btn"
-          data-motion-toggle
-          aria-pressed="false"
-          aria-label="Pause corporate SVG animations"
-        >
-          <span class="motion-status-dot" aria-hidden="true"></span>
-          <span data-motion-label>Pause Animations</span>
-        </button>
       </nav>
     </div>
   </header>
@@ -3519,30 +3508,36 @@
       }
     }
 
-    function bindInteractiveTableRows(tbodyElement, attrName, totalItems, arg4, arg5) {
+    function bindInteractiveTableRows(tbodyElement, attrName, count, onSelect) {
       if (!tbodyElement) return;
-      var onSelect = typeof arg5 === "function" ? arg5 : typeof arg4 === "function" ? arg4 : typeof totalItems === "function" ? totalItems : null;
-      if (!onSelect) return;
       var tableRows = tbodyElement.querySelectorAll("[" + attrName + "]");
-      var count = typeof totalItems === "number" && totalItems > 0 ? totalItems : tableRows.length;
       for (var rIdx = 0; rIdx < tableRows.length; rIdx++) {
         tableRows[rIdx].addEventListener("click", function () {
-          var idx = Number(this.getAttribute(attrName));
-          onSelect(idx, false);
+          onSelect(Number(this.getAttribute(attrName)), false);
         });
         tableRows[rIdx].addEventListener("keydown", function (evt) {
-          var idx = Number(this.getAttribute(attrName));
+          var cur = Number(this.getAttribute(attrName));
           if (evt.key === "Enter" || evt.key === " " || evt.key === "Spacebar") {
             evt.preventDefault();
-            onSelect(idx, true);
+            onSelect(cur, true);
           } else if (evt.key === "ArrowDown" || evt.key === "ArrowRight") {
             evt.preventDefault();
-            onSelect((idx + 1) % count, true);
+            onSelect((cur + 1) % count, true);
           } else if (evt.key === "ArrowUp" || evt.key === "ArrowLeft") {
             evt.preventDefault();
-            onSelect((idx - 1 + count) % count, true);
+            onSelect((cur - 1 + count) % count, true);
           }
         });
+      }
+    }
+
+    function decoratePolarSvgAnimations() {
+      var polarSvgIds = ["svg-polar-categories", "svg-polar-geography", "svg-polar-flywheel"];
+      for (var i = 0; i < polarSvgIds.length; i++) {
+        var svgEl = document.getElementById(polarSvgIds[i]);
+        if (svgEl) {
+          svgEl.classList.add("svg-animated-flow");
+        }
       }
     }
 
@@ -3621,8 +3616,8 @@
           'aria-label="' + cat.name + ": " + formatUsdM(sales) + " (" + share.toFixed(2) + '%)" />';
 
         var midDeg = (startDeg + endDeg) / 2;
-        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR - 6), midDeg);
-        var leaderOuter = polarPoint(cx, cy, maxR + 12, midDeg);
+        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR * 0.72), midDeg);
+        var leaderOuter = polarPoint(cx, cy, maxR + 10, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
@@ -3815,8 +3810,8 @@
           'aria-label="' + seg.name + ": " + ariaValLabel + '" />';
 
         var midDeg = (startDeg + endDeg) / 2;
-        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR - 6), midDeg);
-        var leaderOuter = polarPoint(cx, cy, maxR + 12, midDeg);
+        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR * 0.72), midDeg);
+        var leaderOuter = polarPoint(cx, cy, maxR + 10, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
@@ -4082,9 +4077,50 @@
 
       svg.innerHTML = svgMarkup;
 
-      bindPolarSectorEvents(svg, "data-fly-sector", function (idx, isKeyboard, ring) {
+      function syncFlywheelSelectionInPlace(idx, isKeyboard, ring) {
         flyState.selectedIndex = idx;
-        renderPolarFlywheel();
+        var sectorNodes = svg.querySelectorAll("[data-fly-sector]");
+        for (var s = 0; s < sectorNodes.length; s++) {
+          var node = sectorNodes[s];
+          var sActive = Number(node.getAttribute("data-fly-sector")) === idx;
+          node.classList.toggle("is-selected", sActive);
+          if (flyState.mode === "asymmetry") {
+            var nRing = node.getAttribute("data-fly-ring");
+            var isFeeNode = Number(node.getAttribute("data-fly-sector")) === 1;
+            if (nRing === "outer") {
+              node.setAttribute("fill-opacity", isFeeNode ? (sActive ? "0.98" : "0.85") : (sActive ? "0.92" : "0.72"));
+            } else {
+              node.setAttribute("fill-opacity", isFeeNode ? (sActive ? "0.95" : "0.80") : (sActive ? "0.92" : "0.72"));
+            }
+          } else {
+            node.setAttribute("fill-opacity", sActive ? "0.94" : "0.78");
+          }
+        }
+
+        if (flyState.mode === "asymmetry") {
+          var selP = FLYWHEEL_ASYMMETRY_DATA[flyState.selectedIndex % 2];
+          drilldown.innerHTML =
+            '<div class="drilldown-eyebrow">Selected Pillar Detail · Revenue Share vs. Operating Income Contribution</div>' +
+            '<div class="drilldown-title">' + selP.name + " — " + selP.revSharePct.toFixed(2) + "% of Revenue → " + selP.opIncSharePct.toFixed(2) + "% of Operating Income</div>" +
+            '<p class="drilldown-copy">' + selP.detail + "</p>" +
+            '<div class="drilldown-meta-grid">' +
+            '<div class="drilldown-meta-item"><span>FY2024 Top-Line Volume</span><strong>' + formatUsdM(selP.revM) + " (" + selP.revSharePct.toFixed(2) + "%)</strong></div>" +
+            '<div class="drilldown-meta-item"><span>FY2024 Operating Profit Contribution</span><strong>' + formatUsdM(selP.opIncM) + " (" + selP.opIncSharePct.toFixed(2) + "%)</strong></div>" +
+            '<div class="drilldown-meta-item"><span>Consolidated Net Income</span><strong>$7,367M ($16.56 Diluted EPS)</strong></div>' +
+            "</div>";
+        } else {
+          var selA = ANCILLARY_ROSE_DATA[flyState.selectedIndex % ANCILLARY_ROSE_DATA.length];
+          drilldown.innerHTML =
+            '<div class="drilldown-eyebrow">Selected Channel Detail · Warehouse Ancillary &amp; E-Commerce Operations</div>' +
+            '<div class="drilldown-title">' + selA.name + " — ~$" + selA.volumeB.toFixed(1) + "B (~" + selA.shareOfSalesPct.toFixed(1) + "% of Net Sales)</div>" +
+            '<p class="drilldown-copy">' + selA.detail + "</p>" +
+            '<div class="drilldown-meta-grid">' +
+            '<div class="drilldown-meta-item"><span>Estimated Annual Volume</span><strong>~$' + selA.volumeB.toFixed(1) + "B (~" + selA.shareOfSalesPct.toFixed(1) + "%)</strong></div>" +
+            '<div class="drilldown-meta-item"><span>Operational Key Metric</span><strong>' + selA.metricBadge + "</strong></div>" +
+            '<div class="drilldown-meta-item"><span>Note 11 Ancillary Total</span><strong>$49,969M (20.02% of Net Sales)</strong></div>' +
+            "</div>";
+        }
+
         if (isKeyboard) {
           var selector = '[data-fly-sector="' + idx + '"]' + (ring ? '[data-fly-ring="' + ring + '"]' : "");
           var targetPath = svg.querySelector(selector) || svg.querySelector('[data-fly-sector="' + idx + '"]');
@@ -4092,6 +4128,10 @@
             targetPath.focus({ preventScroll: true });
           }
         }
+      }
+
+      bindPolarSectorEvents(svg, "data-fly-sector", function (idx, isKeyboard, ring) {
+        syncFlywheelSelectionInPlace(idx, isKeyboard, ring);
       });
     }
 
@@ -4162,13 +4202,15 @@
       }
     }
 
+    var motionControlInitialized = false;
+
     function initMotionControl() {
-      if (motionControlBound) return;
-      motionControlBound = true;
-      var btns = document.querySelectorAll("[data-motion-toggle], #motion-toggle-btn, #btn-toggle-animation");
-      for (var b = 0; b < btns.length; b++) {
-        btns[b].addEventListener("click", function () {
-          toggleAnimationPlayback();
+      if (motionControlInitialized) return;
+      motionControlInitialized = true;
+      var btn = document.getElementById("motion-toggle-btn");
+      if (btn) {
+        btn.addEventListener("click", function () {
+          setMotionPaused(!isMotionPaused);
         });
       }
       if (window.matchMedia) {
