@@ -23,6 +23,10 @@ logs/
 .sandcastle/patches/
 .sandcastle/.current-run-id
 .sandcastle/.env
+.sandcastle/bin/pip
+.sandcastle/bin/pip3
+.sandcastle/bin/python
+.sandcastle/bin/python3
 
 # Scratch / temporary directories
 scratch/
