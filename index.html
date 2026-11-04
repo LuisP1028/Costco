@@ -203,14 +203,21 @@
     .dither-accent-band {
       height: 6px;
       width: 100%;
-      background-image: radial-gradient(rgba(15, 23, 42, 0.16) 1px, transparent 0), radial-gradient(rgba(0, 93, 170, 0.12) 1px, transparent 0);
+      background-color: #F1F5F9;
+      background-image:
+        radial-gradient(rgba(15, 23, 42, 0.16) 1px, transparent 0),
+        radial-gradient(rgba(0, 93, 170, 0.12) 1px, transparent 0);
       background-size: 6px 6px;
       background-position: 0 0, 3px 3px;
       border-bottom: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      margin-bottom: 14px;
     }
 
     .dither-header-plate {
       position: relative;
+      background-image: radial-gradient(rgba(0, 93, 170, 0.08) 1px, transparent 0);
+      background-size: 8px 8px;
     }
     .dither-header-plate::after {
       content: "";
@@ -227,13 +234,15 @@
 
     .dither-badge-accent {
       box-shadow: inset 0 0 0 1px rgba(0, 93, 170, 0.25);
-      background-image: radial-gradient(rgba(0, 93, 170, 0.10) 1px, transparent 0);
+      background-image: radial-gradient(rgba(0, 93, 170, 0.09) 1px, transparent 0);
       background-size: 3px 3px;
     }
 
     .dither-kpi-strip {
-      border-top: 2px solid transparent;
-      border-image: radial-gradient(circle, #005DAA 1px, transparent 1px) 2;
+      background-image: radial-gradient(rgba(0, 93, 170, 0.06) 1px, transparent 0);
+      background-size: 6px 6px;
+      background-repeat: repeat-x;
+      background-position: top left;
     }
 
     .dither-step-band {
@@ -437,83 +446,9 @@
       line-height: 1.62;
     }
 
-    /* Ordered Bayer & Halftone Dither Accent Plates (AC-02) */
-    .dither-accent-band {
-      height: 8px;
-      width: 100%;
-      border-radius: 4px;
-      background-color: #F1F5F9;
-      background-image:
-        radial-gradient(rgba(0, 93, 170, 0.22) 1.1px, transparent 1.1px),
-        radial-gradient(rgba(227, 24, 55, 0.18) 0.95px, transparent 0.95px);
-      background-size: 6px 6px;
-      background-position: 0 0, 3px 3px;
-      border: 1px solid var(--border-strong);
-      margin-bottom: 14px;
-    }
-
-    .dither-header-plate {
-      background-image: radial-gradient(rgba(15, 23, 42, 0.07) 1px, transparent 0);
-      background-size: 6px 6px;
-    }
-
-    .dither-badge-accent {
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
-    }
-
-    /* Plain-English Explanatory Notes & Chart Reading Guides (AC-03) */
+    /* Plain-English Explanatory Callouts & Chart Reading Guides (AC-03) */
     .plain-english-note,
     .chart-reading-note {
-      background: #F8FAFC;
-      border: 1px solid var(--border-strong);
-      border-left: 4px solid var(--costco-navy);
-      border-radius: var(--radius-sm);
-      padding: 13px 16px;
-      margin: 14px 0 18px 0;
-      color: var(--ink-primary);
-      font-size: 13.5px;
-      line-height: 1.58;
-      box-shadow: var(--shadow-sm);
-      overflow-wrap: break-word;
-      word-break: break-word;
-    }
-
-    .chart-reading-note {
-      border-left-color: var(--cat-emerald);
-      margin: 0 0 16px 0;
-    }
-
-    .plain-english-note strong,
-    .chart-reading-note strong {
-      color: var(--ink-primary);
-      font-weight: 700;
-    }
-
-    /* Ordered Bayer Matrix & Halftone Stipple Dithering Accents (AC-02) */
-    .dither-accent-band {
-      height: 6px;
-      width: 100%;
-      background-image: radial-gradient(rgba(15, 23, 42, 0.16) 1px, transparent 0),
-        radial-gradient(rgba(0, 93, 170, 0.12) 1px, transparent 0);
-      background-size: 6px 6px;
-      background-position: 0 0, 3px 3px;
-      border-bottom: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-      margin-bottom: 14px;
-    }
-
-    .dither-header-plate {
-      position: relative;
-      background-image: radial-gradient(rgba(0, 93, 170, 0.09) 1px, transparent 0);
-      background-size: 8px 8px;
-    }
-
-    .dither-badge-accent {
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
-    }
-
-    /* Plain-English Explanatory Callouts & Chart Reading Guides (AC-03) */
-    .plain-english-note {
       background: #F8FAFC;
       border: 1px solid var(--border-strong);
       border-left: 4px solid var(--costco-navy);
@@ -523,6 +458,15 @@
       font-size: clamp(0.88rem, 0.3vw + 0.8rem, 0.96rem);
       line-height: 1.6;
       color: var(--ink-primary);
+      box-shadow: var(--shadow-sm);
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .plain-english-note strong,
+    .chart-reading-note strong {
+      color: var(--ink-primary);
+      font-weight: 700;
     }
 
     .plain-english-note strong.note-kicker {
@@ -542,7 +486,7 @@
 
     .chart-reading-note {
       width: 100%;
-      margin-top: 10px;
+      margin: 0 0 16px 0;
       padding: 10px 12px;
       background: #F8FAFC;
       border: 1px solid var(--border-subtle);
@@ -2183,42 +2127,42 @@
         </div>
 
         <div class="kpi-scorecard-grid" role="region" aria-label="FY2024 Key Performance Indicators">
-          <div class="kpi-card">
+          <div class="kpi-card dither-kpi-strip">
             <span class="kpi-label">Consolidated Total Revenue (FY24)</span>
             <span class="kpi-value">$254,453M</span>
             <span class="kpi-delta">+5.02% YoY (52w vs 53w FY23 $242,290M)</span>
             <span class="kpi-subnote">Exact GAAP sum: $249,625M Net Sales + $4,828M Membership Fees</span>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card dither-kpi-strip">
             <span class="kpi-label">Net Sales Pillar (98.10% Share)</span>
             <span class="kpi-value">$249,625M</span>
             <span class="kpi-delta">&lt;4,000 Warehouse SKUs · &gt;$62M / SKU</span>
             <span class="kpi-subnote">890 clubs worldwide (614 U.S., 108 Canada, 168 Other International · 703 owned / 187 leased)</span>
           </div>
 
-          <div class="kpi-card crimson-accent">
+          <div class="kpi-card crimson-accent dither-kpi-strip">
             <span class="kpi-label">Membership Fees Pillar (1.90% Share)</span>
             <span class="kpi-value">$4,828M</span>
             <span class="kpi-delta">52.00% of $9,285M Operating Income</span>
             <span class="kpi-subnote">$2,501M Deferred Fee Liability · Sept 2024 Fee Lift (+$370M 2-Yr)</span>
           </div>
 
-          <div class="kpi-card emerald-accent">
+          <div class="kpi-card emerald-accent dither-kpi-strip">
             <span class="kpi-label">Gross Margin Ceiling (FY24)</span>
             <span class="kpi-value">10.92%</span>
             <span class="kpi-delta">$27,267M Gross Margin vs 9.14% SG&amp;A ($22,810M)</span>
             <span class="kpi-subnote">$4,457M Net Merchandise Operating Profit (48.00% of Operating Income)</span>
           </div>
 
-          <div class="kpi-card crimson-accent">
+          <div class="kpi-card crimson-accent dither-kpi-strip">
             <span class="kpi-label">Member Renewal &amp; Executive Mix</span>
             <span class="kpi-value">92.9%</span>
             <span class="kpi-delta">U.S./Canada Renewal · 90.5% Worldwide</span>
             <span class="kpi-subnote">76.2M Paid Members (136.8M Cardholders) · 35.4M Exec = 73.3% of Sales</span>
           </div>
 
-          <div class="kpi-card emerald-accent">
+          <div class="kpi-card emerald-accent dither-kpi-strip">
             <span class="kpi-label">Supplier-Financed Inventory (AP Ratio)</span>
             <span class="kpi-value">104.15%</span>
             <span class="kpi-delta">$19,421M AP / $18,647M Inventory (+$774M Float)</span>
@@ -2359,7 +2303,7 @@
         <div class="polar-suite-stack">
           <!-- POLAR GRAPH 1: Merchandise Categories (#polar-chart-categories) -->
           <article class="polar-panel" id="polar-chart-categories" aria-labelledby="heading-polar-cat">
-            <div class="polar-panel-header">
+            <div class="polar-panel-header dither-header-plate">
               <div>
                 <h3 class="polar-panel-title" id="heading-polar-cat">
                   2.1 Net Sales Disaggregation by Merchandise Category ($249,625M Note 11 Polar Rose)
@@ -2433,7 +2377,7 @@
 
           <!-- POLAR GRAPH 2: Geographic Segments (#polar-chart-geography) -->
           <article class="polar-panel" id="polar-chart-geography" aria-labelledby="heading-polar-geo">
-            <div class="polar-panel-header">
+            <div class="polar-panel-header dither-header-plate">
               <div>
                 <h3 class="polar-panel-title" id="heading-polar-geo">
                   2.2 Consolidated Revenue, Operating Income &amp; Warehouse Footprint by Geographic Segment (890 Clubs)
@@ -2499,7 +2443,7 @@
 
           <!-- POLAR GRAPH 3: Revenue vs Operating Income Flywheel & Ancillary Mix (#polar-chart-flywheel) -->
           <article class="polar-panel" id="polar-chart-flywheel" aria-labelledby="heading-polar-flywheel">
-            <div class="polar-panel-header">
+            <div class="polar-panel-header dither-header-plate">
               <div>
                 <h3 class="polar-panel-title" id="heading-polar-flywheel">
                   2.3 Structural Polar Asymmetry: Top-Line Revenue vs. Operating Income Flywheel &amp; Ancillary Channels
@@ -2669,9 +2613,9 @@
         <div class="steps-vertical-list">
           <!-- STEP 1 -->
           <article class="step-card is-active-step" id="step-1" data-step-card="1">
-            <div class="step-card-header">
+            <div class="step-card-header dither-step-band">
               <div class="step-badge-cluster">
-                <span class="step-number-badge">STEP 01</span>
+                <span class="step-number-badge dither-badge-accent">STEP 01</span>
                 <h3 class="step-card-title">
                   Paid Membership Access and Executive Tier Concentration ($4,828M Membership Fees)
                 </h3>
@@ -2730,9 +2674,9 @@
 
           <!-- STEP 2 -->
           <article class="step-card" id="step-2" data-step-card="2">
-            <div class="step-card-header">
+            <div class="step-card-header dither-step-band">
               <div class="step-badge-cluster">
-                <span class="step-number-badge">STEP 02</span>
+                <span class="step-number-badge dither-badge-accent">STEP 02</span>
                 <h3 class="step-card-title">
                   High-Volume Purchasing Across Fewer Than 4,000 SKUs ($249,625M Net Sales)
                 </h3>
@@ -2791,9 +2735,9 @@
 
           <!-- STEP 3 -->
           <article class="step-card" id="step-3" data-step-card="3">
-            <div class="step-card-header">
+            <div class="step-card-header dither-step-band">
               <div class="step-badge-cluster">
-                <span class="step-number-badge">STEP 03</span>
+                <span class="step-number-badge dither-badge-accent">STEP 03</span>
                 <h3 class="step-card-title">
                   Ancillary Businesses and E-Commerce Fulfillment ($49,969M Ancillary + ~7% E-Commerce)
                 </h3>
@@ -2851,9 +2795,9 @@
 
           <!-- STEP 4 -->
           <article class="step-card" id="step-4" data-step-card="4">
-            <div class="step-card-header">
+            <div class="step-card-header dither-step-band">
               <div class="step-badge-cluster">
-                <span class="step-number-badge">STEP 04</span>
+                <span class="step-number-badge dither-badge-accent">STEP 04</span>
                 <h3 class="step-card-title">
                   The 10.92% Gross Margin Cap and Supplier-Financed Inventory (104.15% Accounts Payable to Inventory)
                 </h3>
@@ -2911,9 +2855,9 @@
 
           <!-- STEP 5 -->
           <article class="step-card" id="step-5" data-step-card="5">
-            <div class="step-card-header">
+            <div class="step-card-header dither-step-band">
               <div class="step-badge-cluster">
-                <span class="step-number-badge">STEP 05</span>
+                <span class="step-number-badge dither-badge-accent">STEP 05</span>
                 <h3 class="step-card-title">
                   Operating Profit Conversion ($9,285M Operating Income to $7,367M Net Income)
                 </h3>
@@ -3659,8 +3603,8 @@
           'aria-label="' + cat.name + ": " + formatUsdM(sales) + " (" + share.toFixed(2) + '%)" />';
 
         var midDeg = (startDeg + endDeg) / 2;
-        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR - 14), midDeg);
-        var leaderOuter = polarPoint(cx, cy, maxR + 10, midDeg);
+        var leaderInner = polarPoint(cx, cy, rOuter, midDeg);
+        var leaderOuter = polarPoint(cx, cy, maxR + 12, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
@@ -3853,8 +3797,8 @@
           'aria-label="' + seg.name + ": " + ariaValLabel + '" />';
 
         var midDeg = (startDeg + endDeg) / 2;
-        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR - 14), midDeg);
-        var leaderOuter = polarPoint(cx, cy, maxR + 10, midDeg);
+        var leaderInner = polarPoint(cx, cy, rOuter, midDeg);
+        var leaderOuter = polarPoint(cx, cy, maxR + 12, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
@@ -4285,16 +4229,11 @@
       }
     }
 
-    function bootCorporateMotionEngine() {
-      initMotionControl();
-      decoratePolarSvgAnimations();
-      syncAnimatedFlywheelHighlight(currentStep);
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", bootCorporateMotionEngine);
-    } else {
-      Promise.resolve().then(bootCorporateMotionEngine);
+    function decoratePolarSvgAnimations() {
+      var polarSvgs = document.querySelectorAll("#svg-polar-categories, #svg-polar-geography, #svg-polar-flywheel");
+      for (var i = 0; i < polarSvgs.length; i++) {
+        polarSvgs[i].classList.add("svg-animated-flow");
+      }
     }
 
     /* =========================================================================
@@ -4824,6 +4763,7 @@
       renderPolarCategories();
       renderPolarGeography();
       renderPolarFlywheel();
+      decoratePolarSvgAnimations();
       renderGaapWaterfall();
       updateSimulator();
       renderTicketInspector();
