@@ -1,0 +1,217 @@
+{
+  "agent": "tester-4",
+  "pillar": "AC-04 (Polar Graph Legibility & Companion Tables) + PERF-01..PERF-05",
+  "status": "VERIFIED",
+  "staticAudit": {
+    "svgChecks": [
+      {
+        "id": "svg-polar-categories",
+        "exists": true,
+        "viewBox": "-80 -44 560 488",
+        "hubRadius": 42
+      },
+      {
+        "id": "svg-polar-geography",
+        "exists": true,
+        "viewBox": "-80 -44 560 488",
+        "hubRadius": 42
+      },
+      {
+        "id": "svg-polar-flywheel",
+        "exists": true,
+        "viewBox": "-80 -44 560 488",
+        "hubRadius": 42
+      }
+    ],
+    "sectorFontSizePx": 12.5,
+    "sectorFontWeight": 700,
+    "sectorPaintOrder": "stroke",
+    "sectorStrokeWidthPx": 3.5,
+    "axisFontSizePx": 11,
+    "axisPaintOrder": "stroke",
+    "axisStrokeWidthPx": 3.5,
+    "centerTitleFontSizePx": 13,
+    "centerSubFontSizePx": 10.5,
+    "companionTableFontSizePx": 12.5,
+    "companionTablePaddingTopPx": 8,
+    "companionTablePaddingLeftPx": 10,
+    "polarLegends": 3,
+    "allPanelsContained": true,
+    "feTurbulenceCount": 0,
+    "motionToggleButtons": 1
+  },
+  "collisionSweepSummary": {
+    "totalStatesAudited": 17,
+    "totalCollisions": 0,
+    "totalClippedLabels": 0,
+    "states": [
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=sqrt,year=2024",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=sqrt,year=2023",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=sqrt,year=2022",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=sqrt,year=overlay",
+        "textCount": 15,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=linear,year=2024",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=linear,year=2023",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=linear,year=2022",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=linear,year=overlay",
+        "textCount": 15,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=angle,year=2024",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=angle,year=2023",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=angle,year=2022",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-categories",
+        "stateLabel": "cat:mode=angle,year=overlay",
+        "textCount": 15,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-geography",
+        "stateLabel": "geo:metric=revenue",
+        "textCount": 12,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-geography",
+        "stateLabel": "geo:metric=opinc",
+        "textCount": 12,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-geography",
+        "stateLabel": "geo:metric=warehouses",
+        "textCount": 12,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-flywheel",
+        "stateLabel": "fly:mode=asymmetry",
+        "textCount": 12,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      },
+      {
+        "svgId": "svg-polar-flywheel",
+        "stateLabel": "fly:mode=ancillary",
+        "textCount": 14,
+        "collisionCount": 0,
+        "collisions": [],
+        "clippedCount": 0,
+        "clipped": []
+      }
+    ]
+  },
+  "perfBenchmark": {
+    "catRowLatencyMs": 0.4,
+    "catNodeIdentityPreserved": true,
+    "catFocusPreserved": true,
+    "catSector1Selected": true,
+    "geoRowLatencyMs": 0.1,
+    "geoNodeIdentityPreserved": true,
+    "geoFocusPreserved": true,
+    "geoSector2Selected": true,
+    "flySectorLatencyMs": 0.1,
+    "flyNodeIdentityPreserved": true,
+    "avgCatClickMs": 0.021,
+    "total50ScrollDispatchMs": 0
+  }
+}

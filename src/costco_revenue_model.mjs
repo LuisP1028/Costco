@@ -1288,6 +1288,16 @@ export function verifyCorporateWebReport(rawOptions = {}) {
       `Corporate web report audit failed for ${htmlLabel}: missing padded polar viewBox="-80 -44 560 488" (found ${paddedPolarViewBoxCount}), .polar-html-legend (found ${polarHtmlLegendCount}), or halo stroke rule (AC-04).`
     );
   }
+  if (
+    !resolvedHtml.includes("syncCategorySelectionInPlace") ||
+    !resolvedHtml.includes("syncGeographySelectionInPlace") ||
+    !resolvedHtml.includes("syncFlywheelSelectionInPlace") ||
+    !combinedCss.includes("contain: layout style")
+  ) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing O(1) in-place polar selection helpers (syncCategorySelectionInPlace, syncGeographySelectionInPlace, syncFlywheelSelectionInPlace) or CSS containment rule (AC-04 / PERF-02 / PERF-03).`
+    );
+  }
 
   if (
     !combinedCss.includes("clamp(") ||
