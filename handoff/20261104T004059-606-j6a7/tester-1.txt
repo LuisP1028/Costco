@@ -1,0 +1,4 @@
+tests/tester-1-animated-svg.test.mjs
+index.html
+assets/20261104T004059-606-j6a7/tester-1-telemetry.json
+assets/20261104T004059-606-j6a7/tester-1-flywheel-hero.png

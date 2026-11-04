@@ -1,0 +1,7 @@
+index.html
+src/costco_revenue_model.mjs
+data/costco_revenue_breakdown.json
+wayfinder/map.md
+wayfinder/tickets/ticket-006.md
+README.md
+handoff/20261104T004059-606-j6a7/implementer-4.txt
