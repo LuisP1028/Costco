@@ -1,0 +1,3 @@
+tests/tester-2-dithering-storage.test.mjs
+assets/20261104T004059-606-j6a7/tester-2-storage-dithering-report.json
+index.html
