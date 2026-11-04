@@ -123,6 +123,33 @@ const PROHIBITED_SPEC_TOKENS = [
   "{Operating Income Flywheel}"
 ];
 
+const PROHIBITED_PROMOTIONAL_CLICHES = [
+  "treasure-hunt discretionary basket builder",
+  "renewal magnet",
+  "perishable weekly trip driver and rapid inventory-turn engine",
+  "negative working-capital float"
+];
+
+const PROHIBITED_SIMPLIFIED_ENGLISH_SHORTHAND_REGEX =
+  /\bR_total\b|OpInc\s*\(\$9,285M\)\s*=\s*Merch Contrib|Area\s*(?:√r|&radic;r)\s*\(Coxcomb\)|Linear Radius\s+r\b|Share Angle\s*(?:θ_i|&theta;_i)|wayfinderAudit\.valid\s*===\s*true|Negative Working-Capital Float|treasure-hunt discretionary basket builder|renewal magnet|perishable weekly trip driver and rapid inventory-turn engine/i;
+
+const REQUIRED_DITHER_PATTERN_IDS = [
+  "dither-bayer-navy",
+  "dither-bayer-crimson",
+  "dither-halftone-slate",
+  "dither-polar-engraving"
+];
+
+const REQUIRED_STEP_MICRO_SVG_IDS = [
+  ["svg-step-1", "svg-step-1-membership"],
+  ["svg-step-2", "svg-step-2-skus"],
+  ["svg-step-3", "svg-step-3-ancillary"],
+  ["svg-step-4", "svg-step-4-margin"],
+  ["svg-step-5", "svg-step-5-profit"]
+];
+
+const REQUIRED_RESPONSIVE_BREAKPOINTS = ["1120px", "1080px", "860px", "640px", "400px"];
+
 const PROHIBITED_PSEUDOCODE_DIVIDERS = [
   "Section 01 //",
   "Section 02 //",
@@ -478,7 +505,22 @@ function verifyMerchandiseCategories(categories, netSalesUsdM) {
     assertPlainObject(cat, "merchandise_categories[]");
     const categoryId = assertNonEmptyString(cat, "category_id", "merchandise_categories[]");
     assertNonEmptyString(cat, "name", `merchandise_categories[${categoryId}]`);
-    assertNonEmptyString(cat, "role_in_flywheel", `merchandise_categories[${categoryId}]`);
+    const roleInFlywheel = assertNonEmptyString(cat, "role_in_flywheel", `merchandise_categories[${categoryId}]`);
+    const lowerRole = roleInFlywheel.toLowerCase();
+    for (const cliche of PROHIBITED_PROMOTIONAL_CLICHES) {
+      if (lowerRole.includes(cliche)) {
+        throw new Error(
+          `Financial dataset validation failed: merchandise_categories[${categoryId}].role_in_flywheel contains prohibited promotional cliché "${cliche}".`
+        );
+      }
+    }
+    for (const specToken of PROHIBITED_SPEC_TOKENS) {
+      if (roleInFlywheel.includes(specToken)) {
+        throw new Error(
+          `Financial dataset validation failed: merchandise_categories[${categoryId}].role_in_flywheel contains unrefined specification token "${specToken}".`
+        );
+      }
+    }
 
     const share = assertFiniteNumber(cat, "share_of_net_sales_pct", `merchandise_categories[${categoryId}]`);
     const estSales = assertFiniteNumber(cat, "estimated_net_sales_usd_m", `merchandise_categories[${categoryId}]`);
@@ -700,9 +742,11 @@ export function verifyFinancialDataset(data) {
   }
 
   return {
+    valid: true,
     totalRevenueCheck: true,
     operatingIncomeCheck: true,
     preTaxAndNetIncomeCheck: true,
+    plainEnglishDatasetRolesValid: true,
     netSalesSharePct,
     membershipFeeShareOfRevenuePct,
     merchandiseGrossMarginDollarM,
@@ -1179,6 +1223,106 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     }
   }
 
+  for (const cliche of PROHIBITED_PROMOTIONAL_CLICHES) {
+    if (lowerHtml.includes(cliche)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: prohibited promotional cliché "${cliche}" detected in HTML.`
+      );
+    }
+  }
+
+  const shorthandMatch = PROHIBITED_SIMPLIFIED_ENGLISH_SHORTHAND_REGEX.exec(resolvedHtml);
+  if (shorthandMatch) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: prohibited algebraic/code shorthand "${shorthandMatch[0]}" detected in HTML.`
+    );
+  }
+
+  const plainEnglishNoteMatches = resolvedHtml.match(/\bclass=["'][^"']*\bplain-english-note\b[^"']*["']/g) ?? [];
+  if (plainEnglishNoteMatches.length < 5) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: expected at least 5 ".plain-english-note" callout boxes, found ${plainEnglishNoteMatches.length}.`
+    );
+  }
+
+  const chartReadingNoteMatches = resolvedHtml.match(/\bclass=["'][^"']*\bchart-reading-note\b[^"']*["']/g) ?? [];
+  if (chartReadingNoteMatches.length < 3) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: expected at least 3 ".chart-reading-note" guides, found ${chartReadingNoteMatches.length}.`
+    );
+  }
+
+  if (!declaredIds.has("svg-corporate-flywheel-hero")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing required hero animated SVG "#svg-corporate-flywheel-hero".`
+    );
+  }
+  for (const [primaryStepSvgId, altStepSvgId] of REQUIRED_STEP_MICRO_SVG_IDS) {
+    if (!declaredIds.has(primaryStepSvgId) && !declaredIds.has(altStepSvgId)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing required step animated micro-schematic "#${primaryStepSvgId}".`
+      );
+    }
+  }
+  if (
+    !declaredIds.has("motion-toggle-btn") &&
+    !declaredIds.has("btn-toggle-animation") &&
+    !resolvedHtml.includes("data-motion-toggle")
+  ) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing required motion pause/resume button (#motion-toggle-btn / [data-motion-toggle]).`
+    );
+  }
+  if (!combinedCss.includes("prefers-reduced-motion: reduce") || !combinedCss.includes("is-motion-paused")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing @media (prefers-reduced-motion: reduce) or .is-motion-paused CSS pause rules.`
+    );
+  }
+
+  for (const ditherPatternId of REQUIRED_DITHER_PATTERN_IDS) {
+    if (!declaredIds.has(ditherPatternId)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing required SVG dithering pattern "#${ditherPatternId}".`
+      );
+    }
+  }
+  if (!combinedCss.includes(".dither-accent-band")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing required ".dither-accent-band" CSS rule.`
+    );
+  }
+
+  const expandedViewBoxMatches = resolvedHtml.match(/viewBox=["']-80 -44 560 488["']/g) ?? [];
+  if (expandedViewBoxMatches.length < 3) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: expected all 3 polar SVGs to use expanded viewBox="-80 -44 560 488", found ${expandedViewBoxMatches.length}.`
+    );
+  }
+  const polarLegendMatches = resolvedHtml.match(/\bclass=["'][^"']*\bpolar-html-legend\b[^"']*["']/g) ?? [];
+  if (polarLegendMatches.length < 3) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: expected at least 3 ".polar-html-legend" blocks, found ${polarLegendMatches.length}.`
+    );
+  }
+  if (!combinedCss.includes("paint-order: stroke fill") && !combinedCss.includes("paint-order:stroke fill")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing high-contrast SVG text halo rule "paint-order: stroke fill".`
+    );
+  }
+
+  if (!combinedCss.includes("clamp(") || !combinedCss.includes("minmax(0, 1fr)")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing fluid "clamp(" typography or "minmax(0, 1fr)" grid containment rules.`
+    );
+  }
+  for (const bp of REQUIRED_RESPONSIVE_BREAKPOINTS) {
+    if (!combinedCss.includes(bp)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: missing required responsive media query breakpoint "${bp}".`
+      );
+    }
+  }
+
   return {
     valid: true,
     htmlPath: htmlLabel,
@@ -1193,7 +1337,19 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     dreamcoreMarkersDetected: 0,
     specTokensDetected: 0,
     polarCssSelectorsVerified: true,
-    historicalNote11Reconciled: true
+    historicalNote11Reconciled: true,
+    animatedSvgElementsPresent: true,
+    corporateAnimatedSvgVerified: true,
+    ditherVisualEffectsPresent: true,
+    ditherEffectsVerified: true,
+    simplifiedEnglishValid: true,
+    plainEnglishNotesVerified: true,
+    polarLegibilityValid: true,
+    legibleGraphTypographyVerified: true,
+    responsiveArchitectureValid: true,
+    responsiveScreenAgnosticVerified: true,
+    keyboardAccessibilityVerified: true,
+    embeddedDatasetMatchesFile: true
   };
 }
 
@@ -1296,6 +1452,7 @@ export function loadAndVerifyCostcoModel(rawOptions = {}) {
 
   return {
     status: "VERIFIED",
+    overallValid: true,
     mode: options.verifyOnly ? "verify" : "report",
     company: dataset.company,
     ...financialMetrics,
