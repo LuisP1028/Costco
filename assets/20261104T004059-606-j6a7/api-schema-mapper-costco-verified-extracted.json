@@ -1,0 +1,137 @@
+{
+  "run_id": "20261104T004059-606-j6a7",
+  "specification": "functional_specification_005.md",
+  "primary_source_metadata": {
+    "company_name": "Costco Wholesale Corporation",
+    "ticker": "COST",
+    "exchange": "NASDAQ",
+    "cik": "0000909832",
+    "fiscal_year": 2024,
+    "fiscal_year_end": "2024-09-01",
+    "form_10k_accession_number": "0000909832-24-000049",
+    "form_10k_filing_date": "2024-10-09",
+    "form_10k_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983224000049/cost-20240901.htm",
+    "form_8k_accession_number": "0000909832-24-000043",
+    "form_8k_filing_date": "2024-09-26",
+    "form_8k_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983224000043/cost-20240926.htm"
+  },
+  "spec_005_plain_english_dataset_transformations": {
+    "target_file": "data/costco_revenue_breakdown.json",
+    "field_path": "merchandise_categories[].role_in_flywheel",
+    "prohibited_phrases": [
+      "treasure-hunt discretionary basket builder",
+      "renewal magnet",
+      "perishable weekly trip driver and rapid inventory-turn engine"
+    ],
+    "recommended_plain_english_values": {
+      "foods_and_sundries": "Everyday grocery and household staples ($101,463M or 40.65% of FY2024 Net Sales) that bring members back regularly for bulk pantry goods, drinks, snacks, and cleaning supplies.",
+      "non_foods": "Appliances, electronics, clothing, hardware, and seasonal home goods ($63,973M or 25.63% of FY2024 Net Sales) sold at low markups alongside Kirkland Signature products and Costco Logistics delivery.",
+      "fresh_foods": "Fresh meat, produce, bakery, and deli items ($34,220M or 13.71% of FY2024 Net Sales, +7.01% YoY) that bring members into the warehouse every week and sell through quickly with minimal waste.",
+      "warehouse_ancillary_and_other": "Gas stations (719 locations generating ~12% of net sales), pharmacy, optical, food court, hearing aids, tire installation, and Costco Travel ($49,969M or 20.02% of FY2024 Net Sales) that save members money on everyday services and encourage annual membership renewal."
+    }
+  },
+  "spec_005_ui_shorthand_remediations": [
+    {
+      "location": "index.html:1341",
+      "current_text": "Negative Working-Capital Float",
+      "required_replacement": "Supplier-Financed Inventory (AP to Inventory)"
+    },
+    {
+      "location": "index.html:1348-1357",
+      "current_text": "R_total ($254,453M) = Net Sales ($249,625M) + Membership Fees ($4,828M) | OpInc ($9,285M) = Merch Contrib ($4,457M | 48.00%) + Membership Fees ($4,828M | 52.00%)",
+      "required_replacement": "Total Revenue ($254,453M) = Net Sales ($249,625M) + Membership Fees ($4,828M) | Operating Income ($9,285M) = Net Merchandise Profit ($4,457M, or 48.00%) + Membership Fees ($4,828M, or 52.00%)"
+    },
+    {
+      "location": "index.html:1395-1397",
+      "current_text": "Area √r (Coxcomb) | Linear Radius r | Share Angle θ_i",
+      "required_replacement": "By Area (Square-Root Scale) | By Radius (Linear Scale) | By Revenue Share (Angle)"
+    },
+    {
+      "location": "index.html:1994",
+      "current_text": "wayfinderAudit.valid === true (6 resolved tickets verified)",
+      "required_replacement": "Verified: 6 resolved research tickets and canonical decision map"
+    },
+    {
+      "location": "index.html:2283",
+      "current_text": "Establishes the consolidated revenue identity R_total ($254,453M) = Net Sales ($249,625M | 98.10%) + Membership Fees ($4,828M | 1.90%).",
+      "required_replacement": "Establishes the consolidated revenue identity Total Revenue ($254,453M) = Net Sales ($249,625M, or 98.10%) + Membership Fees ($4,828M, or 1.90%)."
+    },
+    {
+      "location": "index.html:2514-2518",
+      "current_text": "Area-Proportional √r (90° Coxcomb Sectors) / Linear Radius r (90° Sectors) / Share-Weighted Sector Angle θ_i",
+      "required_replacement": "By Area (Square-Root Scale, 90° Sectors) / By Radius (Linear Scale, 90° Sectors) / By Revenue Share (Sector Angle)"
+    }
+  ],
+  "verification_engine_return_schema": {
+    "status": "VERIFIED",
+    "mode": "verify | report",
+    "company": "object",
+    "totalRevenueCheck": true,
+    "operatingIncomeCheck": true,
+    "preTaxAndNetIncomeCheck": true,
+    "netSalesSharePct": 98.1026,
+    "membershipFeeShareOfRevenuePct": 1.8974,
+    "merchandiseGrossMarginDollarM": 27267,
+    "merchandiseGrossMarginPct": 10.9232,
+    "sgaPctOfNetSales": 9.1377,
+    "membershipFeeShareOfOperatingIncomePct": 51.9978,
+    "merchandiseOperatingContributionUsdM": 4457,
+    "merchandiseOperatingContributionSharePct": 48.0022,
+    "accountsPayableToInventoryRatioPct": 104.1508,
+    "formattedRatios": {
+      "netSalesSharePct": "98.10",
+      "membershipFeeShareOfRevenuePct": "1.90",
+      "merchandiseGrossMarginPct": "10.92",
+      "sgaPctOfNetSales": "9.14",
+      "membershipFeeShareOfOperatingIncomePct": "52.00",
+      "merchandiseOperatingContributionSharePct": "48.00",
+      "accountsPayableToInventoryRatioPct": "104.15"
+    },
+    "disaggregationSummary": {
+      "merchandiseCategoryCount": 4,
+      "merchandiseCategoryShareSumPct": 100.01,
+      "merchandiseCategoryNetSalesSumUsdM": 249625,
+      "geographicSegmentCount": 3,
+      "geographicSegmentShareSumPct": 100.01,
+      "totalWarehouses": 890
+    },
+    "wayfinderAudit": {
+      "valid": true,
+      "requiredSectionsVerified": 5,
+      "resolvedTicketCount": 6
+    },
+    "researchAudit": {
+      "valid": true,
+      "byteLength": 40118
+    },
+    "corporateWebAudit": {
+      "valid": true,
+      "tableOfContentsVerified": true,
+      "polarChartsVerified": [
+        "polar-chart-categories",
+        "polar-chart-geography",
+        "polar-chart-flywheel"
+      ],
+      "fiveStepsVerified": [
+        "step-1",
+        "step-2",
+        "step-3",
+        "step-4",
+        "step-5"
+      ],
+      "dreamcoreMarkersDetected": 0,
+      "specTokensDetected": 0,
+      "polarCssSelectorsVerified": true,
+      "historicalNote11Reconciled": true,
+      "corporateAnimatedSvgVerified": true,
+      "corporateDitheringVerified": true,
+      "plainEnglishNotesVerified": true,
+      "responsiveScreenAgnosticVerified": true
+    },
+    "telemetry": {
+      "elapsedMs": 16.9781,
+      "rssMb": 46.8438,
+      "externalNetworkRequests": 0
+    }
+  }
+}
