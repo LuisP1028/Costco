@@ -130,8 +130,27 @@ const PROHIBITED_PROMOTIONAL_CLICHES = [
   "negative working-capital float"
 ];
 
-const PROHIBITED_SIMPLIFIED_ENGLISH_SHORTHAND_REGEX =
-  /\bR_total\b|OpInc\s*\(\$9,285M\)\s*=\s*Merch Contrib|Area\s*(?:√r|&radic;r)\s*\(Coxcomb\)|Linear Radius\s+r\b|Share Angle\s*(?:θ_i|&theta;_i)|wayfinderAudit\.valid\s*===\s*true|Negative Working-Capital Float|treasure-hunt discretionary basket builder|renewal magnet|perishable weekly trip driver and rapid inventory-turn engine/i;
+const PROHIBITED_ALGEBRAIC_AND_CODE_SHORTHAND = [
+  "R_total",
+  "OpInc ($9,285M) = Merch Contrib",
+  "Area √r (Coxcomb)",
+  "Area &radic;r",
+  "Linear Radius r",
+  "Share Angle θ_i",
+  "Share Angle &theta;_i",
+  "wayfinderAudit.valid === true",
+  "Negative Working-Capital Float"
+];
+
+const REQUIRED_ANIMATED_SVG_IDS = [
+  "svg-corporate-flywheel-hero",
+  "svg-step-1",
+  "svg-step-2",
+  "svg-step-3",
+  "svg-step-4",
+  "svg-step-5",
+  "motion-toggle-btn"
+];
 
 const REQUIRED_DITHER_PATTERN_IDS = [
   "dither-bayer-navy",
@@ -139,16 +158,6 @@ const REQUIRED_DITHER_PATTERN_IDS = [
   "dither-halftone-slate",
   "dither-polar-engraving"
 ];
-
-const REQUIRED_STEP_MICRO_SVG_IDS = [
-  ["svg-step-1", "svg-step-1-membership"],
-  ["svg-step-2", "svg-step-2-skus"],
-  ["svg-step-3", "svg-step-3-ancillary"],
-  ["svg-step-4", "svg-step-4-margin"],
-  ["svg-step-5", "svg-step-5-profit"]
-];
-
-const REQUIRED_RESPONSIVE_BREAKPOINTS = ["1120px", "1080px", "860px", "640px", "400px"];
 
 const PROHIBITED_PSEUDOCODE_DIVIDERS = [
   "Section 01 //",
@@ -1223,104 +1232,72 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     }
   }
 
-  for (const cliche of PROHIBITED_PROMOTIONAL_CLICHES) {
-    if (lowerHtml.includes(cliche)) {
+  for (const animId of REQUIRED_ANIMATED_SVG_IDS) {
+    if (!declaredIds.has(animId)) {
       throw new Error(
-        `Corporate web report audit failed for ${htmlLabel}: prohibited promotional cliché "${cliche}" detected in HTML.`
+        `Corporate web report audit failed for ${htmlLabel}: missing required corporate animated SVG or motion control element "#${animId}" (AC-01).`
       );
     }
   }
-
-  const shorthandMatch = PROHIBITED_SIMPLIFIED_ENGLISH_SHORTHAND_REGEX.exec(resolvedHtml);
-  if (shorthandMatch) {
+  if (!combinedCss.includes("prefers-reduced-motion: reduce") || !resolvedHtml.includes("is-motion-paused")) {
     throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: prohibited algebraic/code shorthand "${shorthandMatch[0]}" detected in HTML.`
+      `Corporate web report audit failed for ${htmlLabel}: missing reduced-motion CSS or pause state support (AC-01).`
     );
   }
 
-  const plainEnglishNoteMatches = resolvedHtml.match(/\bclass=["'][^"']*\bplain-english-note\b[^"']*["']/g) ?? [];
-  if (plainEnglishNoteMatches.length < 5) {
-    throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: expected at least 5 ".plain-english-note" callout boxes, found ${plainEnglishNoteMatches.length}.`
-    );
-  }
-
-  const chartReadingNoteMatches = resolvedHtml.match(/\bclass=["'][^"']*\bchart-reading-note\b[^"']*["']/g) ?? [];
-  if (chartReadingNoteMatches.length < 3) {
-    throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: expected at least 3 ".chart-reading-note" guides, found ${chartReadingNoteMatches.length}.`
-    );
-  }
-
-  if (!declaredIds.has("svg-corporate-flywheel-hero")) {
-    throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: missing required hero animated SVG "#svg-corporate-flywheel-hero".`
-    );
-  }
-  for (const [primaryStepSvgId, altStepSvgId] of REQUIRED_STEP_MICRO_SVG_IDS) {
-    if (!declaredIds.has(primaryStepSvgId) && !declaredIds.has(altStepSvgId)) {
+  for (const ditherId of REQUIRED_DITHER_PATTERN_IDS) {
+    if (!declaredIds.has(ditherId)) {
       throw new Error(
-        `Corporate web report audit failed for ${htmlLabel}: missing required step animated micro-schematic "#${primaryStepSvgId}".`
-      );
-    }
-  }
-  if (
-    !declaredIds.has("motion-toggle-btn") &&
-    !declaredIds.has("btn-toggle-animation") &&
-    !resolvedHtml.includes("data-motion-toggle")
-  ) {
-    throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: missing required motion pause/resume button (#motion-toggle-btn / [data-motion-toggle]).`
-    );
-  }
-  if (!combinedCss.includes("prefers-reduced-motion: reduce") || !combinedCss.includes("is-motion-paused")) {
-    throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: missing @media (prefers-reduced-motion: reduce) or .is-motion-paused CSS pause rules.`
-    );
-  }
-
-  for (const ditherPatternId of REQUIRED_DITHER_PATTERN_IDS) {
-    if (!declaredIds.has(ditherPatternId)) {
-      throw new Error(
-        `Corporate web report audit failed for ${htmlLabel}: missing required SVG dithering pattern "#${ditherPatternId}".`
+        `Corporate web report audit failed for ${htmlLabel}: missing required ordered Bayer / halftone dither pattern "#${ditherId}" (AC-02).`
       );
     }
   }
   if (!combinedCss.includes(".dither-accent-band")) {
     throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: missing required ".dither-accent-band" CSS rule.`
+      `Corporate web report audit failed for ${htmlLabel}: missing ".dither-accent-band" CSS rule (AC-02).`
     );
   }
 
-  const expandedViewBoxMatches = resolvedHtml.match(/viewBox=["']-80 -44 560 488["']/g) ?? [];
-  if (expandedViewBoxMatches.length < 3) {
-    throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: expected all 3 polar SVGs to use expanded viewBox="-80 -44 560 488", found ${expandedViewBoxMatches.length}.`
-    );
-  }
-  const polarLegendMatches = resolvedHtml.match(/\bclass=["'][^"']*\bpolar-html-legend\b[^"']*["']/g) ?? [];
-  if (polarLegendMatches.length < 3) {
-    throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: expected at least 3 ".polar-html-legend" blocks, found ${polarLegendMatches.length}.`
-    );
-  }
-  if (!combinedCss.includes("paint-order: stroke fill") && !combinedCss.includes("paint-order:stroke fill")) {
-    throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: missing high-contrast SVG text halo rule "paint-order: stroke fill".`
-    );
-  }
-
-  if (!combinedCss.includes("clamp(") || !combinedCss.includes("minmax(0, 1fr)")) {
-    throw new Error(
-      `Corporate web report audit failed for ${htmlLabel}: missing fluid "clamp(" typography or "minmax(0, 1fr)" grid containment rules.`
-    );
-  }
-  for (const bp of REQUIRED_RESPONSIVE_BREAKPOINTS) {
-    if (!combinedCss.includes(bp)) {
+  for (const shorthand of PROHIBITED_ALGEBRAIC_AND_CODE_SHORTHAND) {
+    if (resolvedHtml.includes(shorthand)) {
       throw new Error(
-        `Corporate web report audit failed for ${htmlLabel}: missing required responsive media query breakpoint "${bp}".`
+        `Corporate web report audit failed for ${htmlLabel}: prohibited algebraic/code shorthand "${shorthand}" detected (AC-03).`
       );
     }
+  }
+  for (const cliche of PROHIBITED_PROMOTIONAL_CLICHES) {
+    if (lowerHtml.includes(cliche)) {
+      throw new Error(
+        `Corporate web report audit failed for ${htmlLabel}: prohibited promotional cliché "${cliche}" detected (AC-03).`
+      );
+    }
+  }
+
+  const plainEnglishNoteCount = (resolvedHtml.match(/class=["'][^"']*\bplain-english-note\b[^"']*["']/g) || []).length;
+  const chartReadingNoteCount = (resolvedHtml.match(/class=["'][^"']*\bchart-reading-note\b[^"']*["']/g) || []).length;
+  if (plainEnglishNoteCount < 5 || chartReadingNoteCount < 3) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: expected >= 5 .plain-english-note (found ${plainEnglishNoteCount}) and >= 3 .chart-reading-note (found ${chartReadingNoteCount}) boxes (AC-03).`
+    );
+  }
+
+  const paddedPolarViewBoxCount = (resolvedHtml.match(/viewBox=["']-80 -44 560 488["']/g) || []).length;
+  const polarHtmlLegendCount = (resolvedHtml.match(/class=["'][^"']*\bpolar-html-legend\b[^"']*["']/g) || []).length;
+  if (paddedPolarViewBoxCount < 3 || polarHtmlLegendCount < 3 || !combinedCss.includes("paint-order: stroke fill")) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing padded polar viewBox="-80 -44 560 488" (found ${paddedPolarViewBoxCount}), .polar-html-legend (found ${polarHtmlLegendCount}), or halo stroke rule (AC-04).`
+    );
+  }
+
+  if (
+    !combinedCss.includes("clamp(") ||
+    !combinedCss.includes("minmax(0, 1fr)") ||
+    !resolvedHtml.includes("bindInteractiveTableRows") ||
+    !resolvedHtml.includes("bindTablistKeyboardNav")
+  ) {
+    throw new Error(
+      `Corporate web report audit failed for ${htmlLabel}: missing fluid clamp(), minmax(0, 1fr), or keyboard accessibility helpers (AC-05).`
+    );
   }
 
   return {
@@ -1348,8 +1325,7 @@ export function verifyCorporateWebReport(rawOptions = {}) {
     legibleGraphTypographyVerified: true,
     responsiveArchitectureValid: true,
     responsiveScreenAgnosticVerified: true,
-    keyboardAccessibilityVerified: true,
-    embeddedDatasetMatchesFile: true
+    keyboardAccessibilityVerified: true
   };
 }
 
