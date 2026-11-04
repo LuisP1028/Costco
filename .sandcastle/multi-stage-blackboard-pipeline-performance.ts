@@ -183,6 +183,8 @@ function isTransientRelativePath(relPath: string): boolean {
     const segments = normalized.split("/");
     const base = segments[segments.length - 1] ?? "";
     return (
+        normalized === "node_modules" ||
+        normalized.startsWith("node_modules/") ||
         normalized === "logs" ||
         normalized.startsWith("logs/mcp-") ||
         (normalized.startsWith("logs/.") && normalized.endsWith("-audit.json")) ||
@@ -1681,7 +1683,7 @@ export function cleanTransientWorktreeArtifacts(dir: string): void {
     }
 
     if (existsSync(join(dir, ".git"))) {
-        ignoreMissing(["git", "rm", "-rf", "--cached", "--ignore-unmatch", "--", "logs", ".playwright-mcp"], dir);
+        ignoreMissing(["git", "rm", "-rf", "--cached", "--ignore-unmatch", "--", "node_modules", "logs", ".playwright-mcp"], dir);
         ignoreMissing(["git", "clean", "-fd", "--", "logs", ".playwright-mcp"], dir);
     }
 }
@@ -1705,7 +1707,7 @@ export function commitLeftovers(dir: string, branch: string, stageName = "stage"
         });
     if (meaningfulLines.length === 0) return false;
     execFileSync("git", ["add", "-A"], { cwd: dir, stdio: "inherit" });
-    ignoreMissing(["git", "rm", "-rf", "--cached", "--ignore-unmatch", "--", "logs", ".playwright-mcp"], dir);
+    ignoreMissing(["git", "rm", "-rf", "--cached", "--ignore-unmatch", "--", "node_modules", "logs", ".playwright-mcp"], dir);
     try {
         execFileSync("git", ["diff", "--cached", "--quiet"], { cwd: dir, stdio: "ignore" });
         return false;
