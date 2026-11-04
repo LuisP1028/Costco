@@ -600,7 +600,10 @@
     }
 
     .corp-anim-flow-path,
-    .svg-animated-flow {
+    path.svg-animated-flow,
+    line.svg-animated-flow,
+    circle.svg-animated-flow {
+      fill: none;
       stroke-dasharray: 7 5;
       animation: corpFlowDash 2.4s linear infinite;
     }
@@ -1526,6 +1529,8 @@
     }
 
     .corp-anim-flow-path {
+      fill: none;
+      stroke-width: 2px;
       stroke-dasharray: 6 6;
       stroke-dashoffset: 0;
       animation: corpFlowDash 1.8s linear infinite;
@@ -1718,6 +1723,7 @@
       .polar-sweep-indicator,
       .polar-active-arc {
         animation: none !important;
+        animation-play-state: paused !important;
       }
     }
 
@@ -1731,12 +1737,6 @@
     }
 
     /* Corporate Animated SVG & Motion Control Rules (AC-01) */
-    @keyframes corpFlowDash {
-      to {
-        stroke-dashoffset: -48;
-      }
-    }
-
     @keyframes corpNodePulse {
       0%, 100% {
         opacity: 0.35;
@@ -1748,7 +1748,6 @@
       }
     }
 
-    .corp-anim-flow-path,
     path.svg-animated-flow {
       fill: none;
       stroke-width: 2px;
@@ -1756,7 +1755,6 @@
       animation: corpFlowDash 2.4s linear infinite;
     }
 
-    .polar-compass-ring,
     .polar-radar-sweep {
       fill: none;
       stroke: var(--costco-navy);
@@ -1812,7 +1810,8 @@
       border-radius: 99px;
     }
 
-    .flywheel-node-group.is-step-linked .flywheel-node-box {
+    .flywheel-node-group.is-step-linked .flywheel-node-box,
+    .flywheel-node-group.is-active-node .flywheel-node-box {
       stroke-width: 2.75px;
       filter: drop-shadow(0 2px 6px rgba(0, 93, 170, 0.16));
     }
@@ -1821,40 +1820,6 @@
       width: 100%;
       height: auto;
       display: block;
-    }
-
-    .step-micro-svg {
-      width: 100%;
-      max-width: 340px;
-      height: auto;
-      display: block;
-      margin: 0 0 10px 0;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-    }
-
-    .motion-toggle-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      font-weight: 700;
-      padding: 6px 12px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-strong);
-      background: var(--bg-well);
-      color: var(--ink-primary);
-      cursor: pointer;
-    }
-
-    .motion-status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--cat-emerald);
-      display: inline-block;
     }
 
     html.is-motion-paused .motion-status-dot,
@@ -1866,10 +1831,14 @@
       .corp-anim-flow-path,
       .svg-animated-flow,
       .svg-animated-node-halo,
+      .corp-node-pulse-ring,
       .polar-compass-ring,
       .polar-radar-sweep,
+      .polar-sweep-indicator,
+      .polar-active-arc,
       .polar-sector-path {
         animation: none !important;
+        animation-play-state: paused !important;
         transition: none !important;
       }
     }
@@ -1877,15 +1846,21 @@
     html.is-motion-paused .corp-anim-flow-path,
     html.is-motion-paused .svg-animated-flow,
     html.is-motion-paused .svg-animated-node-halo,
+    html.is-motion-paused .corp-node-pulse-ring,
     html.is-motion-paused .polar-compass-ring,
     html.is-motion-paused .polar-radar-sweep,
+    html.is-motion-paused .polar-sweep-indicator,
+    html.is-motion-paused .polar-active-arc,
     html.animations-paused .corp-anim-flow-path,
     html.animations-paused .svg-animated-flow,
     html.animations-paused .svg-animated-node-halo,
+    html.animations-paused .corp-node-pulse-ring,
     html.animations-paused .polar-compass-ring,
-    html.animations-paused .polar-radar-sweep {
-      animation-play-state: paused !important;
+    html.animations-paused .polar-radar-sweep,
+    html.animations-paused .polar-sweep-indicator,
+    html.animations-paused .polar-active-arc {
       animation: none !important;
+      animation-play-state: paused !important;
       transition: none !important;
     }
 
@@ -1945,12 +1920,6 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .stepper-pills {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 860px) {
-      .kpi-scorecard-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
@@ -2089,17 +2058,6 @@
         <a href="#section-five-steps" class="nav-chip">5-Step Revenue Model</a>
         <a href="#section-gaap-model" class="nav-chip">GAAP Waterfall &amp; Simulator</a>
         <a href="#section-wayfinder-audit" class="nav-chip">Wayfinder &amp; 10-K Audit</a>
-        <button
-          type="button"
-          id="motion-toggle-btn"
-          class="motion-toggle-btn"
-          data-motion-toggle
-          aria-pressed="false"
-          aria-label="Pause corporate SVG animations"
-        >
-          <span class="motion-status-dot" aria-hidden="true"></span>
-          <span data-motion-label>Pause Animations</span>
-        </button>
       </nav>
     </div>
   </header>
@@ -2290,38 +2248,41 @@
         <div class="flywheel-hero-stage" role="region" aria-label="Animated Corporate Revenue-to-Profit Flywheel Schematic">
           <div class="flywheel-hero-header">
             <span class="flywheel-hero-title">CORPORATE REVENUE-TO-PROFIT FLYWHEEL SCHEMATIC (FY2024 FORM 10-K CONSERVATION FLOW)</span>
-            <span class="flywheel-hero-badge">4-NODE CLOSED-LOOP OPERATING MODEL · CLICK STEPPER OR PAUSE ANIMATIONS ANYTIME</span>
+            <span class="flywheel-hero-badge" id="flywheel-hero-status">4-NODE CLOSED-LOOP OPERATING MODEL · ACTIVE NODE 01 (STEP 01)</span>
           </div>
           <svg
             id="svg-corporate-flywheel-hero"
-            class="flywheel-hero-svg svg-animated-flow"
+            class="flywheel-hero-svg"
             viewBox="0 0 960 210"
             role="img"
+            aria-labelledby="flywheel-hero-title flywheel-hero-desc"
             aria-label="Animated four-node corporate schematic showing how 76.2 million paid members and $4,828M in membership fees drive $249,625M in net sales, a 10.92% gross margin ceiling, 104.15% supplier-financed inventory, and $9,285M in operating income"
           >
+            <title id="flywheel-hero-title">Costco Wholesale FY2024 Four-Node Revenue and Operating Profit Flywheel Schematic</title>
+            <desc id="flywheel-hero-desc">Animated corporate diagram tracing Node 1 Paid Membership Access ($4,828M, 1.90% of revenue), Node 2 High-Volume Buying Concentration ($249,625M Net Sales across fewer than 4,000 SKUs), Node 3 10.92% Gross Margin Ceiling and 104.15% Accounts Payable-to-Inventory Float (+$4,457M Net Merchandise Profit), and Node 4 Consolidated Operating Profit ($9,285M Operating Income and $7,367M Net Income) feeding back into 92.9% U.S./Canada renewal.</desc>
             <rect x="2" y="2" width="956" height="206" rx="8" fill="url(#dither-bayer-navy)" stroke="#CBD5E1" stroke-width="1" />
 
             <!-- Animated Forward Flow Connectors Between the 4 Nodes -->
-            <path d="M 222 86 L 258 86" class="corp-anim-flow-path" stroke="#005DAA" />
+            <path d="M 222 86 L 258 86" fill="none" class="corp-anim-flow-path svg-animated-flow is-active-flow" data-hero-flow="1" stroke="#005DAA" />
             <polygon points="258,86 250,81 250,91" fill="#005DAA" />
 
-            <path d="M 466 86 L 502 86" class="corp-anim-flow-path" stroke="#005DAA" />
+            <path d="M 466 86 L 502 86" fill="none" class="corp-anim-flow-path svg-animated-flow" data-hero-flow="2" stroke="#005DAA" />
             <polygon points="502,86 494,81 494,91" fill="#005DAA" />
 
-            <path d="M 710 86 L 746 86" class="corp-anim-flow-path crimson-flow" stroke="#E31837" />
+            <path d="M 710 86 L 746 86" fill="none" class="corp-anim-flow-path svg-animated-flow crimson-flow" data-hero-flow="3" stroke="#E31837" />
             <polygon points="746,86 738,81 738,91" fill="#E31837" />
 
             <!-- Closed-Loop Renewal Feedback Path from Node 4 Back to Node 1 -->
-            <path d="M 848 152 L 848 188 L 118 188 L 118 152" class="corp-anim-flow-path emerald-flow" stroke="#047857" />
+            <path d="M 848 152 L 848 188 L 118 188 L 118 152" fill="none" class="corp-anim-flow-path svg-animated-flow emerald-flow" data-hero-flow="4" stroke="#047857" />
             <polygon points="118,152 113,160 123,160" fill="#047857" />
-            <rect x="215" y="176" width="530" height="22" rx="11" fill="#FFFFFF" stroke="#059669" stroke-width="1.2" />
-            <text x="480" y="191" text-anchor="middle" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#047857">
+            <rect x="185" y="176" width="590" height="22" rx="11" fill="#FFFFFF" stroke="#059669" stroke-width="1.2" />
+            <text x="480" y="191" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#047857">
               CLOSED-LOOP RENEWAL FEEDBACK: LOW PRICES DRIVE 92.9% U.S./CANADA RENEWAL &amp; REPEAT VISITS
             </text>
 
             <!-- Node 1: Paid Membership Base -->
-            <g class="flywheel-node-group is-step-linked" data-hero-node="1" data-flywheel-node="1">
-              <rect class="flywheel-node-box" x="14" y="20" width="212" height="132" rx="7" fill="#FFFFFF" stroke="#E31837" stroke-width="2" />
+            <g class="flywheel-node-group flywheel-hero-node is-step-linked is-active-node" data-hero-node="1" data-flywheel-node="1" tabindex="0" role="button" aria-label="Node 1: 76.2M Paid Members and $4,828M Membership Fees">
+              <rect class="flywheel-node-box node-box" x="14" y="20" width="212" height="132" rx="7" fill="#FFFFFF" stroke="#E31837" stroke-width="2" />
               <rect x="14" y="20" width="212" height="24" rx="7" fill="url(#dither-bayer-crimson)" />
               <circle cx="28" cy="32" r="4.5" fill="#E31837" class="corp-node-pulse-ring" />
               <text x="40" y="36" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#B91C1C">NODE 01 · MEMBERSHIP ACCESS</text>
@@ -2329,12 +2290,12 @@
               <text x="24" y="82" font-family="var(--font-mono)" font-size="12" font-weight="700" fill="#B91C1C">$4,828M Fees (1.90% Rev)</text>
               <text x="24" y="102" font-family="var(--font-sans)" font-size="10.5" fill="#334155">136.8M Cardholders · 92.9% Renewal</text>
               <text x="24" y="120" font-family="var(--font-sans)" font-size="10.5" fill="#334155">35.4M Executive = 73.3% of Sales</text>
-              <text x="24" y="138" font-family="var(--font-mono)" font-size="9.5" fill="#475569">$2,501M Deferred Liability (ASC 606)</text>
+              <text x="24" y="138" font-family="var(--font-mono)" font-size="9" fill="#475569">$2,501M Deferred Liability (ASC 606)</text>
             </g>
 
             <!-- Node 2: High-Volume Purchasing Scale -->
-            <g class="flywheel-node-group" data-hero-node="2" data-flywheel-node="2">
-              <rect class="flywheel-node-box" x="256" y="20" width="212" height="132" rx="7" fill="#FFFFFF" stroke="#005DAA" stroke-width="2" />
+            <g class="flywheel-node-group flywheel-hero-node" data-hero-node="2" data-flywheel-node="2" tabindex="0" role="button" aria-label="Node 2: Fewer than 4,000 SKUs and $249,625M Net Sales">
+              <rect class="flywheel-node-box node-box" x="256" y="20" width="212" height="132" rx="7" fill="#FFFFFF" stroke="#005DAA" stroke-width="2" />
               <rect x="256" y="20" width="212" height="24" rx="7" fill="url(#dither-bayer-navy)" />
               <circle cx="270" cy="32" r="4.5" fill="#005DAA" class="corp-node-pulse-ring" />
               <text x="282" y="36" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#005DAA">NODE 02 · BUYING CONCENTRATION</text>
@@ -2342,12 +2303,12 @@
               <text x="266" y="82" font-family="var(--font-mono)" font-size="12" font-weight="700" fill="#005DAA">$249,625M Sales (98.10%)</text>
               <text x="266" y="102" font-family="var(--font-sans)" font-size="10.5" fill="#334155">&gt;$62M Volume per Warehouse SKU</text>
               <text x="266" y="120" font-family="var(--font-sans)" font-size="10.5" fill="#334155">719 Gas Stations · ~7% E-Commerce</text>
-              <text x="266" y="138" font-family="var(--font-mono)" font-size="9.5" fill="#475569">890 Clubs · Kirkland ~30%+ (+36 bps)</text>
+              <text x="266" y="138" font-family="var(--font-mono)" font-size="9" fill="#475569">890 Clubs · Kirkland ~30%+ (+36 bps)</text>
             </g>
 
             <!-- Node 3: 10.92% Gross Margin Cap & Working Capital -->
-            <g class="flywheel-node-group" data-hero-node="3" data-flywheel-node="3">
-              <rect class="flywheel-node-box" x="498" y="20" width="212" height="132" rx="7" fill="#FFFFFF" stroke="#059669" stroke-width="2" />
+            <g class="flywheel-node-group flywheel-hero-node" data-hero-node="3" data-flywheel-node="3" tabindex="0" role="button" aria-label="Node 3: 10.92% Gross Margin Cap and 104.15% AP to Inventory Coverage">
+              <rect class="flywheel-node-box node-box" x="498" y="20" width="212" height="132" rx="7" fill="#FFFFFF" stroke="#059669" stroke-width="2" />
               <rect x="498" y="20" width="212" height="24" rx="7" fill="url(#dither-halftone-slate)" />
               <circle cx="512" cy="32" r="4.5" fill="#059669" class="corp-node-pulse-ring" />
               <text x="524" y="36" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#047857">NODE 03 · MARGIN CAP &amp; FLOAT</text>
@@ -2359,8 +2320,8 @@
             </g>
 
             <!-- Node 4: Operating Profit Conversion -->
-            <g class="flywheel-node-group" data-hero-node="4" data-flywheel-node="4">
-              <rect class="flywheel-node-box" x="740" y="20" width="206" height="132" rx="7" fill="#FFFFFF" stroke="#E31837" stroke-width="2" />
+            <g class="flywheel-node-group flywheel-hero-node" data-hero-node="4" data-flywheel-node="4" tabindex="0" role="button" aria-label="Node 4: $9,285M Operating Income and $7,367M Net Income">
+              <rect class="flywheel-node-box node-box" x="740" y="20" width="206" height="132" rx="7" fill="#FFFFFF" stroke="#E31837" stroke-width="2" />
               <rect x="740" y="20" width="206" height="24" rx="7" fill="url(#dither-bayer-crimson)" />
               <circle cx="754" cy="32" r="4.5" fill="#E31837" class="corp-node-pulse-ring" />
               <text x="766" y="36" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="#B91C1C">NODE 04 · OPERATING PROFIT</text>
@@ -2736,6 +2697,7 @@
 
               <div class="step-metrics-box">
                 <svg id="svg-step-1" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 1 animated schematic: Upfront cash fees flow into $2,501M deferred liability and recognize ratably into $4,828M earned membership fees">
+                  <title>Step 1 Animated Schematic: Paid Membership Access and ASC 606 Ratable Fee Recognition ($4,828M)</title>
                   <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-bayer-crimson)" />
                   <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#E31837" stroke-width="1.5" />
                   <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#B91C1C">76.2M MEMBERS</text>
@@ -2796,6 +2758,7 @@
 
               <div class="step-metrics-box">
                 <svg id="svg-step-2" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 2 animated schematic: Fewer than 4,000 active SKUs concentrate more than $62M per SKU into $249,625M Net Sales">
+                  <title>Step 2 Animated Schematic: High-Volume Purchasing Across Fewer Than 4,000 SKUs ($249,625M Net Sales)</title>
                   <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-bayer-navy)" />
                   <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#005DAA" stroke-width="1.5" />
                   <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#005DAA">DISCIPLINED ASSORT.</text>
@@ -2855,6 +2818,7 @@
 
               <div class="step-metrics-box">
                 <svg id="svg-step-3" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 3 animated schematic: 719 gas stations, pharmacy, and e-commerce drive $49,969M in ancillary sales and repeat visits">
+                  <title>Step 3 Animated Schematic: 719 Gas Stations, In-Club Ancillary Services and E-Commerce ($49,969M)</title>
                   <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-halftone-slate)" />
                   <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#D97706" stroke-width="1.5" />
                   <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#B45309">719 GAS STATIONS</text>
@@ -2914,6 +2878,7 @@
 
               <div class="step-metrics-box">
                 <svg id="svg-step-4" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 4 animated schematic: 10.92% gross margin ($27,267M) minus 9.14% SG&A ($22,810M) yields +$4,457M profit with 104.15% AP-to-inventory coverage">
+                  <title>Step 4 Animated Schematic: 10.92% Gross Margin Ceiling and 104.15% Supplier-Financed Inventory Float</title>
                   <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-bayer-navy)" />
                   <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#059669" stroke-width="1.5" />
                   <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#047857">GROSS MARGIN</text>
@@ -2974,6 +2939,7 @@
 
               <div class="step-metrics-box">
                 <svg id="svg-step-5" class="step-micro-svg svg-animated-flow" viewBox="0 0 320 96" role="img" aria-label="Step 5 animated schematic: $4,457M net merchandise profit plus $4,828M membership fees equal $9,285M operating income and $7,367M net income">
+                  <title>Step 5 Animated Schematic: Operating Profit Conversion ($4,457M Merch + $4,828M Fees = $9,285M Operating Income)</title>
                   <rect x="2" y="2" width="316" height="92" rx="5" fill="url(#dither-bayer-crimson)" />
                   <rect x="10" y="16" width="90" height="64" rx="5" fill="#FFFFFF" stroke="#005DAA" stroke-width="1.5" />
                   <text x="55" y="37" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="#005DAA">MERCH PROFIT</text>
@@ -3528,8 +3494,9 @@
       var html = "";
       var rBase = typeof rBaseOverride === "number" ? rBaseOverride : 42;
       var rings = [0.25, 0.5, 0.75, 1.0];
-      /* Subtle engraved dithered outer halo + animated radar compass ring */
+      /* Subtle engraved dithered outer halo + animated radar compass ring & sweep indicator */
       html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (maxR + 8).toFixed(1) + '" class="polar-compass-ring polar-radar-sweep corp-anim-flow-path" />';
+      html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (maxR + 10.5).toFixed(1) + '" class="polar-sweep-indicator corp-anim-flow-path" />';
       html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (maxR + 4).toFixed(1) + '" fill="none" stroke="url(#dither-polar-engraving)" stroke-width="4" />';
       for (var i = 0; i < rings.length; i++) {
         var r = rBase + (maxR - rBase) * rings[i];
@@ -3592,8 +3559,10 @@
       }
     }
 
-    function bindInteractiveTableRows(tbodyElement, attrName, count, onSelect) {
+    function bindInteractiveTableRows(tbodyElement, attrName, count, arg4, arg5) {
       if (!tbodyElement) return;
+      var onSelect = typeof arg5 === "function" ? arg5 : arg4;
+      if (typeof onSelect !== "function") return;
       var tableRows = tbodyElement.querySelectorAll("[" + attrName + "]");
       for (var rIdx = 0; rIdx < tableRows.length; rIdx++) {
         tableRows[rIdx].addEventListener("click", function () {
@@ -3610,32 +3579,6 @@
           } else if (evt.key === "ArrowUp" || evt.key === "ArrowLeft") {
             evt.preventDefault();
             onSelect((cur - 1 + count) % count, true);
-          }
-        });
-      }
-    }
-
-    function bindInteractiveTableRows(tbodyElement, attrName, totalItems, getSelectedIdx, onSelectRow) {
-      if (!tbodyElement) return;
-      var tableRows = tbodyElement.querySelectorAll("[" + attrName + "]");
-      for (var rIdx = 0; rIdx < tableRows.length; rIdx++) {
-        tableRows[rIdx].addEventListener("click", function () {
-          var idx = Number(this.getAttribute(attrName));
-          onSelectRow(idx, false);
-        });
-        tableRows[rIdx].addEventListener("keydown", function (evt) {
-          var idx = Number(this.getAttribute(attrName));
-          if (evt.key === "Enter" || evt.key === " " || evt.key === "Spacebar") {
-            evt.preventDefault();
-            onSelectRow(idx, true);
-          } else if (evt.key === "ArrowDown" || evt.key === "ArrowRight") {
-            evt.preventDefault();
-            var nextIdx = (idx + 1) % totalItems;
-            onSelectRow(nextIdx, true);
-          } else if (evt.key === "ArrowUp" || evt.key === "ArrowLeft") {
-            evt.preventDefault();
-            var prevIdx = (idx - 1 + totalItems) % totalItems;
-            onSelectRow(prevIdx, true);
           }
         });
       }
@@ -3671,6 +3614,7 @@
 
       var spokeAngles = [0, 90, 180, 270];
       var svgMarkup = renderPolarGrid(cx, cy, maxR, null, spokeAngles, rInner);
+      var selectedPathD = "";
 
       var currentAngle = 0;
       for (var i = 0; i < CATEGORY_DATA.length; i++) {
@@ -3705,6 +3649,9 @@
 
         var isSelected = i === catState.selectedIndex;
         var pathD = describeAnnularSector(cx, cy, rInner, rOuter, startDeg, endDeg);
+        if (isSelected) {
+          selectedPathD = pathD;
+        }
         svgMarkup +=
           '<path d="' + pathD + '" fill="' + cat.color + '" fill-opacity="' + (isSelected ? "0.94" : "0.78") + '" ' +
           'class="polar-sector-path' + (isSelected ? " is-selected" : "") + '" ' +
@@ -3712,6 +3659,8 @@
           'aria-label="' + cat.name + ": " + formatUsdM(sales) + " (" + share.toFixed(2) + '%)" />';
 
         var midDeg = (startDeg + endDeg) / 2;
+        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR - 14), midDeg);
+        var leaderOuter = polarPoint(cx, cy, maxR + 10, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
@@ -3720,6 +3669,10 @@
           cat.shortName + "</text>" +
           '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 11).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
           formatUsdM(sales) + " (" + share.toFixed(1) + "%)</text>";
+      }
+
+      if (selectedPathD) {
+        svgMarkup += '<path d="' + selectedPathD + '" class="polar-active-arc corp-anim-flow-path" data-polar-active-arc="cat" />';
       }
 
       /* Foreground ring scale labels (offset to 25 deg in angle mode to prevent 12-o'clock collision) + Center hub */
@@ -3778,6 +3731,11 @@
           sectorNodes[s].classList.toggle("is-selected", sActive);
           sectorNodes[s].setAttribute("fill-opacity", sActive ? "0.94" : "0.78");
         }
+        var activeArcEl = svg.querySelector('[data-polar-active-arc="cat"]');
+        var activeSectorEl = svg.querySelector('[data-cat-sector="' + idx + '"]');
+        if (activeArcEl && activeSectorEl) {
+          activeArcEl.setAttribute("d", activeSectorEl.getAttribute("d") || "");
+        }
         var rowNodes = tbody.querySelectorAll("[data-cat-row]");
         for (var r = 0; r < rowNodes.length; r++) {
           var rActive = Number(rowNodes[r].getAttribute("data-cat-row")) === idx;
@@ -3830,18 +3788,6 @@
       bindInteractiveTableRows(tbody, "data-cat-row", CATEGORY_DATA.length, function (idx, isKeyboard) {
         syncCategorySelectionInPlace(idx, isKeyboard, "row");
       });
-      bindInteractiveTableRows(tbody, "data-cat-row", CATEGORY_DATA.length, function () {
-        return catState.selectedIndex;
-      }, function (idx, isKeyboard) {
-        catState.selectedIndex = idx;
-        renderPolarCategories();
-        if (isKeyboard) {
-          var targetRow = tbody.querySelector('[data-cat-row="' + idx + '"]');
-          if (targetRow && typeof targetRow.focus === "function") {
-            targetRow.focus({ preventScroll: true });
-          }
-        }
-      });
     }
 
     /* =========================================================================
@@ -3872,6 +3818,7 @@
 
       var spokeAngles = [0, 120, 240];
       var svgMarkup = renderPolarGrid(cx, cy, maxR, null, spokeAngles, rInner);
+      var selectedPathD = "";
 
       var maxVal = geoState.metric === "revenue" ? 184143 : geoState.metric === "opinc" ? 6217 : 614;
 
@@ -3885,6 +3832,9 @@
         var isSelected = i === geoState.selectedIndex;
 
         var pathD = describeAnnularSector(cx, cy, rInner, rOuter, startDeg, endDeg);
+        if (isSelected) {
+          selectedPathD = pathD;
+        }
         var ariaValLabel = geoState.metric === "revenue"
           ? formatUsdM(seg.revenueM) + " (" + seg.revSharePct.toFixed(2) + "%)"
           : geoState.metric === "opinc"
@@ -3903,6 +3853,8 @@
           'aria-label="' + seg.name + ": " + ariaValLabel + '" />';
 
         var midDeg = (startDeg + endDeg) / 2;
+        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR - 14), midDeg);
+        var leaderOuter = polarPoint(cx, cy, maxR + 10, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
         svgMarkup +=
@@ -3911,6 +3863,10 @@
           seg.shortName + "</text>" +
           '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 11).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
           valLabel + "</text>";
+      }
+
+      if (selectedPathD) {
+        svgMarkup += '<path d="' + selectedPathD + '" class="polar-active-arc corp-anim-flow-path" data-polar-active-arc="geo" />';
       }
 
       var centerTop = geoState.metric === "revenue" ? "$254.5B" : geoState.metric === "opinc" ? "$9,285M" : "890 Clubs";
@@ -3952,6 +3908,11 @@
           var sActive = Number(sectorNodes[s].getAttribute("data-geo-sector")) === idx;
           sectorNodes[s].classList.toggle("is-selected", sActive);
           sectorNodes[s].setAttribute("fill-opacity", sActive ? "0.94" : "0.78");
+        }
+        var activeArcEl = svg.querySelector('[data-polar-active-arc="geo"]');
+        var activeSectorEl = svg.querySelector('[data-geo-sector="' + idx + '"]');
+        if (activeArcEl && activeSectorEl) {
+          activeArcEl.setAttribute("d", activeSectorEl.getAttribute("d") || "");
         }
         var rowNodes = tbody.querySelectorAll("[data-geo-row]");
         for (var r = 0; r < rowNodes.length; r++) {
@@ -4003,18 +3964,6 @@
       bindInteractiveTableRows(tbody, "data-geo-row", GEOGRAPHY_DATA.length, function (idx, isKeyboard) {
         syncGeographySelectionInPlace(idx, isKeyboard, "row");
       });
-      bindInteractiveTableRows(tbody, "data-geo-row", GEOGRAPHY_DATA.length, function () {
-        return geoState.selectedIndex;
-      }, function (idx, isKeyboard) {
-        geoState.selectedIndex = idx;
-        renderPolarGeography();
-        if (isKeyboard) {
-          var targetRow = tbody.querySelector('[data-geo-row="' + idx + '"]');
-          if (targetRow && typeof targetRow.focus === "function") {
-            targetRow.focus({ preventScroll: true });
-          }
-        }
-      });
     }
 
     /* =========================================================================
@@ -4046,26 +3995,32 @@
         var feeOpDeg = (52.00 / 100) * 360;
 
         var isFeeSelected = flyState.selectedIndex === 1;
+        var outerSalesD = describeAnnularSector(cx, cy, 100, 136, feeRevVisualSpan, 360);
+        var outerFeesD = describeAnnularSector(cx, cy, 100, 136, 0, feeRevVisualSpan);
+        var innerFeesD = describeAnnularSector(cx, cy, 44, 94, 0, feeOpDeg);
+        var innerMerchD = describeAnnularSector(cx, cy, 44, 94, feeOpDeg, 360);
 
         /* Outer Ring: Net Sales (98.10%) and Membership Fees (1.90%) */
         svgMarkup +=
-          '<path d="' + describeAnnularSector(cx, cy, 100, 136, feeRevVisualSpan, 360) + '" fill="#005DAA" fill-opacity="' + (!isFeeSelected ? "0.92" : "0.72") + '" ' +
+          '<path d="' + outerSalesD + '" fill="#005DAA" fill-opacity="' + (!isFeeSelected ? "0.92" : "0.72") + '" ' +
           'class="polar-sector-path' + (!isFeeSelected ? " is-selected" : "") + '" data-fly-sector="0" data-fly-ring="outer" role="button" tabindex="0" ' +
           'aria-label="Outer Ring Top-Line Revenue: Net Sales $249,625M (98.10%)" />';
         svgMarkup +=
-          '<path d="' + describeAnnularSector(cx, cy, 100, 136, 0, feeRevVisualSpan) + '" fill="#E31837" fill-opacity="' + (isFeeSelected ? "0.98" : "0.85") + '" ' +
+          '<path d="' + outerFeesD + '" fill="#E31837" fill-opacity="' + (isFeeSelected ? "0.98" : "0.85") + '" ' +
           'class="polar-sector-path' + (isFeeSelected ? " is-selected" : "") + '" data-fly-sector="1" data-fly-ring="outer" role="button" tabindex="0" ' +
           'aria-label="Outer Ring Top-Line Revenue: Membership Fees $4,828M (1.90%)" />';
 
         /* Inner Ring: Operating Income Share — Membership Fees (52.00% = 187.2 deg) vs Net Merch Contribution (48.00% = 172.8 deg) */
         svgMarkup +=
-          '<path d="' + describeAnnularSector(cx, cy, 44, 94, 0, feeOpDeg) + '" fill="#E31837" fill-opacity="' + (isFeeSelected ? "0.95" : "0.80") + '" ' +
+          '<path d="' + innerFeesD + '" fill="#E31837" fill-opacity="' + (isFeeSelected ? "0.95" : "0.80") + '" ' +
           'class="polar-sector-path' + (isFeeSelected ? " is-selected" : "") + '" data-fly-sector="1" data-fly-ring="inner" role="button" tabindex="0" ' +
           'aria-label="Inner Ring Operating Profit: Membership Fees $4,828M (52.00% of Operating Income)" />';
         svgMarkup +=
-          '<path d="' + describeAnnularSector(cx, cy, 44, 94, feeOpDeg, 360) + '" fill="#005DAA" fill-opacity="' + (!isFeeSelected ? "0.92" : "0.72") + '" ' +
+          '<path d="' + innerMerchD + '" fill="#005DAA" fill-opacity="' + (!isFeeSelected ? "0.92" : "0.72") + '" ' +
           'class="polar-sector-path' + (!isFeeSelected ? " is-selected" : "") + '" data-fly-sector="0" data-fly-ring="inner" role="button" tabindex="0" ' +
           'aria-label="Inner Ring Operating Profit: Net Merchandise Contribution $4,457M (48.00% of Operating Income)" />';
+
+        svgMarkup += '<path d="' + (isFeeSelected ? innerFeesD : innerMerchD) + '" class="polar-active-arc corp-anim-flow-path" data-polar-active-arc="fly" />';
 
         /* Labels: offset ring scale labels to 25 deg and route inner-ring callouts via horizontal leader lines into side margins */
         svgMarkup += renderPolarRingLabels(cx, cy, 136, ["25%", "50%", "75%", "100%"], 42, 25);
@@ -4107,6 +4062,7 @@
         var maxR = 118;
         var maxVolB = 30.0;
         svgMarkup += renderPolarGrid(cx, cy, maxR, null, [0, 90, 180, 270], rInner);
+        var selectedFlyPathD = "";
 
         for (var i = 0; i < ANCILLARY_ROSE_DATA.length; i++) {
           var item = ANCILLARY_ROSE_DATA[i];
@@ -4115,9 +4071,13 @@
           var startDeg = i * 90 + 5;
           var endDeg = (i + 1) * 90 - 5;
           var isSelected = i === flyState.selectedIndex;
+          var ancPathD = describeAnnularSector(cx, cy, rInner, rOuter, startDeg, endDeg);
+          if (isSelected) {
+            selectedFlyPathD = ancPathD;
+          }
 
           svgMarkup +=
-            '<path d="' + describeAnnularSector(cx, cy, rInner, rOuter, startDeg, endDeg) + '" fill="' + item.color + '" fill-opacity="' + (isSelected ? "0.94" : "0.78") + '" ' +
+            '<path d="' + ancPathD + '" fill="' + item.color + '" fill-opacity="' + (isSelected ? "0.94" : "0.78") + '" ' +
             'class="polar-sector-path' + (isSelected ? " is-selected" : "") + '" data-fly-sector="' + i + '" role="button" tabindex="0" ' +
             'aria-label="' + item.name + ": ~$" + item.volumeB.toFixed(1) + 'B" />';
 
@@ -4129,6 +4089,10 @@
             item.shortName + "</text>" +
             '<text x="' + labelPos.x.toFixed(1) + '" y="' + (labelPos.y + 11).toFixed(1) + '" text-anchor="' + anchor + '" class="polar-axis-label">' +
             (item.svgBadge || item.metricBadge) + "</text>";
+        }
+
+        if (selectedFlyPathD) {
+          svgMarkup += '<path d="' + selectedFlyPathD + '" class="polar-active-arc corp-anim-flow-path" data-polar-active-arc="fly" />';
         }
 
         svgMarkup += renderPolarRingLabels(cx, cy, maxR, ["$7.5B", "$15B", "$22.5B", "$30B"], rInner, 0);
@@ -4174,10 +4138,17 @@
        ========================================================================= */
     var currentStep = 1;
     var isMotionPaused = false;
+    var motionControlInitialized = false;
+    var reducedMotionMq = null;
 
     function setMotionPaused(paused) {
       isMotionPaused = Boolean(paused);
       document.documentElement.classList.toggle("is-motion-paused", isMotionPaused);
+      document.documentElement.classList.toggle("animations-paused", isMotionPaused);
+      if (document.body) {
+        document.body.classList.toggle("is-motion-paused", isMotionPaused);
+        document.body.classList.toggle("animations-paused", isMotionPaused);
+      }
       var btn = document.getElementById("motion-toggle-btn");
       if (btn) {
         btn.setAttribute("aria-pressed", isMotionPaused ? "true" : "false");
@@ -4195,24 +4166,63 @@
           allSvgs[i].unpauseAnimations();
         }
       }
+      return isMotionPaused;
+    }
+
+    function toggleAnimationPlayback() {
+      return setMotionPaused(!isMotionPaused);
+    }
+
+    function decoratePolarSvgAnimations() {
+      var polarIds = ["svg-polar-categories", "svg-polar-geography", "svg-polar-flywheel"];
+      for (var i = 0; i < polarIds.length; i++) {
+        var svg = document.getElementById(polarIds[i]);
+        if (!svg) continue;
+        if (isMotionPaused && typeof svg.pauseAnimations === "function") {
+          svg.pauseAnimations();
+        } else if (!isMotionPaused && typeof svg.unpauseAnimations === "function") {
+          svg.unpauseAnimations();
+        }
+      }
     }
 
     function initMotionControl() {
+      if (motionControlInitialized) return;
+      motionControlInitialized = true;
       var btn = document.getElementById("motion-toggle-btn");
       if (btn) {
         btn.addEventListener("click", function () {
-          setMotionPaused(!isMotionPaused);
+          toggleAnimationPlayback();
+        });
+      }
+      var heroNodes = document.querySelectorAll("#svg-corporate-flywheel-hero [data-flywheel-node]");
+      for (var i = 0; i < heroNodes.length; i++) {
+        heroNodes[i].addEventListener("click", function () {
+          var nodeNum = Number(this.getAttribute("data-flywheel-node"));
+          var targetStep = nodeNum === 1 ? 1 : nodeNum === 2 ? 2 : nodeNum === 3 ? 4 : 5;
+          setActiveStep(targetStep, false);
+        });
+        heroNodes[i].addEventListener("keydown", function (evt) {
+          if (evt.key === "Enter" || evt.key === " " || evt.key === "Spacebar") {
+            evt.preventDefault();
+            var nodeNum = Number(this.getAttribute("data-flywheel-node"));
+            var targetStep = nodeNum === 1 ? 1 : nodeNum === 2 ? 2 : nodeNum === 3 ? 4 : 5;
+            setActiveStep(targetStep, false);
+          }
         });
       }
       if (window.matchMedia) {
-        var mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-        if (mq.matches) {
+        reducedMotionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+        if (reducedMotionMq.matches) {
           setMotionPaused(true);
         }
-        if (typeof mq.addEventListener === "function") {
-          mq.addEventListener("change", function (e) {
-            setMotionPaused(Boolean(e.matches));
-          });
+        var onMotionPrefChange = function (e) {
+          setMotionPaused(Boolean(e && e.matches));
+        };
+        if (typeof reducedMotionMq.addEventListener === "function") {
+          reducedMotionMq.addEventListener("change", onMotionPrefChange);
+        } else if (typeof reducedMotionMq.addListener === "function") {
+          reducedMotionMq.addListener(onMotionPrefChange);
         }
       }
     }
@@ -4222,7 +4232,24 @@
       var heroNodes = document.querySelectorAll("[data-hero-node]");
       for (var i = 0; i < heroNodes.length; i++) {
         var nId = Number(heroNodes[i].getAttribute("data-hero-node"));
-        heroNodes[i].classList.toggle("is-step-linked", nId === mappedNode);
+        var isNodeActive = nId === mappedNode;
+        heroNodes[i].classList.toggle("is-step-linked", isNodeActive);
+        heroNodes[i].classList.toggle("is-active-node", isNodeActive);
+      }
+      var heroFlows = document.querySelectorAll("[data-hero-flow]");
+      for (var f = 0; f < heroFlows.length; f++) {
+        var fId = Number(heroFlows[f].getAttribute("data-hero-flow"));
+        heroFlows[f].classList.toggle("is-active-flow", fId === mappedNode);
+      }
+      var statusEl = document.getElementById("flywheel-hero-status");
+      if (statusEl) {
+        var nodeLabels = {
+          1: "Node 01 Active: Paid Membership Base ($4,828M · 98.10% Sales Catalyst)",
+          2: "Node 02 Active: Structural Price Cap (10.92% Gross Margin · 104.15% AP Float)",
+          3: "Node 03 Active: Net Merchandise Profit ($4,457M · 48.00% of Operating Income)",
+          4: "Node 04 Active: Consolidated Operating Profit ($9,285M OpInc · $7,367M Net Income)"
+        };
+        statusEl.textContent = nodeLabels[mappedNode] || nodeLabels[1];
       }
     }
 
@@ -4249,8 +4276,6 @@
         banner.innerHTML =
           "<strong>Active Focus — " + STEP_SUMMARIES[currentStep].title + ":</strong> " + STEP_SUMMARIES[currentStep].text;
       }
-
-      syncAnimatedFlywheelHighlight(currentStep);
 
       if (shouldScroll) {
         var targetEl = document.getElementById("step-" + currentStep);
