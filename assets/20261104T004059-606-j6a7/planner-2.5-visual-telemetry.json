@@ -1,0 +1,164 @@
+{
+  "contrastAudit": [
+    {
+      "pair": "Primary Ink (#0F172A) on Pure White (#FFFFFF)",
+      "fg": "#0F172A",
+      "bg": "#FFFFFF",
+      "contrastRatio": 17.85,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "Primary Ink (#0F172A) on Canvas (#F8FAFC)",
+      "fg": "#0F172A",
+      "bg": "#F8FAFC",
+      "contrastRatio": 17.06,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "Primary Ink (#0F172A) on Well (#F1F5F9)",
+      "fg": "#0F172A",
+      "bg": "#F1F5F9",
+      "contrastRatio": 16.3,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "Secondary Ink (#334155) on Pure White (#FFFFFF)",
+      "fg": "#334155",
+      "bg": "#FFFFFF",
+      "contrastRatio": 10.35,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "Secondary Ink (#334155) on Canvas (#F8FAFC)",
+      "fg": "#334155",
+      "bg": "#F8FAFC",
+      "contrastRatio": 9.9,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "Secondary Ink (#334155) on Well (#F1F5F9)",
+      "fg": "#334155",
+      "bg": "#F1F5F9",
+      "contrastRatio": 9.45,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "Slate Dark (#475569) on Pure White (#FFFFFF)",
+      "fg": "#475569",
+      "bg": "#FFFFFF",
+      "contrastRatio": 7.58,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "Slate Dark (#475569) on Canvas (#F8FAFC)",
+      "fg": "#475569",
+      "bg": "#F8FAFC",
+      "contrastRatio": 7.24,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "Costco Executive Navy (#005DAA) on Pure White (#FFFFFF)",
+      "fg": "#005DAA",
+      "bg": "#FFFFFF",
+      "contrastRatio": 6.67,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": false
+    },
+    {
+      "pair": "Costco Executive Navy (#005DAA) on Canvas (#F8FAFC)",
+      "fg": "#005DAA",
+      "bg": "#F8FAFC",
+      "contrastRatio": 6.38,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": false
+    },
+    {
+      "pair": "Costco Executive Navy Dark (#00427A) on Pure White (#FFFFFF)",
+      "fg": "#00427A",
+      "bg": "#FFFFFF",
+      "contrastRatio": 10.19,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "Costco Crimson (#E31837) on Pure White (#FFFFFF)",
+      "fg": "#E31837",
+      "bg": "#FFFFFF",
+      "contrastRatio": 4.72,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": false
+    },
+    {
+      "pair": "Costco Crimson Dark (#B91C1C) on Pure White (#FFFFFF)",
+      "fg": "#B91C1C",
+      "bg": "#FFFFFF",
+      "contrastRatio": 6.47,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": false
+    },
+    {
+      "pair": "Emerald Dark (#047857) on Pure White (#FFFFFF)",
+      "fg": "#047857",
+      "bg": "#FFFFFF",
+      "contrastRatio": 5.48,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": false
+    },
+    {
+      "pair": "White (#FFFFFF) on Primary Ink (#0F172A)",
+      "fg": "#FFFFFF",
+      "bg": "#0F172A",
+      "contrastRatio": 17.85,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": true
+    },
+    {
+      "pair": "White (#FFFFFF) on Costco Executive Navy (#005DAA)",
+      "fg": "#FFFFFF",
+      "bg": "#005DAA",
+      "contrastRatio": 6.67,
+      "wcagAA_Text_4_5": true,
+      "wcagAAA_Metric_7_0": false
+    }
+  ],
+  "viewportAudit": [
+    {
+      "innerWidth": 320,
+      "scrollWidth": 320,
+      "overflowPx": 0
+    },
+    {
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "overflowPx": 0
+    },
+    {
+      "innerWidth": 768,
+      "scrollWidth": 768,
+      "overflowPx": 0
+    },
+    {
+      "innerWidth": 1024,
+      "scrollWidth": 1024,
+      "overflowPx": 0
+    },
+    {
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "overflowPx": 0
+    },
+    {
+      "innerWidth": 2560,
+      "scrollWidth": 2560,
+      "overflowPx": 0
+    }
+  ]
+}
