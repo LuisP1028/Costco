@@ -1,0 +1,22 @@
+{
+  "agent": "tester-1",
+  "runId": "20261104T004059-606-j6a7",
+  "status": "VERIFIED",
+  "consoleErrors": 0,
+  "pageErrors": 0,
+  "externalRequests": 0,
+  "uniqueIds": {
+    "motionToggleBtn": 1,
+    "flywheelHero": 1,
+    "polarCategories": 1,
+    "polarGeography": 1,
+    "polarFlywheel": 1
+  },
+  "heroFlywheel": {
+    "nodeCount": 4,
+    "flowCount": 4,
+    "viewBox": "0 0 960 210"
+  },
+  "stepSvgsVerified": 5,
+  "polarSvgsVerified": 3
+}
