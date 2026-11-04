@@ -2175,7 +2175,10 @@ function defaultAgentTaskRunner(repoDir: string): AgentTaskRunner {
                         SEED_PATH: seed,
                         PLAN_BRANCH: planBranch,
                     },
-                    branchStrategy: { type: "branch", branch },
+                    branchStrategy:
+                        branch === "main" || branch === "HEAD"
+                            ? { type: "head" }
+                            : { type: "branch", branch },
                     logging: {
                         type: "file",
                         verbose: true,
