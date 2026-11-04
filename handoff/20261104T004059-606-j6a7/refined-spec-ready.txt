@@ -1,0 +1,2 @@
+functional_specification_005.md
+wayfinder/20261104T004059-606-j6a7/refined-specification.md
