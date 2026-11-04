@@ -191,6 +191,48 @@
       background: var(--costco-navy-dark);
     }
 
+    /* High-Density Halftone & Ordered Bayer Dithering Architecture (AC-02 / M2) */
+    .dither-accent-band {
+      height: 6px;
+      width: 100%;
+      background-image: radial-gradient(rgba(15, 23, 42, 0.16) 1px, transparent 0), radial-gradient(rgba(0, 93, 170, 0.12) 1px, transparent 0);
+      background-size: 6px 6px;
+      background-position: 0 0, 3px 3px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .dither-header-plate {
+      position: relative;
+    }
+    .dither-header-plate::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 48px;
+      height: 100%;
+      background-image: radial-gradient(rgba(0, 93, 170, 0.15) 1px, transparent 0);
+      background-size: 4px 4px;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .dither-badge-accent {
+      box-shadow: inset 0 0 0 1px rgba(0, 93, 170, 0.25);
+      background-image: radial-gradient(rgba(0, 93, 170, 0.10) 1px, transparent 0);
+      background-size: 3px 3px;
+    }
+
+    .dither-kpi-strip {
+      border-top: 2px solid transparent;
+      border-image: radial-gradient(circle, #005DAA 1px, transparent 1px) 2;
+    }
+
+    .dither-step-band {
+      background-image: radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 0);
+      background-size: 5px 5px;
+    }
+
     /* Main Two-Column Corporate Layout (Sticky TOC + Report Body) */
     .corporate-shell {
       max-width: 1440px;
@@ -1154,6 +1196,46 @@
 </head>
 <body>
 
+  <!-- Shared Global SVG Pattern Registry for Halftone & Ordered Bayer Dithering (AC-02 / M2) -->
+  <svg id="svg-global-dither-defs" aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;">
+    <defs>
+      <!-- 8x8 Ordered Bayer Matrix Pattern — Costco Executive Navy (#005DAA) -->
+      <pattern id="dither-bayer-navy" width="8" height="8" patternUnits="userSpaceOnUse">
+        <rect width="8" height="8" fill="#F1F5F9" />
+        <rect x="0" y="0" width="1" height="1" fill="#005DAA" fill-opacity="0.16" />
+        <rect x="4" y="0" width="1" height="1" fill="#005DAA" fill-opacity="0.12" />
+        <rect x="2" y="2" width="1" height="1" fill="#005DAA" fill-opacity="0.16" />
+        <rect x="6" y="2" width="1" height="1" fill="#005DAA" fill-opacity="0.12" />
+        <rect x="0" y="4" width="1" height="1" fill="#005DAA" fill-opacity="0.12" />
+        <rect x="4" y="4" width="1" height="1" fill="#005DAA" fill-opacity="0.16" />
+        <rect x="2" y="6" width="1" height="1" fill="#005DAA" fill-opacity="0.12" />
+        <rect x="6" y="6" width="1" height="1" fill="#005DAA" fill-opacity="0.16" />
+      </pattern>
+      <!-- 8x8 Ordered Bayer Matrix Pattern — Costco Crimson (#E31837) -->
+      <pattern id="dither-bayer-crimson" width="8" height="8" patternUnits="userSpaceOnUse">
+        <rect width="8" height="8" fill="#FFF1F2" />
+        <rect x="0" y="0" width="1" height="1" fill="#E31837" fill-opacity="0.16" />
+        <rect x="4" y="0" width="1" height="1" fill="#E31837" fill-opacity="0.12" />
+        <rect x="2" y="2" width="1" height="1" fill="#E31837" fill-opacity="0.16" />
+        <rect x="6" y="2" width="1" height="1" fill="#E31837" fill-opacity="0.12" />
+        <rect x="0" y="4" width="1" height="1" fill="#E31837" fill-opacity="0.12" />
+        <rect x="4" y="4" width="1" height="1" fill="#E31837" fill-opacity="0.16" />
+        <rect x="2" y="6" width="1" height="1" fill="#E31837" fill-opacity="0.12" />
+        <rect x="6" y="6" width="1" height="1" fill="#E31837" fill-opacity="0.16" />
+      </pattern>
+      <!-- 6x6 Halftone Stipple Matrix — Slate Ink (#0F172A) -->
+      <pattern id="dither-halftone-slate" width="6" height="6" patternUnits="userSpaceOnUse">
+        <circle cx="1.5" cy="1.5" r="0.85" fill="#0F172A" fill-opacity="0.14" />
+        <circle cx="4.5" cy="4.5" r="0.65" fill="#005DAA" fill-opacity="0.12" />
+      </pattern>
+      <!-- 4x4 Polar Engraving Stipple — Institutional Engraving Ring -->
+      <pattern id="dither-polar-engraving" width="4" height="4" patternUnits="userSpaceOnUse">
+        <rect x="0" y="0" width="1" height="1" fill="#0F172A" fill-opacity="0.15" />
+        <rect x="2" y="2" width="1" height="1" fill="#005DAA" fill-opacity="0.15" />
+      </pattern>
+    </defs>
+  </svg>
+
   <!-- Institutional Top Header Bar -->
   <header class="corporate-header" role="banner">
     <div class="header-top-strip">
@@ -1286,7 +1368,8 @@
     <!-- Primary Report Content -->
     <main class="report-main" role="main">
       <!-- SECTION 01: Executive Summary & FY2024 GAAP Scorecard -->
-      <section class="report-section" id="section-executive-summary" aria-labelledby="heading-exec-summary">
+      <section class="report-section dither-header-plate" id="section-executive-summary" aria-labelledby="heading-exec-summary">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 01 · Executive Summary</div>
         <h1 class="section-title" id="heading-exec-summary">
           Costco Wholesale Corporation (COST): Consolidated Revenue &amp; Operating Profit Architecture
@@ -1358,7 +1441,8 @@
       </section>
 
       <!-- SECTION 02: Interactive Polar Revenue Disaggregation Suite -->
-      <section class="report-section" id="section-polar-graphs" aria-labelledby="heading-polar-suite">
+      <section class="report-section dither-header-plate" id="section-polar-graphs" aria-labelledby="heading-polar-suite">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 02 · Interactive Polar Revenue Charts</div>
         <h2 class="section-title" id="heading-polar-suite">
           Where Costco Generates Revenue: Interactive Polar Graph Suite
@@ -1590,7 +1674,8 @@
       </section>
 
       <!-- SECTION 03: How Costco Generates Revenue in 5 Steps -->
-      <section class="report-section" id="section-five-steps" aria-labelledby="heading-five-steps">
+      <section class="report-section dither-header-plate" id="section-five-steps" aria-labelledby="heading-five-steps">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 03 · Five-Step Revenue Model</div>
         <h2 class="section-title" id="heading-five-steps">
           How Costco Generates Revenue in 5 Steps
@@ -1860,7 +1945,8 @@
       </section>
 
       <!-- SECTION 04: Multi-Year GAAP Waterfall & Flywheel Sensitivity Simulator -->
-      <section class="report-section" id="section-gaap-model" aria-labelledby="heading-gaap-model">
+      <section class="report-section dither-header-plate" id="section-gaap-model" aria-labelledby="heading-gaap-model">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 04 · Multi-Year GAAP Income Statement &amp; Sensitivity Simulator</div>
         <h2 class="section-title" id="heading-gaap-model">
           Multi-Year GAAP Consolidated Waterfall (FY2022–FY2024) &amp; Flywheel Sensitivity Simulator
@@ -1955,7 +2041,8 @@
       </section>
 
       <!-- SECTION 05: Primary-Source SEC Form 10-K & Wayfinder Decision Audit -->
-      <section class="report-section" id="section-wayfinder-audit" aria-labelledby="heading-wayfinder-audit">
+      <section class="report-section dither-header-plate" id="section-wayfinder-audit" aria-labelledby="heading-wayfinder-audit">
+        <div class="dither-accent-band" aria-hidden="true"></div>
         <div class="section-eyebrow">Section 05 · Primary-Source SEC Form 10-K Citations &amp; Wayfinder Audit</div>
         <h2 class="section-title" id="heading-wayfinder-audit">
           Primary-Source SEC Form 10-K Citations &amp; Resolved Wayfinder Decision Tickets (ticket-001 .. ticket-006)
@@ -2363,6 +2450,8 @@
 
     function renderPolarGrid(cx, cy, maxR, ringLabels, spokeAngles) {
       var html = "";
+      /* Decorative outer dither engraving ring (AC-02 / M2) */
+      html += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (maxR + 28) + '" fill="url(#dither-polar-engraving)" stroke="none" opacity="0.35" />';
       var rBase = 36;
       var rings = [0.25, 0.5, 0.75, 1.0];
       for (var i = 0; i < rings.length; i++) {
