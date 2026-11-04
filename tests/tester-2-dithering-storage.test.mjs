@@ -475,7 +475,8 @@ with sync_playwright() as p:
     print(json.dumps(output))
 `;
 
-  const proc = spawnSync("python3", ["-c", pyScript, HTML_PATH], {
+  const PYTHON_BIN = fs.existsSync("/opt/anaconda3/bin/python3") ? "/opt/anaconda3/bin/python3" : "python3";
+  const proc = spawnSync(PYTHON_BIN, ["-c", pyScript, HTML_PATH], {
     cwd: ROOT_DIR,
     encoding: "utf8"
   });

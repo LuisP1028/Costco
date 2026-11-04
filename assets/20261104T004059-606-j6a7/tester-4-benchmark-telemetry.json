@@ -201,17 +201,17 @@
     ]
   },
   "perfBenchmark": {
-    "catRowLatencyMs": 0.4,
+    "catRowLatencyMs": 0.5,
     "catNodeIdentityPreserved": true,
     "catFocusPreserved": true,
     "catSector1Selected": true,
-    "geoRowLatencyMs": 0.1,
+    "geoRowLatencyMs": 0.3,
     "geoNodeIdentityPreserved": true,
     "geoFocusPreserved": true,
     "geoSector2Selected": true,
-    "flySectorLatencyMs": 0.1,
+    "flySectorLatencyMs": 0.3,
     "flyNodeIdentityPreserved": true,
-    "avgCatClickMs": 0.021,
-    "total50ScrollDispatchMs": 0
+    "avgCatClickMs": 0.023,
+    "total50ScrollDispatchMs": 0.1
   }
 }

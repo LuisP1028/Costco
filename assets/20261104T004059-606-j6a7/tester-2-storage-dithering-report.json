@@ -1,23 +1,23 @@
 {
   "agent": "tester-2",
   "runId": "20261104T004059-606-j6a7",
-  "timestamp": "2026-11-04T02:11:01.124Z",
+  "timestamp": "2026-11-04T02:34:56.320Z",
   "overallStatus": "PASSED",
   "totalTests": 8,
   "results": [
     {
       "name": "1.1 Storage Engine Physics: Sub-millisecond JSON snapshot read & parse (R_amp=1.0, W_amp=1.0, S_amp=1.0)",
       "status": "PASS",
-      "elapsedMs": 1.76,
+      "elapsedMs": 1.73,
       "detail": {
         "byteSize": 9775,
-        "avgReadParseMs": 0.0647
+        "avgReadParseMs": 0.064
       }
     },
     {
       "name": "1.2 Schema & Partitioning: Temporal fiscal year partitions (2022, 2023, 2024) & dense ordinal indexing",
       "status": "PASS",
-      "elapsedMs": 0.411,
+      "elapsedMs": 0.403,
       "detail": {
         "fiscalYearsVerified": [
           2022,
@@ -31,7 +31,7 @@
     {
       "name": "1.3 Cross-Layer Primary-Source Reconciliation: data/costco_revenue_breakdown.json <-> index.html inlined tables",
       "status": "PASS",
-      "elapsedMs": 0.84,
+      "elapsedMs": 0.847,
       "detail": {
         "categoriesReconciled": 4,
         "segmentsReconciled": 3,
@@ -41,7 +41,7 @@
     {
       "name": "2.1 Snapshot Isolation & Stateless Parameter Overrides: Concurrent verification without dirty reads or write skew",
       "status": "PASS",
-      "elapsedMs": 54.703,
+      "elapsedMs": 78.348,
       "detail": {
         "concurrentTasksCompleted": 12
       }
@@ -49,7 +49,7 @@
     {
       "name": "2.2 Fail-Fast Anomaly & Boundary Verification (GATE-FIN-01..04 & GATE-WEB-01..06)",
       "status": "PASS",
-      "elapsedMs": 72.529,
+      "elapsedMs": 96.247,
       "detail": {
         "negativeBoundaryGatesVerified": 19
       }
@@ -57,17 +57,17 @@
     {
       "name": "3.1 ACID Durability & Read-Only Runtime Invariant: Zero file mutations or temp/WAL artifacts during CLI execution",
       "status": "PASS",
-      "elapsedMs": 54.959,
+      "elapsedMs": 68.146,
       "detail": {
-        "cliElapsedMs": 14.1307,
-        "cliRssMb": 47.8125,
+        "cliElapsedMs": 17.4972,
+        "cliRssMb": 48.2031,
         "zeroDiskMutations": true
       }
     },
     {
       "name": "4.1 Static SVG Pattern Atlas (#svg-global-dither-defs) & CSS Dithering Architecture Audit",
       "status": "PASS",
-      "elapsedMs": 0.529,
+      "elapsedMs": 0.975,
       "detail": {
         "patternsVerified": 4,
         "cssClassesVerified": 5,
@@ -77,7 +77,7 @@
     {
       "name": "4.2 Headless Chromium Live DOM Audit: Dither Rendering, WCAG AA/AAA Contrast, Serialized Event-Loop Concurrency & 0 Console/Page Errors",
       "status": "PASS",
-      "elapsedMs": 1166.97,
+      "elapsedMs": 1358,
       "detail": {
         "consoleErrors": 0,
         "pageErrors": 0,

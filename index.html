@@ -1123,8 +1123,15 @@
 
     .polar-details-column .corp-table th,
     .polar-details-column .corp-table td {
-      padding: 8px 6px;
+      padding: 8px 10px;
       line-height: 1.38;
+    }
+
+    @media (max-width: 1120px) {
+      .polar-details-column .corp-table th,
+      .polar-details-column .corp-table td {
+        padding: 8px 6px;
+      }
     }
 
     .polar-details-column .corp-table th {
@@ -1819,7 +1826,6 @@
     html.animations-paused .polar-radar-sweep,
     html.animations-paused .polar-sweep-indicator,
     html.animations-paused .polar-active-arc {
-      animation: none !important;
       animation-play-state: paused !important;
       transition: none !important;
     }
@@ -2018,6 +2024,17 @@
         <a href="#section-five-steps" class="nav-chip">5-Step Revenue Model</a>
         <a href="#section-gaap-model" class="nav-chip">GAAP Waterfall &amp; Simulator</a>
         <a href="#section-wayfinder-audit" class="nav-chip">Wayfinder &amp; 10-K Audit</a>
+        <button
+          type="button"
+          id="motion-toggle-btn"
+          class="motion-toggle-btn"
+          data-motion-toggle
+          aria-pressed="false"
+          aria-label="Pause corporate SVG animations"
+        >
+          <span class="motion-status-dot" aria-hidden="true"></span>
+          <span data-motion-label>Pause Animations</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -2191,6 +2208,13 @@
             Operating Income ($9,285M) = Net Merchandise Profit ($4,457M, or 48.00%) + Membership Fees ($4,828M, or 52.00%)
           </div>
         </div>
+
+        <aside class="plain-english-note" aria-label="Plain-English Summary of Costco's Business Model">
+          <div class="note-eyebrow">In Plain English · How the Two Revenue Streams Work Together</div>
+          <p class="note-body">
+            Unlike traditional supermarkets and department stores that mark up merchandise by <strong>25% to 40%</strong>, Costco collects money in two ways: <strong>Net Sales ($249,625M, or 98.10% of total revenue)</strong> from goods and services sold at 890 warehouses and online, and <strong>Membership Fees ($4,828M, or 1.90% of total revenue)</strong> paid once a year by <strong>76.2 million members</strong>. Because Costco caps its merchandise gross margin at <strong>10.92% ($27,267M)</strong>, warehouse sales pay for <strong>100% of operating overhead ($22,810M SG&amp;A, or 9.14% of sales)</strong> and still leave <strong>$4,457M in net merchandise profit (48.00% of operating income)</strong>. That allows all <strong>$4,828M of annual membership fees to account for 52.00% of Costco's $9,285M operating income</strong>, resulting in <strong>$7,367M in bottom-line net income</strong>.
+          </p>
+        </aside>
 
         <!-- Corporate Animated SVG Hero Schematic: 4-Node Revenue-to-Profit Flywheel -->
         <div class="flywheel-hero-stage" role="region" aria-label="Animated Corporate Revenue-to-Profit Flywheel Schematic">
@@ -4135,20 +4159,25 @@
        ========================================================================= */
     var currentStep = 1;
     var isMotionPaused = false;
-    var motionControlBound = false;
+    var motionControlInitialized = false;
+    var reducedMotionMq = null;
 
     function setMotionPaused(paused) {
       isMotionPaused = Boolean(paused);
       document.documentElement.classList.toggle("is-motion-paused", isMotionPaused);
       document.documentElement.classList.toggle("animations-paused", isMotionPaused);
-      var btns = document.querySelectorAll("[data-motion-toggle]");
+      if (document.body) {
+        document.body.classList.toggle("is-motion-paused", isMotionPaused);
+        document.body.classList.toggle("animations-paused", isMotionPaused);
+      }
+      var btns = document.querySelectorAll("[data-motion-toggle], #motion-toggle-btn");
       for (var b = 0; b < btns.length; b++) {
         var btn = btns[b];
         btn.setAttribute("aria-pressed", isMotionPaused ? "true" : "false");
         btn.setAttribute("aria-label", isMotionPaused ? "Play corporate SVG animations" : "Pause corporate SVG animations");
         var labelEl = btn.querySelector("[data-motion-label]");
         if (labelEl) {
-          labelEl.textContent = isMotionPaused ? "Resume Animations" : "Pause Animations";
+          labelEl.textContent = isMotionPaused ? "Play Animations" : "Pause Animations";
         }
       }
       var allSvgs = document.querySelectorAll("svg");
@@ -4162,14 +4191,47 @@
       return isMotionPaused;
     }
 
-    var motionControlInitialized = false;
+    function toggleAnimationPlayback() {
+      return setMotionPaused(!isMotionPaused);
+    }
+
+    function decoratePolarSvgAnimations() {
+      var polarIds = ["svg-polar-categories", "svg-polar-geography", "svg-polar-flywheel"];
+      for (var i = 0; i < polarIds.length; i++) {
+        var svgEl = document.getElementById(polarIds[i]);
+        if (!svgEl) continue;
+        svgEl.classList.add("svg-animated-flow");
+        if (isMotionPaused && typeof svgEl.pauseAnimations === "function") {
+          svgEl.pauseAnimations();
+        } else if (!isMotionPaused && typeof svgEl.unpauseAnimations === "function") {
+          svgEl.unpauseAnimations();
+        }
+      }
+    }
+
     function initMotionControl() {
       if (motionControlInitialized) return;
       motionControlInitialized = true;
-      var btns = document.querySelectorAll("[data-motion-toggle]");
+      var btns = document.querySelectorAll("[data-motion-toggle], #motion-toggle-btn");
       for (var b = 0; b < btns.length; b++) {
         btns[b].addEventListener("click", function () {
-          setMotionPaused(!isMotionPaused);
+          toggleAnimationPlayback();
+        });
+      }
+      var heroNodes = document.querySelectorAll("#svg-corporate-flywheel-hero [data-flywheel-node]");
+      for (var i = 0; i < heroNodes.length; i++) {
+        heroNodes[i].addEventListener("click", function () {
+          var nodeNum = Number(this.getAttribute("data-flywheel-node"));
+          var targetStep = nodeNum === 1 ? 1 : nodeNum === 2 ? 2 : nodeNum === 3 ? 4 : 5;
+          setActiveStep(targetStep, false);
+        });
+        heroNodes[i].addEventListener("keydown", function (evt) {
+          if (evt.key === "Enter" || evt.key === " " || evt.key === "Spacebar") {
+            evt.preventDefault();
+            var nodeNum = Number(this.getAttribute("data-flywheel-node"));
+            var targetStep = nodeNum === 1 ? 1 : nodeNum === 2 ? 2 : nodeNum === 3 ? 4 : 5;
+            setActiveStep(targetStep, false);
+          }
         });
       }
       if (window.matchMedia) {
@@ -4188,24 +4250,29 @@
       }
     }
 
-    function decoratePolarSvgAnimations() {
-      var polarIds = ["svg-polar-categories", "svg-polar-geography", "svg-polar-flywheel"];
-      for (var i = 0; i < polarIds.length; i++) {
-        var svgEl = document.getElementById(polarIds[i]);
-        if (svgEl) {
-          svgEl.classList.add("svg-animated-flow");
-        }
-      }
-    }
-
     function syncAnimatedFlywheelHighlight(stepNum) {
       var mappedNode = stepNum === 1 ? 1 : (stepNum === 2 || stepNum === 3) ? 2 : stepNum === 4 ? 3 : 4;
       var heroNodes = document.querySelectorAll("[data-hero-node]");
       for (var i = 0; i < heroNodes.length; i++) {
         var nId = Number(heroNodes[i].getAttribute("data-hero-node"));
-        var isMatch = nId === mappedNode;
-        heroNodes[i].classList.toggle("is-step-linked", isMatch);
-        heroNodes[i].classList.toggle("is-active-node", isMatch);
+        var isNodeActive = nId === mappedNode;
+        heroNodes[i].classList.toggle("is-step-linked", isNodeActive);
+        heroNodes[i].classList.toggle("is-active-node", isNodeActive);
+      }
+      var heroFlows = document.querySelectorAll("[data-hero-flow]");
+      for (var f = 0; f < heroFlows.length; f++) {
+        var fId = Number(heroFlows[f].getAttribute("data-hero-flow"));
+        heroFlows[f].classList.toggle("is-active-flow", fId === mappedNode);
+      }
+      var statusEl = document.getElementById("flywheel-hero-status");
+      if (statusEl) {
+        var nodeLabels = {
+          1: "Node 01 Active: Paid Membership Base ($4,828M · 98.10% Sales Catalyst)",
+          2: "Node 02 Active: Structural Price Cap (10.92% Gross Margin · 104.15% AP Float)",
+          3: "Node 03 Active: Net Merchandise Profit ($4,457M · 48.00% of Operating Income)",
+          4: "Node 04 Active: Consolidated Operating Profit ($9,285M OpInc · $7,367M Net Income)"
+        };
+        statusEl.textContent = nodeLabels[mappedNode] || nodeLabels[1];
       }
     }
 
@@ -4238,13 +4305,6 @@
         if (targetEl && typeof targetEl.scrollIntoView === "function") {
           targetEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
-      }
-    }
-
-    function decoratePolarSvgAnimations() {
-      var polarSvgs = document.querySelectorAll("#svg-polar-categories, #svg-polar-geography, #svg-polar-flywheel");
-      for (var i = 0; i < polarSvgs.length; i++) {
-        polarSvgs[i].classList.add("svg-animated-flow");
       }
     }
 

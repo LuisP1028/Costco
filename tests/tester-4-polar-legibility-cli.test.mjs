@@ -443,7 +443,8 @@ print(json.dumps({
 }))
 `;
 
-  const rawOut = execFileSync("python3", ["-c", pyScript, fileUrl], {
+  const PYTHON_BIN = fs.existsSync("/opt/anaconda3/bin/python3") ? "/opt/anaconda3/bin/python3" : "python3";
+  const rawOut = execFileSync(PYTHON_BIN, ["-c", pyScript, fileUrl], {
     cwd: ROOT_DIR,
     encoding: "utf8",
     maxBuffer: 10 * 1024 * 1024
