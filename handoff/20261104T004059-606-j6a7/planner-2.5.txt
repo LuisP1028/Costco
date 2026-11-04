@@ -1,0 +1,10 @@
+wayfinder/20261104T004059-606-j6a7/visual-taste-direction.md
+assets/20261104T004059-606-j6a7/planner-2.5-visual-telemetry.json
+assets/20261104T004059-606-j6a7/planner-2.5-prototype-exec-summary-flywheel-1440px.png
+assets/20261104T004059-606-j6a7/planner-2.5-baseline-polar-angle-1440px.png
+assets/20261104T004059-606-j6a7/planner-2.5-remediated-polar-angle-1440px.png
+assets/20261104T004059-606-j6a7/planner-2.5-baseline-polar-flywheel-1440px.png
+assets/20261104T004059-606-j6a7/planner-2.5-remediated-polar-flywheel-1440px.png
+assets/20261104T004059-606-j6a7/planner-2.5-viewport-390px.png
+assets/20261104T004059-606-j6a7/planner-2.5-viewport-768px.png
+assets/20261104T004059-606-j6a7/planner-2.5-viewport-1440px.png
