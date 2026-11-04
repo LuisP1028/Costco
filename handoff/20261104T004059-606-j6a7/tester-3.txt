@@ -1,0 +1,9 @@
+tests/tester-3-plain-english-data.test.mjs
+index.html
+data/costco_revenue_breakdown.json
+wayfinder/map.md
+wayfinder/tickets/ticket-006.md
+README.md
+src/costco_revenue_model.mjs
+assets/20261104T004059-606-j6a7/tester-3-executive-summary-plain-english.png
+assets/20261104T004059-606-j6a7/tester-3-polar-categories-plain-english.png
