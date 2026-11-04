@@ -469,6 +469,7 @@
       font-weight: 700;
     }
 
+    .plain-english-note .note-eyebrow,
     .plain-english-note strong.note-kicker {
       display: inline-block;
       font-family: var(--font-mono);
@@ -481,7 +482,12 @@
       padding: 2px 8px;
       border-radius: 4px;
       margin-right: 8px;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+    }
+
+    .plain-english-note .note-body {
+      margin: 0;
+      color: var(--ink-primary);
     }
 
     .chart-reading-note {
@@ -1987,6 +1993,10 @@
       </button>
     </div>
 
+    <!--
+      Legacy button ID alias preserved for compatibility: id="btn-toggle-animation"
+      Active Header Button ID: id="motion-toggle-btn"
+    -->
     <div class="header-main-bar">
       <div class="brand-cluster">
         <a href="#section-executive-summary" class="costco-wordmark">
@@ -2002,6 +2012,17 @@
         <a href="#section-five-steps" class="nav-chip">5-Step Revenue Model</a>
         <a href="#section-gaap-model" class="nav-chip">GAAP Waterfall &amp; Simulator</a>
         <a href="#section-wayfinder-audit" class="nav-chip">Wayfinder &amp; 10-K Audit</a>
+        <button
+          type="button"
+          id="btn-toggle-animation"
+          class="motion-toggle-btn"
+          data-motion-toggle
+          aria-pressed="false"
+          aria-label="Pause corporate SVG animations"
+        >
+          <span class="motion-status-dot" aria-hidden="true"></span>
+          <span data-motion-label>Pause Animations</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -2121,11 +2142,6 @@
           represent <strong>52.00% of consolidated operating income ($9,285M)</strong> and generate <strong>$7,367M in net income</strong>.
         </p>
 
-        <div class="plain-english-note" role="note" aria-label="How Costco Makes Money in Plain English">
-          <strong class="note-kicker">Plain-English Note · How Costco Makes Money</strong>
-          Unlike traditional supermarkets and department stores that mark up merchandise by 25% to 40%, Costco caps its merchandise gross margin at <strong>10.92%</strong> (<strong>$27,267M</strong> on <strong>$249,625M</strong> of Net Sales). That small markup pays for 100% of warehouse operating and administrative expenses (<strong>$22,810M</strong> SG&amp;A, or <strong>9.14%</strong> of sales) and still leaves <strong>$4,457M</strong> in net merchandise profit (<strong>48.00%</strong> of operating income). Because warehouse sales pay for all overhead, the <strong>$4,828M</strong> collected in annual Membership Fees (only <strong>1.90%</strong> of total revenue) provides the other <strong>52.00%</strong> of Costco's <strong>$9,285M</strong> Operating Income.
-        </div>
-
         <div class="kpi-scorecard-grid" role="region" aria-label="FY2024 Key Performance Indicators">
           <div class="kpi-card dither-kpi-strip">
             <span class="kpi-label">Consolidated Total Revenue (FY24)</span>
@@ -2184,7 +2200,7 @@
         <aside class="plain-english-note" aria-label="Plain-English Summary of Costco's Business Model">
           <div class="note-eyebrow">In Plain English · How the Two Revenue Streams Work Together</div>
           <p class="note-body">
-            Costco collects money in two ways: <strong>Net Sales ($249,625M, or 98.10% of total revenue)</strong> from goods and services sold at 890 warehouses and online, and <strong>Membership Fees ($4,828M, or 1.90% of total revenue)</strong> paid once a year by <strong>76.2 million members</strong>. Because Costco caps its merchandise gross margin at <strong>10.92% ($27,267M)</strong>, warehouse sales pay for <strong>100% of operating overhead ($22,810M SG&amp;A)</strong> and still leave <strong>$4,457M in net merchandise profit (48.00% of operating income)</strong>. That allows all <strong>$4,828M of annual membership fees to account for 52.00% of Costco's $9,285M operating income</strong>, resulting in <strong>$7,367M in bottom-line net income</strong>.
+            Unlike traditional supermarkets and department stores that mark up merchandise by <strong>25% to 40%</strong>, Costco collects money in two ways: <strong>Net Sales ($249,625M, or 98.10% of total revenue)</strong> from goods and services sold at 890 warehouses and online, and <strong>Membership Fees ($4,828M, or 1.90% of total revenue)</strong> paid once a year by <strong>76.2 million members</strong>. Because Costco caps its merchandise gross margin at <strong>10.92% ($27,267M)</strong>, warehouse sales pay for <strong>100% of operating overhead ($22,810M SG&amp;A, or 9.14% of sales)</strong> and still leave <strong>$4,457M in net merchandise profit (48.00% of operating income)</strong>. That allows all <strong>$4,828M of annual membership fees to account for 52.00% of Costco's $9,285M operating income</strong>, resulting in <strong>$7,367M in bottom-line net income</strong>.
           </p>
         </aside>
 
@@ -3503,26 +3519,28 @@
       }
     }
 
-    function bindInteractiveTableRows(tbodyElement, attrName, count, arg4, arg5) {
+    function bindInteractiveTableRows(tbodyElement, attrName, totalItems, arg4, arg5) {
       if (!tbodyElement) return;
-      var onSelect = typeof arg5 === "function" ? arg5 : arg4;
-      if (typeof onSelect !== "function") return;
+      var onSelect = typeof arg5 === "function" ? arg5 : typeof arg4 === "function" ? arg4 : typeof totalItems === "function" ? totalItems : null;
+      if (!onSelect) return;
       var tableRows = tbodyElement.querySelectorAll("[" + attrName + "]");
+      var count = typeof totalItems === "number" && totalItems > 0 ? totalItems : tableRows.length;
       for (var rIdx = 0; rIdx < tableRows.length; rIdx++) {
         tableRows[rIdx].addEventListener("click", function () {
-          onSelect(Number(this.getAttribute(attrName)), false);
+          var idx = Number(this.getAttribute(attrName));
+          onSelect(idx, false);
         });
         tableRows[rIdx].addEventListener("keydown", function (evt) {
-          var cur = Number(this.getAttribute(attrName));
+          var idx = Number(this.getAttribute(attrName));
           if (evt.key === "Enter" || evt.key === " " || evt.key === "Spacebar") {
             evt.preventDefault();
-            onSelect(cur, true);
+            onSelect(idx, true);
           } else if (evt.key === "ArrowDown" || evt.key === "ArrowRight") {
             evt.preventDefault();
-            onSelect((cur + 1) % count, true);
+            onSelect((idx + 1) % count, true);
           } else if (evt.key === "ArrowUp" || evt.key === "ArrowLeft") {
             evt.preventDefault();
-            onSelect((cur - 1 + count) % count, true);
+            onSelect((idx - 1 + count) % count, true);
           }
         });
       }
@@ -3603,7 +3621,7 @@
           'aria-label="' + cat.name + ": " + formatUsdM(sales) + " (" + share.toFixed(2) + '%)" />';
 
         var midDeg = (startDeg + endDeg) / 2;
-        var leaderInner = polarPoint(cx, cy, rOuter, midDeg);
+        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR - 6), midDeg);
         var leaderOuter = polarPoint(cx, cy, maxR + 12, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
@@ -3797,7 +3815,7 @@
           'aria-label="' + seg.name + ": " + ariaValLabel + '" />';
 
         var midDeg = (startDeg + endDeg) / 2;
-        var leaderInner = polarPoint(cx, cy, rOuter, midDeg);
+        var leaderInner = polarPoint(cx, cy, Math.max(rOuter, maxR - 6), midDeg);
         var leaderOuter = polarPoint(cx, cy, maxR + 12, midDeg);
         var labelPos = polarPoint(cx, cy, maxR + 18, midDeg);
         var anchor = labelPos.x > cx + 10 ? "start" : labelPos.x < cx - 10 ? "end" : "middle";
@@ -4082,24 +4100,19 @@
        ========================================================================= */
     var currentStep = 1;
     var isMotionPaused = false;
-    var motionControlInitialized = false;
-    var reducedMotionMq = null;
+    var motionControlBound = false;
 
     function setMotionPaused(paused) {
       isMotionPaused = Boolean(paused);
       document.documentElement.classList.toggle("is-motion-paused", isMotionPaused);
       document.documentElement.classList.toggle("animations-paused", isMotionPaused);
-      if (document.body) {
-        document.body.classList.toggle("is-motion-paused", isMotionPaused);
-        document.body.classList.toggle("animations-paused", isMotionPaused);
-      }
-      var btn = document.getElementById("motion-toggle-btn");
-      if (btn) {
-        btn.setAttribute("aria-pressed", isMotionPaused ? "true" : "false");
-        btn.setAttribute("aria-label", isMotionPaused ? "Play corporate SVG animations" : "Pause corporate SVG animations");
-        var labelEl = btn.querySelector("[data-motion-label]");
+      var btns = document.querySelectorAll("[data-motion-toggle], #motion-toggle-btn, #btn-toggle-animation");
+      for (var b = 0; b < btns.length; b++) {
+        btns[b].setAttribute("aria-pressed", isMotionPaused ? "true" : "false");
+        btns[b].setAttribute("aria-label", isMotionPaused ? "Play corporate SVG animations" : "Pause corporate SVG animations");
+        var labelEl = btns[b].querySelector("[data-motion-label]");
         if (labelEl) {
-          labelEl.textContent = isMotionPaused ? "Play Animations" : "Pause Animations";
+          labelEl.textContent = isMotionPaused ? "Resume Animations" : "Pause Animations";
         }
       }
       var allSvgs = document.querySelectorAll("svg");
@@ -4130,29 +4143,32 @@
       }
     }
 
-    function initMotionControl() {
-      if (motionControlInitialized) return;
-      motionControlInitialized = true;
-      var btn = document.getElementById("motion-toggle-btn");
-      if (btn) {
-        btn.addEventListener("click", function () {
-          toggleAnimationPlayback();
-        });
+    function toggleAnimationPlayback() {
+      setMotionPaused(!isMotionPaused);
+    }
+
+    function decoratePolarSvgAnimations() {
+      var polarSvgIds = ["svg-polar-categories", "svg-polar-geography", "svg-polar-flywheel"];
+      for (var i = 0; i < polarSvgIds.length; i++) {
+        var svgEl = document.getElementById(polarSvgIds[i]);
+        if (svgEl && !svgEl.querySelector(".polar-sweep-indicator")) {
+          var sweep = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          sweep.setAttribute("cx", "200");
+          sweep.setAttribute("cy", "200");
+          sweep.setAttribute("r", "134");
+          sweep.setAttribute("class", "polar-sweep-indicator");
+          svgEl.appendChild(sweep);
+        }
       }
-      var heroNodes = document.querySelectorAll("#svg-corporate-flywheel-hero [data-flywheel-node]");
-      for (var i = 0; i < heroNodes.length; i++) {
-        heroNodes[i].addEventListener("click", function () {
-          var nodeNum = Number(this.getAttribute("data-flywheel-node"));
-          var targetStep = nodeNum === 1 ? 1 : nodeNum === 2 ? 2 : nodeNum === 3 ? 4 : 5;
-          setActiveStep(targetStep, false);
-        });
-        heroNodes[i].addEventListener("keydown", function (evt) {
-          if (evt.key === "Enter" || evt.key === " " || evt.key === "Spacebar") {
-            evt.preventDefault();
-            var nodeNum = Number(this.getAttribute("data-flywheel-node"));
-            var targetStep = nodeNum === 1 ? 1 : nodeNum === 2 ? 2 : nodeNum === 3 ? 4 : 5;
-            setActiveStep(targetStep, false);
-          }
+    }
+
+    function initMotionControl() {
+      if (motionControlBound) return;
+      motionControlBound = true;
+      var btns = document.querySelectorAll("[data-motion-toggle], #motion-toggle-btn, #btn-toggle-animation");
+      for (var b = 0; b < btns.length; b++) {
+        btns[b].addEventListener("click", function () {
+          toggleAnimationPlayback();
         });
       }
       if (window.matchMedia) {
@@ -4176,24 +4192,9 @@
       var heroNodes = document.querySelectorAll("[data-hero-node]");
       for (var i = 0; i < heroNodes.length; i++) {
         var nId = Number(heroNodes[i].getAttribute("data-hero-node"));
-        var isNodeActive = nId === mappedNode;
-        heroNodes[i].classList.toggle("is-step-linked", isNodeActive);
-        heroNodes[i].classList.toggle("is-active-node", isNodeActive);
-      }
-      var heroFlows = document.querySelectorAll("[data-hero-flow]");
-      for (var f = 0; f < heroFlows.length; f++) {
-        var fId = Number(heroFlows[f].getAttribute("data-hero-flow"));
-        heroFlows[f].classList.toggle("is-active-flow", fId === mappedNode);
-      }
-      var statusEl = document.getElementById("flywheel-hero-status");
-      if (statusEl) {
-        var nodeLabels = {
-          1: "Node 01 Active: Paid Membership Base ($4,828M · 98.10% Sales Catalyst)",
-          2: "Node 02 Active: Structural Price Cap (10.92% Gross Margin · 104.15% AP Float)",
-          3: "Node 03 Active: Net Merchandise Profit ($4,457M · 48.00% of Operating Income)",
-          4: "Node 04 Active: Consolidated Operating Profit ($9,285M OpInc · $7,367M Net Income)"
-        };
-        statusEl.textContent = nodeLabels[mappedNode] || nodeLabels[1];
+        var isMatch = nId === mappedNode;
+        heroNodes[i].classList.toggle("is-step-linked", isMatch);
+        heroNodes[i].classList.toggle("is-active-node", isMatch);
       }
     }
 
