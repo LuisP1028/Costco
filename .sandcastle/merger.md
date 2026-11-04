@@ -14,4 +14,4 @@ Role: Final local git branch merger. Do not redo prior stages. Never run `git pu
 1. Verify `git branch --show-current` is the main project branch (not `{{PLAN_BRANCH}}`). If `{{PLAN_BRANCH}}` is already an ancestor of `HEAD` and `git status --porcelain` is empty, output `<promise>COMPLETE</promise>`.
 2. Run `git merge {{PLAN_BRANCH}} --no-edit`.
 3. If merge conflicts occur, resolve them by keeping the finished work from `{{PLAN_BRANCH}}` while preserving both run directories under `handoff/`, `wayfinder/`, and `assets/`, then `git add` and `git commit --no-edit`.
-4. Confirm `git status --porcelain` is empty and output `<promise>COMPLETE</promise>`.
+4. Write `handoff/{{RUN_ID}}/merged.txt` containing the merged commit hash, `git add handoff/{{RUN_ID}}/merged.txt && git commit -m "chore(merger): record handoff/{{RUN_ID}}/merged.txt"`, confirm `git status --porcelain` is empty, and output `<promise>COMPLETE</promise>`.

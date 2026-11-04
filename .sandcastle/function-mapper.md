@@ -22,7 +22,7 @@ Role: Language recommender and exact library/database/module function mapper. Do
    - Recommend the optimal language(s) and runtime(s) (e.g., Rust, Python, TypeScript, JavaScript, C/C++, SQL, GLSL) for each part of `{{SEED_PATH}}` based on project fit and performance.
 
 2. **Inspect Installed Packages & Map Exact Functions:**
-   - Introspect the installed library versions, database drivers, and project modules (via `python -c "import inspect..."`, `node -e "..."`, CLI `--help`, or documentation/MCP lookups) so zero signatures are guessed.
+   - Introspect the installed library versions, database drivers, and project modules (via `python -c "import inspect..."`, `node -e "...; process.exit(0)"`, CLI `--help`, or documentation/MCP lookups) so zero signatures are guessed. Always terminate standalone `node -e` / `python -c` probes with `process.exit(0)` (or kill any backgrounded command task before exiting) so background handles never hold the CLI open.
    - Write `wayfinder/{{RUN_ID}}/library-functions.md` detailing:
      - **Language & Runtime Recommendations:** Which language/runtime to use for each component and why.
      - **Exact Import Statements & Function Signatures:** Verbatim module imports, class constructors, function/method names, parameter names/types, and return structures from installed libraries and database clients required by `{{SEED_PATH}}`.

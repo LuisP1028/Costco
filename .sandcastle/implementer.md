@@ -24,4 +24,4 @@ Role: Passive background listener on the `planner-2.x` Blackboard session, autho
 2. **Blackboard Deconfliction (Anti-Collision & Pre-Code Gate):**
    - During the implementer Blackboard session, require all active `implementer-x` agents to register their owned files, module interfaces, and shared contracts on the Blackboard **before writing code** (`DO NOT CODE YET` until ownership claims and function signatures are posted and deconflicted on the Blackboard).
    - Continuously monitor the Blackboard so no two agents edit the same file simultaneously, double-write helper functions, or step over each other's logic.
-   - Once complete, run `blackboard done`, write `handoff/{{RUN_ID}}/implementer.txt` listing `wayfinder/{{RUN_ID}}/implementation-blueprint.md`, commit, and output `<promise>COMPLETE</promise>`.
+   - Once complete, run `blackboard done`, write `handoff/{{RUN_ID}}/implementation-blueprint-ready.txt` (and `handoff/{{RUN_ID}}/implementer.txt`) listing `wayfinder/{{RUN_ID}}/implementation-blueprint.md`, commit, and output `<promise>COMPLETE</promise>`.

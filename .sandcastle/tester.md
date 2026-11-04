@@ -24,4 +24,4 @@ Role: Passive background listener on the `implementer-1`..`5` Blackboard session
 2. **Blackboard Deconfliction (Anti-Collision & Pre-Code Gate):**
    - During the `tester-1`..`5` Blackboard session, require all active `tester-x` agents to register their owned test files and remediation targets on the Blackboard **before writing code or editing files** (`DO NOT CODE YET` until ownership claims are posted and deconflicted on the Blackboard).
    - Continuously monitor the Blackboard so no two `tester-x` agents edit the same source file simultaneously or write duplicate test suites.
-   - Once complete, run `blackboard done`, write `handoff/{{RUN_ID}}/tester.txt` listing `wayfinder/{{RUN_ID}}/verification-blueprint.md`, commit, and output `<promise>COMPLETE</promise>`.
+   - Once complete, run `blackboard done`, write `handoff/{{RUN_ID}}/verification-blueprint-ready.txt` (and `handoff/{{RUN_ID}}/tester.txt`) listing `wayfinder/{{RUN_ID}}/verification-blueprint.md`, commit, and output `<promise>COMPLETE</promise>`.
