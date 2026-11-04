@@ -1,0 +1,2 @@
+wayfinder/20261104T004059-606-j6a7/installed-libraries.md
+handoff/20261104T004059-606-j6a7/libs-installed.txt
