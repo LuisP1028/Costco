@@ -1532,6 +1532,7 @@ export function antigravity(
         name: "antigravity",
         env: {
             ...process.env,
+            SKIP_GLOBAL_AUTO_SYNC: "1",
             ...extraEnv,
             PATH: `${SHIM_BIN_DIR}:${process.env.PATH || ""}`,
         },
